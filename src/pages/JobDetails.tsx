@@ -36,6 +36,7 @@ import {
 import { toast } from "sonner";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHead from "@/components/seo/SEOHead";
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Not disclosed";
@@ -216,6 +217,13 @@ const JobDetails = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title={`${job.title} at ${job.company_name} | SteelJobs.com`}
+        description={`Apply for ${job.title} position at ${job.company_name} in ${job.location}. ${job.description.substring(0, 150)}...`}
+        keywords={`${job.title}, ${job.company_name}, ${job.location}, ${job.skills_required?.join(", ") || "jobs"}`}
+        canonicalUrl={`https://steeljobs.com/jobs/${job.id}`}
+        ogType="article"
+      />
       <Navbar />
 
       <main className="flex-1 container-narrow py-6">

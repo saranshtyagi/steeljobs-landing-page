@@ -14,6 +14,7 @@ import {
   Loader2,
   Search,
   Mail,
+  BarChart3,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import RecruiterStats from "@/components/recruiter/RecruiterStats";
@@ -22,6 +23,8 @@ import JobDetailView from "@/components/recruiter/JobDetailView";
 import JobPostingModal from "@/components/recruiter/JobPostingModal";
 import CandidateSearch from "@/components/recruiter/CandidateSearch";
 import EmailHistoryTab from "@/components/recruiter/EmailHistoryTab";
+import RecruiterAnalytics from "@/components/recruiter/RecruiterAnalytics";
+import SEOHead from "@/components/seo/SEOHead";
 
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
@@ -86,6 +89,11 @@ const RecruiterDashboard = () => {
 
   return (
     <DashboardLayout>
+      <SEOHead
+        title="Recruiter Dashboard | SteelJobs.com"
+        description="Manage your job postings, search candidates, and track applications on SteelJobs recruiter dashboard."
+        noIndex={true}
+      />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -105,7 +113,7 @@ const RecruiterDashboard = () => {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:flex gap-1">
+          <TabsList className="w-full sm:w-auto grid grid-cols-6 sm:flex gap-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 hidden sm:block" />
               Overview
@@ -117,6 +125,10 @@ const RecruiterDashboard = () => {
             <TabsTrigger value="candidates" className="flex items-center gap-2">
               <Search className="w-4 h-4 hidden sm:block" />
               Candidates
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 hidden sm:block" />
+              Analytics
             </TabsTrigger>
             <TabsTrigger value="company" className="flex items-center gap-2">
               <Building2 className="w-4 h-4 hidden sm:block" />
@@ -205,6 +217,11 @@ const RecruiterDashboard = () => {
           {/* Candidates Tab */}
           <TabsContent value="candidates" className="mt-6">
             <CandidateSearch />
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="mt-6">
+            <RecruiterAnalytics jobs={jobs} />
           </TabsContent>
 
           {/* Company Tab */}
