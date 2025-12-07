@@ -1,7 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Users, Building2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const { user, role } = useAuth();
+
+  const handleGetStarted = () => {
+    if (user && role) {
+      navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       {/* Background Elements */}
@@ -36,8 +49,8 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-up-delay-3">
-            <Button variant="hero" size="xl" className="w-full sm:w-auto group">
-              Create Account
+            <Button variant="hero" size="xl" className="w-full sm:w-auto group" onClick={handleGetStarted}>
+              {user ? "Go to Dashboard" : "Create Account"}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button variant="heroOutline" size="xl" className="w-full sm:w-auto">
