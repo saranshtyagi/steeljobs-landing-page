@@ -1,11 +1,45 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useRecruiterProfile } from "./useRecruiterProfile";
 
 interface ShortlistParams {
   candidateId: string;
   jobId: string;
 }
+
+// Check if a candidate is shortlisted to any of the recruiter's jobs
+export const useCandidateShortlistStatus = (candidateId: string | undefined) => {
+  const { profile } = useRecruiterProfile();
+
+  return useQuery({
+    queryKey: ["candidateShortlistStatus", candidateId, profile?.id],
+    queryFn: async () => {
+      if (!candidateId || !profile?.id) return [];
+
+      // Get all jobs for this recruiter
+      const { data: jobs } = await supabase
+        .from("jobs")
+        .select("id")
+        .eq("recruiter_id", profile.id);
+
+      if (!jobs || jobs.length === 0) return [];
+
+      const jobIds = jobs.map((j) => j.id);
+
+      // Check if candidate has been shortlisted to any of these jobs
+      const { data: applications, error } = await supabase
+        .from("applications")
+        .select("id, job_id, status")
+        .eq("candidate_id", candidateId)
+        .in("job_id", jobIds);
+
+      if (error) throw error;
+      return applications || [];
+    },
+    enabled: !!candidateId && !!profile?.id,
+  });
+};
 
 export const useShortlistCandidate = () => {
   const queryClient = useQueryClient();
@@ -53,6 +87,7 @@ export const useShortlistCandidate = () => {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["jobApplications"] });
       queryClient.invalidateQueries({ queryKey: ["recruiterJobs"] });
+      queryClient.invalidateQueries({ queryKey: ["candidateShortlistStatus"] });
       if (result.updated) {
         toast.success("Candidate status updated to shortlisted");
       } else {
@@ -107,6 +142,7 @@ export const useBulkShortlist = () => {
     onSuccess: ({ successful, total }) => {
       queryClient.invalidateQueries({ queryKey: ["jobApplications"] });
       queryClient.invalidateQueries({ queryKey: ["recruiterJobs"] });
+      queryClient.invalidateQueries({ queryKey: ["candidateShortlistStatus"] });
       toast.success(`${successful} of ${total} candidates shortlisted`);
     },
     onError: (error) => {
