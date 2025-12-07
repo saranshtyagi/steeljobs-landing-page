@@ -77,19 +77,29 @@ const CandidateProfileDrawer = ({ candidateId, isOpen, onClose }: CandidateProfi
       
       const filePath = pathMatch[1];
       
-      // Create a signed URL for download
+      // Download the file directly
       const { data, error } = await supabase.storage
         .from('resumes')
-        .createSignedUrl(filePath, 60); // 60 seconds expiry
+        .download(filePath);
       
       if (error) {
-        console.error("Error creating signed URL:", error);
+        console.error("Error downloading resume:", error);
         toast.error("Failed to download resume");
         return;
       }
       
-      // Open the signed URL in a new tab
-      window.open(data.signedUrl, '_blank');
+      // Create a download link
+      const blob = new Blob([data], { type: 'application/pdf' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${candidate.full_name || 'resume'}_resume.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+      
+      toast.success("Resume downloaded");
     } catch (error) {
       console.error("Download error:", error);
       toast.error("Failed to download resume");
