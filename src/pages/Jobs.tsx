@@ -32,6 +32,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Link } from "react-router-dom";
 import {
   Loader2,
   Search,
@@ -48,8 +49,6 @@ import {
   Flame,
   Zap,
 } from "lucide-react";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Not disclosed";
@@ -425,7 +424,7 @@ const FiltersSidebar = ({
 const Jobs = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
 
   const [filters, setFilters] = useState<JobFilters>(() => ({
     keywords: searchParams.get("q") || undefined,
@@ -465,7 +464,30 @@ const Jobs = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
+      {/* Simple Header */}
+      <header className="bg-card border-b border-border sticky top-0 z-50">
+        <div className="container-narrow flex items-center justify-between h-16">
+          <Link to="/" className="text-xl font-bold gradient-text">
+            SteelJobs
+          </Link>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <Button variant="hero" size="sm" onClick={() => navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate")}>
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
+                  Sign In
+                </Button>
+                <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
+                  Get Started
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
 
       {/* Search Header */}
       <div className="bg-gradient-to-br from-primary/5 to-accent/5 border-b border-border">
@@ -647,8 +669,6 @@ const Jobs = () => {
           </main>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
