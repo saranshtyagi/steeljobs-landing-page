@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import ShortlistPopover from "./ShortlistPopover";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -60,6 +62,40 @@ const formatDate = (dateStr: string | null): string => {
 const CandidateProfileDrawer = ({ candidateId, isOpen, onClose }: CandidateProfileDrawerProps) => {
   const { data: candidate, isLoading } = useCandidateById(candidateId);
 
+  const handleDownloadResume = async () => {
+    if (!candidate?.resume_url) return;
+    
+    try {
+      // Extract path from URL - format: .../storage/v1/object/public/resumes/user_id/filename.pdf
+      const url = new URL(candidate.resume_url);
+      const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/resumes\/(.+)/);
+      
+      if (!pathMatch) {
+        toast.error("Invalid resume URL");
+        return;
+      }
+      
+      const filePath = pathMatch[1];
+      
+      // Create a signed URL for download
+      const { data, error } = await supabase.storage
+        .from('resumes')
+        .createSignedUrl(filePath, 60); // 60 seconds expiry
+      
+      if (error) {
+        console.error("Error creating signed URL:", error);
+        toast.error("Failed to download resume");
+        return;
+      }
+      
+      // Open the signed URL in a new tab
+      window.open(data.signedUrl, '_blank');
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download resume");
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
@@ -104,11 +140,9 @@ const CandidateProfileDrawer = ({ candidateId, isOpen, onClose }: CandidateProfi
               <div className="flex flex-wrap gap-2 mt-4">
                 <ShortlistPopover candidateId={candidate.id} />
                 {candidate.resume_url && (
-                  <Button variant="hero" size="sm" asChild>
-                    <a href={candidate.resume_url} target="_blank" rel="noopener noreferrer">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Resume
-                    </a>
+                  <Button variant="hero" size="sm" onClick={handleDownloadResume}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Resume
                   </Button>
                 )}
                 <Button variant="outline" size="sm">
