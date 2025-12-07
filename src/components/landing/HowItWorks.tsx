@@ -28,22 +28,22 @@ const HowItWorks = () => {
     {
       icon: UserPlus,
       title: "Create Profile",
-      description: "Build your professional profile",
+      description: "Showcase your industrial expertise",
     },
     {
       icon: Upload,
       title: "Upload Resume",
-      description: "Let our AI parse your experience",
+      description: "AI extracts your skills and certifications",
     },
     {
       icon: Send,
       title: "Apply",
-      description: "One-click applications to dream jobs",
+      description: "One-click applications to top positions",
     },
     {
       icon: Trophy,
       title: "Get Hired",
-      description: "Land your next opportunity",
+      description: "Join leading industry employers",
     },
   ];
 
@@ -57,7 +57,7 @@ const HowItWorks = () => {
             Simple steps to success
           </h2>
           <p className="text-muted-foreground">
-            Whether you're hiring talent or seeking your next role, SteelJobs.com makes it effortless.
+            Whether you're hiring skilled professionals or seeking your next role in Steel, Power, or Mining, SteelJobs.com makes it effortless.
           </p>
         </div>
 

@@ -31,15 +31,15 @@ const CTA = () => {
           <div className="relative px-8 py-16 md:px-16 md:py-20 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              <span>Join 200,000+ professionals today</span>
+              <span>Trusted by leading Steel, Power & Mining companies</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-6 max-w-3xl mx-auto">
-              Ready to transform your hiring process?
+              Ready to transform your industrial hiring?
             </h2>
 
             <p className="text-lg text-primary-foreground/80 mb-10 max-w-xl mx-auto">
-              Create your free account today and discover why thousands of companies and job seekers trust SteelJobs.com.
+              Partner with us to find the skilled professionals that power your operations. Connect with our team today.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
