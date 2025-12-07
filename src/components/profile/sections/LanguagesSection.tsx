@@ -1,0 +1,164 @@
+import { useState } from "react";
+import { useCandidateLanguages, CandidateLanguage } from "@/hooks/useCandidateData";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Edit2, Plus, Languages, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Proficient", "Expert", "Native"];
+
+const LanguagesSection = () => {
+  const { languages, isLoading, addLanguage, deleteLanguage } = useCandidateLanguages();
+  const [isAdding, setIsAdding] = useState(false);
+  const [formData, setFormData] = useState({
+    language: "",
+    proficiency: "",
+    can_read: true,
+    can_write: true,
+    can_speak: true,
+  });
+
+  const handleSave = async () => {
+    if (!formData.language.trim()) return;
+    await addLanguage.mutateAsync({
+      language: formData.language,
+      proficiency: formData.proficiency || null,
+      can_read: formData.can_read,
+      can_write: formData.can_write,
+      can_speak: formData.can_speak,
+    });
+    setFormData({ language: "", proficiency: "", can_read: true, can_write: true, can_speak: true });
+    setIsAdding(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Remove this language?")) {
+      await deleteLanguage.mutateAsync(id);
+    }
+  };
+
+  return (
+    <div id="languages" className="bg-card rounded-xl border border-border p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <Languages className="w-5 h-5 text-primary" />
+          Languages
+        </h2>
+        <Button variant="ghost" size="sm" onClick={() => setIsAdding(true)}>
+          <Plus className="w-4 h-4 mr-1" />
+          Add
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="animate-pulse h-12 bg-muted rounded-lg" />
+      ) : languages.length > 0 ? (
+        <div className="space-y-3">
+          {languages.map((lang) => (
+            <div key={lang.id} className="flex items-center justify-between p-3 border border-border rounded-lg group">
+              <div>
+                <span className="font-medium text-foreground">{lang.language}</span>
+                {lang.proficiency && (
+                  <span className="text-sm text-muted-foreground ml-2">• {lang.proficiency}</span>
+                )}
+                <div className="flex gap-2 mt-1">
+                  {lang.can_read && <Badge variant="outline" className="text-xs">Read</Badge>}
+                  {lang.can_write && <Badge variant="outline" className="text-xs">Write</Badge>}
+                  {lang.can_speak && <Badge variant="outline" className="text-xs">Speak</Badge>}
+                </div>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive"
+                onClick={() => handleDelete(lang.id)}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-sm">Add languages you know</p>
+      )}
+
+      {/* Add Dialog */}
+      <Dialog open={isAdding} onOpenChange={setIsAdding}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Language</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Language*</Label>
+              <Input
+                placeholder="e.g., English, Hindi"
+                value={formData.language}
+                onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Proficiency</Label>
+              <Select value={formData.proficiency} onValueChange={(v) => setFormData(prev => ({ ...prev, proficiency: v }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PROFICIENCY_LEVELS.map((level) => (
+                    <SelectItem key={level} value={level}>{level}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={formData.can_read}
+                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_read: !!c }))}
+                />
+                <span className="text-sm">Can Read</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={formData.can_write}
+                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_write: !!c }))}
+                />
+                <span className="text-sm">Can Write</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={formData.can_speak}
+                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_speak: !!c }))}
+                />
+                <span className="text-sm">Can Speak</span>
+              </label>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
+            <Button onClick={handleSave} disabled={addLanguage.isPending || !formData.language.trim()}>
+              {addLanguage.isPending ? "Adding..." : "Add"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default LanguagesSection;
