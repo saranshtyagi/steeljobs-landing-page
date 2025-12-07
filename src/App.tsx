@@ -7,6 +7,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
 import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
 import CandidateDashboard from "./pages/dashboard/CandidateDashboard";
 import CandidateOnboarding from "./pages/onboarding/CandidateOnboarding";
@@ -25,6 +27,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
             <Route
               path="/dashboard/recruiter"
               element={
