@@ -56,12 +56,6 @@ const Navbar = () => {
             <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
               How It Works
             </a>
-            <a href="#recruiters" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-              For Recruiters
-            </a>
-            <a href="#candidates" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-              For Candidates
-            </a>
           </div>
 
           {/* Desktop CTA / User Menu */}
@@ -126,12 +120,6 @@ const Navbar = () => {
               </a>
               <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2">
                 How It Works
-              </a>
-              <a href="#recruiters" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2">
-                For Recruiters
-              </a>
-              <a href="#candidates" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2">
-                For Candidates
               </a>
               <div className="flex flex-col gap-2 pt-4 border-t border-border/50">
                 {user && profile ? (

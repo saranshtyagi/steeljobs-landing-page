@@ -32,19 +32,19 @@ const HeroSection = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-sm font-medium mb-8 animate-fade-up">
             <Sparkles className="w-4 h-4" />
-            <span>Trusted by 10,000+ companies worldwide</span>
+            <span>Trusted by 500+ Steel, Power & Mining companies</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-up-delay-1">
-            Where Talent Meets{" "}
-            <span className="gradient-text">Opportunity</span>
+            Build the Workforce That Powers{" "}
+            <span className="gradient-text">Industry</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-up-delay-2">
-            A modern job portal bridging recruiters and job seekers with powerful search, 
-            seamless applications, and production-grade performance.
+            The specialized job portal for Steel, Power, and Mining industries. 
+            Connect with skilled professionals and top employers in heavy industries.
           </p>
 
           {/* CTA Buttons */}
@@ -61,20 +61,20 @@ const HeroSection = () => {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-up-delay-3">
             <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">15K+</div>
+              <div className="text-sm text-muted-foreground">Industry Jobs</div>
+            </div>
+            <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">50K+</div>
-              <div className="text-sm text-muted-foreground">Active Jobs</div>
+              <div className="text-sm text-muted-foreground">Professionals</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">200K+</div>
-              <div className="text-sm text-muted-foreground">Candidates</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">10K+</div>
+              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">500+</div>
               <div className="text-sm text-muted-foreground">Companies</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">95%</div>
-              <div className="text-sm text-muted-foreground">Success Rate</div>
+              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">92%</div>
+              <div className="text-sm text-muted-foreground">Placement Rate</div>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@ const HeroSection = () => {
               </div>
               <div>
                 <div className="text-sm font-semibold text-foreground">New Hire</div>
-                <div className="text-xs text-muted-foreground">Senior Developer</div>
+                <div className="text-xs text-muted-foreground">Plant Manager</div>
               </div>
             </div>
           </div>
@@ -102,7 +102,7 @@ const HeroSection = () => {
               </div>
               <div>
                 <div className="text-sm font-semibold text-foreground">Application Sent</div>
-                <div className="text-xs text-muted-foreground">Google Inc.</div>
+                <div className="text-xs text-muted-foreground">Tata Steel Ltd.</div>
               </div>
             </div>
           </div>

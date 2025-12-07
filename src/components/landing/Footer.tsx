@@ -51,20 +51,20 @@ const Footer = () => {
               </span>
             </a>
             <p className="text-primary-foreground/70 text-sm mb-6 max-w-xs">
-              A modern job portal bridging recruiters and job seekers with powerful search and seamless applications.
+              India's specialized job portal for Steel, Power, and Mining industries. Connecting skilled professionals with top employers.
             </p>
             <div className="space-y-3 text-sm text-primary-foreground/70">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4" />
-                <span>contact@steeljobs.com</span>
+                <span>support@oppexl.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 (XXX) XXX-XXXX</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4" />
-                <span>San Francisco, CA</span>
+                <span>India</span>
               </div>
             </div>
           </div>

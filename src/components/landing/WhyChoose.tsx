@@ -4,14 +4,14 @@ const WhyChoose = () => {
   const reasons = [
     {
       icon: Target,
-      title: "Accurate Search",
-      description: "Our advanced algorithms ensure you find exactly what you're looking for, whether it's the perfect candidate or your dream job.",
-      points: ["Smart matching algorithm", "Relevant results first", "Filter with precision"],
+      title: "Industry Expertise",
+      description: "Purpose-built for Steel, Power, and Mining sectors with specialized filters for technical roles and certifications.",
+      points: ["Industry-specific job categories", "Technical skill matching", "Certification verification"],
     },
     {
       icon: Palette,
       title: "Modern UI",
-      description: "A beautiful, intuitive interface that makes navigation effortless and keeps you focused on what matters.",
+      description: "A clean, intuitive interface that makes navigation effortless for both field professionals and HR teams.",
       points: ["Clean, minimal design", "Responsive on all devices", "Accessibility-first"],
     },
     {
@@ -22,9 +22,9 @@ const WhyChoose = () => {
     },
     {
       icon: Shield,
-      title: "Secure & Scalable",
-      description: "Enterprise-grade security with infrastructure that scales effortlessly as you grow.",
-      points: ["End-to-end encryption", "GDPR compliant", "99.9% uptime SLA"],
+      title: "Secure & Reliable",
+      description: "Enterprise-grade security trusted by leading industrial companies across India.",
+      points: ["End-to-end encryption", "Data compliance", "99.9% uptime SLA"],
     },
   ];
 
@@ -35,10 +35,10 @@ const WhyChoose = () => {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Why SteelJobs</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mt-4 mb-4">
-            Built for performance, designed for humans
+            The Industrial Hiring Advantage
           </h2>
           <p className="text-muted-foreground">
-            We've obsessed over every detail to create the best possible experience for recruiters and job seekers alike.
+            Built specifically for heavy industries with the expertise and features that matter most to Steel, Power, and Mining professionals.
           </p>
         </div>
 

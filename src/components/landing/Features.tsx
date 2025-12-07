@@ -17,8 +17,8 @@ const Features = () => {
   const features = [
     {
       icon: Search,
-      title: "Advanced Search & Filtering",
-      description: "Filter candidates by skills, location, salary, education, and more with lightning-fast results.",
+      title: "Industry-Specific Search",
+      description: "Filter candidates by technical skills, certifications, plant experience, and more with lightning-fast results.",
       color: "from-blue-500 to-indigo-500",
     },
     {
@@ -30,36 +30,36 @@ const Features = () => {
     {
       icon: Zap,
       title: "Blazing Fast Performance",
-      description: "Optimized backend architecture handles millions of records with sub-second response times.",
+      description: "Optimized architecture handles thousands of industrial job listings with sub-second response times.",
       color: "from-yellow-500 to-orange-500",
     },
     {
       icon: Users,
       title: "Smart Matching",
-      description: "AI-powered recommendations connect the right candidates with the right opportunities.",
+      description: "AI-powered recommendations connect skilled professionals with the right industrial opportunities.",
       color: "from-purple-500 to-pink-500",
     },
     {
       icon: FileText,
       title: "Resume Parsing",
-      description: "Automatically extract and organize information from uploaded resumes.",
+      description: "Automatically extract certifications, safety training, and technical skills from resumes.",
       color: "from-cyan-500 to-blue-500",
     },
     {
       icon: MousePointer,
       title: "One-Click Apply",
-      description: "Streamlined application process lets candidates apply in seconds, not minutes.",
+      description: "Streamlined application process lets professionals apply in seconds, not minutes.",
       color: "from-rose-500 to-red-500",
     },
   ];
 
   const filterCategories = [
-    { icon: Sparkles, label: "Skills", example: "React, Python, SQL" },
-    { icon: MapPin, label: "Location", example: "Remote, NYC, London" },
-    { icon: DollarSign, label: "Salary Range", example: "$80K - $150K" },
-    { icon: GraduationCap, label: "Education", example: "BS, MS, PhD" },
-    { icon: BarChart3, label: "Experience", example: "1-3 years, Senior" },
-    { icon: Upload, label: "Resume Status", example: "Uploaded, Verified" },
+    { icon: Sparkles, label: "Skills", example: "Welding, PLC, Metallurgy" },
+    { icon: MapPin, label: "Location", example: "Jamshedpur, Bokaro, Rourkela" },
+    { icon: DollarSign, label: "Salary Range", example: "₹8L - ₹25L" },
+    { icon: GraduationCap, label: "Education", example: "B.Tech, Diploma, ITI" },
+    { icon: BarChart3, label: "Experience", example: "5-10 years, Senior" },
+    { icon: Upload, label: "Certifications", example: "Safety, ISO, Six Sigma" },
   ];
 
   return (
@@ -69,10 +69,10 @@ const Features = () => {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Features</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mt-4 mb-4">
-            Everything you need to hire and get hired
+            Built for Heavy Industries
           </h2>
           <p className="text-muted-foreground">
-            Powerful tools for recruiters and job seekers, built with modern technology and designed for speed.
+            Powerful tools designed specifically for Steel, Power, and Mining recruitment and job search.
           </p>
         </div>
 
