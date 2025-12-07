@@ -20,7 +20,15 @@ import AccomplishmentsSection from "@/components/profile/sections/Accomplishment
 import ExamsSection from "@/components/profile/sections/ExamsSection";
 import EmploymentSection from "@/components/profile/sections/EmploymentSection";
 import ResumeSection from "@/components/profile/sections/ResumeSection";
+import DashboardStats from "@/components/candidate/DashboardStats";
+import ProfileCompletionCard from "@/components/candidate/ProfileCompletionCard";
+import RecommendedJobsList from "@/components/candidate/RecommendedJobsList";
+import MyApplicationsList from "@/components/candidate/MyApplicationsList";
+import SavedJobsList from "@/components/candidate/SavedJobsList";
+import AllJobsList from "@/components/candidate/AllJobsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Briefcase, FileText, Bookmark, User, Sparkles, Search } from "lucide-react";
 
 const CandidateDashboard = () => {
   const navigate = useNavigate();
@@ -34,6 +42,7 @@ const CandidateDashboard = () => {
   const { accomplishments } = useCandidateAccomplishments();
   const { exams } = useCandidateExams();
   
+  const [activeTab, setActiveTab] = useState("overview");
   const [activeSection, setActiveSection] = useState("preferences");
 
   useEffect(() => {
@@ -92,53 +101,198 @@ const CandidateDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Profile Header */}
-        <ProfileHeader
-          profile={profile}
-          completionPercentage={calculateCompletion()}
-          onEditBasicInfo={() => scrollToSection("preferences")}
-          onAddMissingDetails={() => scrollToSection("summary")}
-        />
-
-        {/* Tabs */}
-        <Tabs defaultValue="edit" className="w-full">
-          <TabsList className="bg-card border border-border">
-            <TabsTrigger value="edit">View & Edit</TabsTrigger>
-            <TabsTrigger value="activity">Activity Insights</TabsTrigger>
+        {/* Main Dashboard Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full justify-start bg-card border border-border p-1 h-auto flex-wrap">
+            <TabsTrigger 
+              value="overview" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Briefcase className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="jobs" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Search className="w-4 h-4" />
+              Find Jobs
+            </TabsTrigger>
+            <TabsTrigger 
+              value="applications" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <FileText className="w-4 h-4" />
+              Applications
+            </TabsTrigger>
+            <TabsTrigger 
+              value="saved" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Bookmark className="w-4 h-4" />
+              Saved Jobs
+            </TabsTrigger>
+            <TabsTrigger 
+              value="profile" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <User className="w-4 h-4" />
+              Profile
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="edit" className="mt-6">
-            <div className="flex gap-6">
-              {/* Sidebar */}
-              <div className="hidden lg:block w-64 flex-shrink-0">
-                <ProfileSidebar
-                  activeSection={activeSection}
-                  onSectionClick={scrollToSection}
-                  sectionStatus={sectionStatus}
-                />
-              </div>
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="mt-6 space-y-6">
+            {/* Stats */}
+            <DashboardStats />
 
-              {/* Main Content */}
-              <div className="flex-1 space-y-6 min-w-0">
-                <ResumeSection />
-                <PreferencesSection profile={profile} />
-                <EducationSection />
-                <SkillsSection />
-                <LanguagesSection />
-                {profile.work_status === "experienced" && <EmploymentSection />}
-                <InternshipsSection />
-                <ProjectsSection />
-                <SummarySection />
-                <AccomplishmentsSection />
-                <ExamsSection />
-              </div>
+            {/* Profile Completion Card */}
+            <ProfileCompletionCard onEditProfile={() => setActiveTab("profile")} />
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Recommended Jobs */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-lg">Recommended for You</CardTitle>
+                  </div>
+                  <CardDescription>Jobs matching your profile and preferences</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <RecommendedJobsList 
+                    limit={3} 
+                    showViewAll 
+                    onViewAll={() => setActiveTab("jobs")} 
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Recent Applications */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-lg">Recent Applications</CardTitle>
+                  </div>
+                  <CardDescription>Track your application status</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MyApplicationsList 
+                    limit={3} 
+                    showViewAll 
+                    onViewAll={() => setActiveTab("applications")} 
+                  />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="mt-6">
-            <div className="bg-card rounded-xl border border-border p-8 text-center">
-              <p className="text-muted-foreground">Activity insights coming soon...</p>
-            </div>
+          {/* Find Jobs Tab */}
+          <TabsContent value="jobs" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="w-5 h-5 text-primary" />
+                  Browse All Jobs
+                </CardTitle>
+                <CardDescription>
+                  Explore job opportunities from top companies
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AllJobsList />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Applications Tab */}
+          <TabsContent value="applications" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  My Applications
+                </CardTitle>
+                <CardDescription>
+                  Track and manage all your job applications
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MyApplicationsList showViewAll={false} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Saved Jobs Tab */}
+          <TabsContent value="saved" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bookmark className="w-5 h-5 text-primary" />
+                  Saved Jobs
+                </CardTitle>
+                <CardDescription>
+                  Jobs you've saved for later
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SavedJobsList showViewAll={false} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="mt-6">
+            {/* Profile Header */}
+            <ProfileHeader
+              profile={profile}
+              completionPercentage={calculateCompletion()}
+              onEditBasicInfo={() => scrollToSection("preferences")}
+              onAddMissingDetails={() => scrollToSection("summary")}
+            />
+
+            {/* Profile Subtabs */}
+            <Tabs defaultValue="edit" className="w-full mt-6">
+              <TabsList className="bg-card border border-border">
+                <TabsTrigger value="edit">View & Edit</TabsTrigger>
+                <TabsTrigger value="activity">Activity Insights</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="edit" className="mt-6">
+                <div className="flex gap-6">
+                  {/* Sidebar */}
+                  <div className="hidden lg:block w-64 flex-shrink-0">
+                    <ProfileSidebar
+                      activeSection={activeSection}
+                      onSectionClick={scrollToSection}
+                      sectionStatus={sectionStatus}
+                    />
+                  </div>
+
+                  {/* Main Content */}
+                  <div className="flex-1 space-y-6 min-w-0">
+                    <ResumeSection />
+                    <PreferencesSection profile={profile} />
+                    <EducationSection />
+                    <SkillsSection />
+                    <LanguagesSection />
+                    {profile.work_status === "experienced" && <EmploymentSection />}
+                    <InternshipsSection />
+                    <ProjectsSection />
+                    <SummarySection />
+                    <AccomplishmentsSection />
+                    <ExamsSection />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="activity" className="mt-6">
+                <div className="bg-card rounded-xl border border-border p-8 text-center">
+                  <p className="text-muted-foreground">Activity insights coming soon...</p>
+                </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
       </div>
