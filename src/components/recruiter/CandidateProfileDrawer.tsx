@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import ShortlistPopover from "./ShortlistPopover";
 import {
   Sheet,
   SheetContent,
@@ -12,15 +13,10 @@ import {
 import {
   MapPin,
   Briefcase,
-  DollarSign,
   GraduationCap,
-  Clock,
   FileText,
   Download,
   Mail,
-  Phone,
-  Globe,
-  Calendar,
   Building2,
   Code,
   Award,
@@ -105,7 +101,8 @@ const CandidateProfileDrawer = ({ candidateId, isOpen, onClose }: CandidateProfi
               </div>
 
               {/* Quick Actions */}
-              <div className="flex gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
+                <ShortlistPopover candidateId={candidate.id} />
                 {candidate.resume_url && (
                   <Button variant="hero" size="sm" asChild>
                     <a href={candidate.resume_url} target="_blank" rel="noopener noreferrer">
@@ -116,7 +113,7 @@ const CandidateProfileDrawer = ({ candidateId, isOpen, onClose }: CandidateProfi
                 )}
                 <Button variant="outline" size="sm">
                   <Mail className="w-4 h-4 mr-2" />
-                  Email Candidate
+                  Email
                 </Button>
               </div>
             </SheetHeader>

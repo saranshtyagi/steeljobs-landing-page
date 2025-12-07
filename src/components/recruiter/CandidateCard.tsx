@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ShortlistPopover from "./ShortlistPopover";
 import {
   MapPin,
   Briefcase,
@@ -11,7 +12,6 @@ import {
   Clock,
   FileText,
   Eye,
-  Mail,
   Star,
 } from "lucide-react";
 
@@ -99,6 +99,7 @@ const CandidateCard = ({ candidate, isSelected, onSelect, onViewProfile }: Candi
 
             {/* Actions */}
             <div className="flex items-center gap-2 flex-shrink-0">
+              <ShortlistPopover candidateId={candidate.id} />
               <Button variant="outline" size="sm" onClick={onViewProfile}>
                 <Eye className="w-4 h-4 mr-1" />
                 View Profile
