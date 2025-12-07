@@ -45,13 +45,15 @@ import {
 import { formatDistanceToNow } from "date-fns";
 
 interface JobsListProps {
-  onPostJob: () => void;
-  onEditJob: (job: Job) => void;
-  onViewJob: (job: Job) => void;
+  jobs: Job[];
+  isLoading: boolean;
+  onPostNew: () => void;
+  onEdit: (job: Job) => void;
+  onView: (job: Job) => void;
 }
 
-const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
-  const { jobs, isLoading, toggleJobStatus, duplicateJob, deleteJob } = useRecruiterJobs();
+const JobsList = ({ jobs, isLoading, onPostNew, onEdit, onView }: JobsListProps) => {
+  const { toggleJobStatus, duplicateJob, deleteJob } = useRecruiterJobs();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -112,7 +114,7 @@ const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="hero" onClick={onPostJob}>
+        <Button variant="hero" onClick={onPostNew}>
           <Plus className="w-4 h-4 mr-2" />
           Post Job
         </Button>
@@ -126,7 +128,7 @@ const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
             {jobs.length === 0 ? "No jobs posted yet" : "No jobs match your filters"}
           </p>
           {jobs.length === 0 && (
-            <Button variant="hero" className="mt-4" onClick={onPostJob}>
+            <Button variant="hero" className="mt-4" onClick={onPostNew}>
               Post Your First Job
             </Button>
           )}
@@ -137,7 +139,7 @@ const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
             <div
               key={job.id}
               className="p-5 rounded-xl bg-card border border-border hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => onViewJob(job)}
+              onClick={() => onView(job)}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -180,7 +182,7 @@ const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onViewJob(job);
+                        onView(job);
                       }}
                     >
                       <Eye className="w-4 h-4 mr-2" />
@@ -189,7 +191,7 @@ const JobsList = ({ onPostJob, onEditJob, onViewJob }: JobsListProps) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onEditJob(job);
+                        onEdit(job);
                       }}
                     >
                       <Pencil className="w-4 h-4 mr-2" />

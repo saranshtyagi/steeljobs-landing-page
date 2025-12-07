@@ -1,9 +1,11 @@
-import { useRecruiterJobs } from "@/hooks/useRecruiterJobs";
-import { Briefcase, Users, CheckCircle2, Clock, TrendingUp } from "lucide-react";
+import { Job } from "@/hooks/useRecruiterJobs";
+import { Briefcase, Users, CheckCircle2, TrendingUp } from "lucide-react";
 
-const RecruiterStats = () => {
-  const { jobs } = useRecruiterJobs();
+interface RecruiterStatsProps {
+  jobs: Job[];
+}
 
+const RecruiterStats = ({ jobs }: RecruiterStatsProps) => {
   const activeJobs = jobs.filter((j) => j.is_active).length;
   const totalApplications = jobs.reduce((sum, j) => sum + (j.applications_count || 0), 0);
 
