@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
 import CandidateDashboard from "./pages/dashboard/CandidateDashboard";
+import CandidateOnboarding from "./pages/onboarding/CandidateOnboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRole="candidate">
                   <CandidateDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/onboarding/candidate"
+              element={
+                <ProtectedRoute allowedRole="candidate">
+                  <CandidateOnboarding />
                 </ProtectedRoute>
               }
             />

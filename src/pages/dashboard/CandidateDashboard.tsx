@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import { useMyApplications } from "@/hooks/useApplications";
@@ -12,6 +13,7 @@ import RecommendedJobsList from "@/components/candidate/RecommendedJobsList";
 import MyApplicationsList from "@/components/candidate/MyApplicationsList";
 
 const CandidateDashboard = () => {
+  const navigate = useNavigate();
   const { profile: authProfile } = useAuth();
   const { profile, isLoading, calculateCompletion } = useCandidateProfile();
   const { data: applications } = useMyApplications();
@@ -20,13 +22,12 @@ const CandidateDashboard = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Show profile setup modal if no profile exists
+  // Redirect to onboarding if profile doesn't exist or onboarding not completed
   useEffect(() => {
-    if (!isLoading && !profile) {
-      setShowProfileModal(true);
-      setIsEditing(false);
+    if (!isLoading && (!profile || !profile.onboarding_completed)) {
+      navigate("/onboarding/candidate");
     }
-  }, [isLoading, profile]);
+  }, [isLoading, profile, navigate]);
 
   const handleEditProfile = () => {
     setIsEditing(true);
@@ -40,7 +41,7 @@ const CandidateDashboard = () => {
     { label: "Saved Jobs", value: savedJobs?.length || 0, icon: Star, trend: "Your bookmarks" },
   ];
 
-  if (isLoading) {
+  if (isLoading || !profile?.onboarding_completed) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center py-20">

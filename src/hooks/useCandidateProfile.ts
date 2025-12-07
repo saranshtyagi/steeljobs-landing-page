@@ -16,7 +16,19 @@ export interface CandidateProfile {
   education_level: EducationLevel | null;
   about: string | null;
   resume_url: string | null;
-  skills: string[];
+  skills: string[] | null;
+  full_name: string | null;
+  mobile_number: string | null;
+  work_status: string | null;
+  gender: string | null;
+  date_of_birth: string | null;
+  profile_photo_url: string | null;
+  profile_summary: string | null;
+  preferred_job_type: string[] | null;
+  preferred_locations: string[] | null;
+  availability: string | null;
+  onboarding_completed: boolean | null;
+  onboarding_step: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -31,6 +43,18 @@ export interface CandidateProfileInput {
   about?: string | null;
   resume_url?: string | null;
   skills?: string[];
+  full_name?: string | null;
+  mobile_number?: string | null;
+  work_status?: string | null;
+  gender?: string | null;
+  date_of_birth?: string | null;
+  profile_photo_url?: string | null;
+  profile_summary?: string | null;
+  preferred_job_type?: string[] | null;
+  preferred_locations?: string[] | null;
+  availability?: string | null;
+  onboarding_completed?: boolean | null;
+  onboarding_step?: number | null;
 }
 
 export const useCandidateProfile = () => {
@@ -72,7 +96,6 @@ export const useCandidateProfile = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidateProfile"] });
-      toast.success("Profile created successfully!");
     },
     onError: (error) => {
       console.error("Create profile error:", error);
@@ -96,7 +119,6 @@ export const useCandidateProfile = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["candidateProfile"] });
-      toast.success("Profile updated successfully!");
     },
     onError: (error) => {
       console.error("Update profile error:", error);
@@ -108,14 +130,16 @@ export const useCandidateProfile = () => {
     if (!profile) return 0;
     
     const fields = [
-      !!profile.headline,
+      !!profile.full_name || !!profile.headline,
       !!profile.location,
       profile.skills && profile.skills.length > 0,
       profile.experience_years !== null,
       !!profile.education_level,
-      !!profile.about,
+      !!profile.about || !!profile.profile_summary,
       !!profile.resume_url,
       profile.expected_salary_min !== null,
+      !!profile.mobile_number,
+      !!profile.profile_photo_url,
     ];
     
     return Math.round((fields.filter(Boolean).length / fields.length) * 100);

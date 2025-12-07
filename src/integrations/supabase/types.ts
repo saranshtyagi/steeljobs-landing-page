@@ -59,57 +59,437 @@ export type Database = {
           },
         ]
       }
+      candidate_accomplishments: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          credential_url: string | null
+          description: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuing_org: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          credential_url?: string | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_org?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          credential_url?: string | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_org?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_accomplishments_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_education: {
+        Row: {
+          candidate_id: string
+          course: string | null
+          course_type: string | null
+          created_at: string
+          degree_level: string
+          grade_value: string | null
+          grading_system: string | null
+          id: string
+          is_highest: boolean | null
+          passing_year: number | null
+          specialization: string | null
+          starting_year: number | null
+          university: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          course?: string | null
+          course_type?: string | null
+          created_at?: string
+          degree_level: string
+          grade_value?: string | null
+          grading_system?: string | null
+          id?: string
+          is_highest?: boolean | null
+          passing_year?: number | null
+          specialization?: string | null
+          starting_year?: number | null
+          university?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          course?: string | null
+          course_type?: string | null
+          created_at?: string
+          degree_level?: string
+          grade_value?: string | null
+          grading_system?: string | null
+          id?: string
+          is_highest?: boolean | null
+          passing_year?: number | null
+          specialization?: string | null
+          starting_year?: number | null
+          university?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_education_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_employment: {
+        Row: {
+          achievements: string | null
+          candidate_id: string
+          company_name: string
+          created_at: string
+          current_salary: number | null
+          department: string | null
+          description: string | null
+          designation: string
+          end_date: string | null
+          id: string
+          is_current: boolean | null
+          notice_period: string | null
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          achievements?: string | null
+          candidate_id: string
+          company_name: string
+          created_at?: string
+          current_salary?: number | null
+          department?: string | null
+          description?: string | null
+          designation: string
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          notice_period?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          achievements?: string | null
+          candidate_id?: string
+          company_name?: string
+          created_at?: string
+          current_salary?: number | null
+          department?: string | null
+          description?: string | null
+          designation?: string
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          notice_period?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_employment_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_exams: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          exam_name: string
+          id: string
+          rank: string | null
+          score: string | null
+          year: number | null
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          exam_name: string
+          id?: string
+          rank?: string | null
+          score?: string | null
+          year?: number | null
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          exam_name?: string
+          id?: string
+          rank?: string | null
+          score?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_exams_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_internships: {
+        Row: {
+          candidate_id: string
+          company_name: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_current: boolean | null
+          role: string
+          skills_learned: string[] | null
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          company_name: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          role: string
+          skills_learned?: string[] | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          company_name?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          role?: string
+          skills_learned?: string[] | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_internships_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_languages: {
+        Row: {
+          can_read: boolean | null
+          can_speak: boolean | null
+          can_write: boolean | null
+          candidate_id: string
+          created_at: string
+          id: string
+          language: string
+          proficiency: string | null
+        }
+        Insert: {
+          can_read?: boolean | null
+          can_speak?: boolean | null
+          can_write?: boolean | null
+          candidate_id: string
+          created_at?: string
+          id?: string
+          language: string
+          proficiency?: string | null
+        }
+        Update: {
+          can_read?: boolean | null
+          can_speak?: boolean | null
+          can_write?: boolean | null
+          candidate_id?: string
+          created_at?: string
+          id?: string
+          language?: string
+          proficiency?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_languages_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidate_profiles: {
         Row: {
           about: string | null
+          availability: string | null
           created_at: string
+          date_of_birth: string | null
           education_level: Database["public"]["Enums"]["education_level"] | null
           expected_salary_max: number | null
           expected_salary_min: number | null
           experience_years: number | null
+          full_name: string | null
+          gender: string | null
           headline: string | null
           id: string
           location: string | null
+          mobile_number: string | null
+          onboarding_completed: boolean | null
+          onboarding_step: number | null
+          preferred_job_type: string[] | null
+          preferred_locations: string[] | null
+          profile_photo_url: string | null
+          profile_summary: string | null
           resume_url: string | null
           skills: string[] | null
           updated_at: string
           user_id: string
+          work_status: string | null
         }
         Insert: {
           about?: string | null
+          availability?: string | null
           created_at?: string
+          date_of_birth?: string | null
           education_level?:
             | Database["public"]["Enums"]["education_level"]
             | null
           expected_salary_max?: number | null
           expected_salary_min?: number | null
           experience_years?: number | null
+          full_name?: string | null
+          gender?: string | null
           headline?: string | null
           id?: string
           location?: string | null
+          mobile_number?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          preferred_job_type?: string[] | null
+          preferred_locations?: string[] | null
+          profile_photo_url?: string | null
+          profile_summary?: string | null
           resume_url?: string | null
           skills?: string[] | null
           updated_at?: string
           user_id: string
+          work_status?: string | null
         }
         Update: {
           about?: string | null
+          availability?: string | null
           created_at?: string
+          date_of_birth?: string | null
           education_level?:
             | Database["public"]["Enums"]["education_level"]
             | null
           expected_salary_max?: number | null
           expected_salary_min?: number | null
           experience_years?: number | null
+          full_name?: string | null
+          gender?: string | null
           headline?: string | null
           id?: string
           location?: string | null
+          mobile_number?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          preferred_job_type?: string[] | null
+          preferred_locations?: string[] | null
+          profile_photo_url?: string | null
+          profile_summary?: string | null
           resume_url?: string | null
           skills?: string[] | null
           updated_at?: string
           user_id?: string
+          work_status?: string | null
         }
         Relationships: []
+      }
+      candidate_projects: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          github_url: string | null
+          id: string
+          live_url: string | null
+          skills_used: string[] | null
+          start_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          github_url?: string | null
+          id?: string
+          live_url?: string | null
+          skills_used?: string[] | null
+          start_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          github_url?: string | null
+          id?: string
+          live_url?: string | null
+          skills_used?: string[] | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_projects_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_logs: {
         Row: {
