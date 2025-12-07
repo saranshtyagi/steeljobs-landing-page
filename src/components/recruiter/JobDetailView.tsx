@@ -35,7 +35,9 @@ interface JobDetailViewProps {
   onEdit: () => void;
 }
 
-const applicationStatuses = [
+type ApplicationStatus = "applied" | "in_review" | "shortlisted" | "interview" | "hired" | "rejected";
+
+const applicationStatuses: { value: ApplicationStatus; label: string; color: string }[] = [
   { value: "applied", label: "Applied", color: "bg-amber-100 text-amber-700" },
   { value: "in_review", label: "In Review", color: "bg-blue-100 text-blue-700" },
   { value: "shortlisted", label: "Shortlisted", color: "bg-purple-100 text-purple-700" },
@@ -68,7 +70,7 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
     );
   };
 
-  const handleBulkAction = (status: string) => {
+  const handleBulkAction = (status: ApplicationStatus) => {
     if (selectedApplications.length > 0) {
       bulkUpdateStatus.mutate({ applicationIds: selectedApplications, status });
       setSelectedApplications([]);
@@ -320,7 +322,7 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
                     )}
                     <Select
                       value={application.status}
-                      onValueChange={(value) =>
+                      onValueChange={(value: ApplicationStatus) =>
                         updateApplicationStatus.mutate({
                           applicationId: application.id,
                           status: value,
