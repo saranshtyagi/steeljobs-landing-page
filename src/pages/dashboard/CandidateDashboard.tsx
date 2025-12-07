@@ -2,44 +2,82 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
-import { useMyApplications } from "@/hooks/useApplications";
-import { useSavedJobs } from "@/hooks/useSavedJobs";
-import { Button } from "@/components/ui/button";
-import { FileText, Search, Upload, TrendingUp, Eye, Clock, Star, Edit } from "lucide-react";
+import { 
+  useCandidateEducation, useCandidateLanguages, useCandidateInternships,
+  useCandidateProjects, useCandidateEmployment, useCandidateAccomplishments, useCandidateExams 
+} from "@/hooks/useCandidateData";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import ProfileSetupModal from "@/components/candidate/ProfileSetupModal";
-import ProfileCompletionCard from "@/components/candidate/ProfileCompletionCard";
-import RecommendedJobsList from "@/components/candidate/RecommendedJobsList";
-import MyApplicationsList from "@/components/candidate/MyApplicationsList";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import ProfileSidebar from "@/components/profile/ProfileSidebar";
+import PreferencesSection from "@/components/profile/sections/PreferencesSection";
+import EducationSection from "@/components/profile/sections/EducationSection";
+import SkillsSection from "@/components/profile/sections/SkillsSection";
+import LanguagesSection from "@/components/profile/sections/LanguagesSection";
+import InternshipsSection from "@/components/profile/sections/InternshipsSection";
+import ProjectsSection from "@/components/profile/sections/ProjectsSection";
+import SummarySection from "@/components/profile/sections/SummarySection";
+import AccomplishmentsSection from "@/components/profile/sections/AccomplishmentsSection";
+import ExamsSection from "@/components/profile/sections/ExamsSection";
+import EmploymentSection from "@/components/profile/sections/EmploymentSection";
+import ResumeSection from "@/components/profile/sections/ResumeSection";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CandidateDashboard = () => {
   const navigate = useNavigate();
-  const { profile: authProfile } = useAuth();
-  const { profile, isLoading, calculateCompletion } = useCandidateProfile();
-  const { data: applications } = useMyApplications();
-  const { data: savedJobs } = useSavedJobs();
+  const { role } = useAuth();
+  const { profile, isLoading } = useCandidateProfile();
+  const { education } = useCandidateEducation();
+  const { languages } = useCandidateLanguages();
+  const { internships } = useCandidateInternships();
+  const { projects } = useCandidateProjects();
+  const { employment } = useCandidateEmployment();
+  const { accomplishments } = useCandidateAccomplishments();
+  const { exams } = useCandidateExams();
+  
+  const [activeSection, setActiveSection] = useState("preferences");
 
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-
-  // Redirect to onboarding if profile doesn't exist or onboarding not completed
   useEffect(() => {
     if (!isLoading && (!profile || !profile.onboarding_completed)) {
       navigate("/onboarding/candidate");
     }
   }, [isLoading, profile, navigate]);
 
-  const handleEditProfile = () => {
-    setIsEditing(true);
-    setShowProfileModal(true);
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
+    element?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const stats = [
-    { label: "Applications Sent", value: applications?.length || 0, icon: FileText, trend: "Track your progress" },
-    { label: "Profile Views", value: "-", icon: Eye, trend: "Coming soon" },
-    { label: "Interviews", value: applications?.filter(a => a.status === "shortlisted").length || 0, icon: Clock, trend: "Shortlisted" },
-    { label: "Saved Jobs", value: savedJobs?.length || 0, icon: Star, trend: "Your bookmarks" },
-  ];
+  const calculateCompletion = () => {
+    if (!profile) return 0;
+    const fields = [
+      !!profile.full_name,
+      !!profile.mobile_number,
+      !!profile.location,
+      profile.skills && profile.skills.length > 0,
+      !!profile.profile_summary,
+      !!profile.resume_url,
+      !!profile.profile_photo_url,
+      education.length > 0,
+      languages.length > 0,
+      profile.preferred_job_type && profile.preferred_job_type.length > 0,
+    ];
+    return Math.round((fields.filter(Boolean).length / fields.length) * 100);
+  };
+
+  const sectionStatus = {
+    preferences: { filled: !!(profile?.preferred_job_type?.length || profile?.preferred_locations?.length) },
+    education: { filled: education.length > 0, count: education.length },
+    skills: { filled: !!(profile?.skills && profile.skills.length > 0), count: profile?.skills?.length },
+    languages: { filled: languages.length > 0, count: languages.length },
+    internships: { filled: internships.length > 0, count: internships.length },
+    projects: { filled: projects.length > 0, count: projects.length },
+    summary: { filled: !!profile?.profile_summary },
+    accomplishments: { filled: accomplishments.length > 0, count: accomplishments.length },
+    exams: { filled: exams.length > 0, count: exams.length },
+    employment: { filled: employment.length > 0, count: employment.length },
+    achievements: { filled: false },
+  };
 
   if (isLoading || !profile?.onboarding_completed) {
     return (
@@ -53,82 +91,57 @@ const CandidateDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Welcome back, {authProfile?.name?.split(" ")[0] || "Candidate"}!
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Track your applications and find new opportunities
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="heroOutline" size="lg" onClick={handleEditProfile}>
-              {profile?.resume_url ? <Edit className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
-              {profile?.resume_url ? "Edit Profile" : "Upload Resume"}
-            </Button>
-            <Button variant="hero" size="lg">
-              <Search className="w-4 h-4" />
-              Find Jobs
-            </Button>
-          </div>
-        </div>
+      <div className="space-y-6">
+        {/* Profile Header */}
+        <ProfileHeader
+          profile={profile}
+          completionPercentage={calculateCompletion()}
+          onEditBasicInfo={() => scrollToSection("preferences")}
+          onAddMissingDetails={() => scrollToSection("summary")}
+        />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="bg-card rounded-xl border border-border p-6 hover-lift">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
-                  <p className="text-xs text-primary mt-2 flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3" />
-                    {stat.trend}
-                  </p>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <stat.icon className="w-6 h-6 text-primary" />
-                </div>
+        {/* Tabs */}
+        <Tabs defaultValue="edit" className="w-full">
+          <TabsList className="bg-card border border-border">
+            <TabsTrigger value="edit">View & Edit</TabsTrigger>
+            <TabsTrigger value="activity">Activity Insights</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="edit" className="mt-6">
+            <div className="flex gap-6">
+              {/* Sidebar */}
+              <div className="hidden lg:block w-64 flex-shrink-0">
+                <ProfileSidebar
+                  activeSection={activeSection}
+                  onSectionClick={scrollToSection}
+                  sectionStatus={sectionStatus}
+                />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 space-y-6 min-w-0">
+                <ResumeSection />
+                <PreferencesSection profile={profile} />
+                <EducationSection />
+                <SkillsSection />
+                <LanguagesSection />
+                {profile.work_status === "experienced" && <EmploymentSection />}
+                <InternshipsSection />
+                <ProjectsSection />
+                <SummarySection />
+                <AccomplishmentsSection />
+                <ExamsSection />
               </div>
             </div>
-          ))}
-        </div>
+          </TabsContent>
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Applications */}
-          <div className="bg-card rounded-xl border border-border p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-foreground">Recent Applications</h2>
+          <TabsContent value="activity" className="mt-6">
+            <div className="bg-card rounded-xl border border-border p-8 text-center">
+              <p className="text-muted-foreground">Activity insights coming soon...</p>
             </div>
-            <MyApplicationsList limit={3} showViewAll={true} />
-          </div>
-
-          {/* Recommended Jobs */}
-          <div className="bg-card rounded-xl border border-border p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-foreground">Recommended for You</h2>
-            </div>
-            <RecommendedJobsList limit={3} showViewAll={true} />
-          </div>
-        </div>
-
-        {/* Profile Completion */}
-        {profile && calculateCompletion(profile) < 100 && (
-          <ProfileCompletionCard onEditProfile={handleEditProfile} />
-        )}
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Profile Setup/Edit Modal */}
-      <ProfileSetupModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        initialData={isEditing ? profile || undefined : undefined}
-        isEditing={isEditing}
-      />
     </DashboardLayout>
   );
 };
