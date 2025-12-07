@@ -28,7 +28,8 @@ import SavedJobsList from "@/components/candidate/SavedJobsList";
 import AllJobsList from "@/components/candidate/AllJobsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, FileText, Bookmark, User, Sparkles, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Briefcase, FileText, Bookmark, User, Sparkles, Search, ExternalLink } from "lucide-react";
 
 const CandidateDashboard = () => {
   const navigate = useNavigate();
@@ -191,14 +192,20 @@ const CandidateDashboard = () => {
           {/* Find Jobs Tab */}
           <TabsContent value="jobs" className="mt-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Search className="w-5 h-5 text-primary" />
-                  Browse All Jobs
-                </CardTitle>
-                <CardDescription>
-                  Explore job opportunities from top companies
-                </CardDescription>
+              <CardHeader className="flex flex-row items-start justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Search className="w-5 h-5 text-primary" />
+                    Browse All Jobs
+                  </CardTitle>
+                  <CardDescription>
+                    Explore job opportunities from top companies
+                  </CardDescription>
+                </div>
+                <Button variant="hero" onClick={() => navigate("/jobs")} className="gap-2">
+                  <ExternalLink className="w-4 h-4" />
+                  Browse Jobs
+                </Button>
               </CardHeader>
               <CardContent>
                 <AllJobsList />
