@@ -46,17 +46,12 @@ const CTA = () => {
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
-                onClick={handleGetStarted}
+                asChild
               >
-                {user ? "Go to Dashboard" : "Get Started for Free"}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="xl" 
-                className="w-full sm:w-auto text-primary-foreground hover:bg-primary-foreground/10"
-              >
-                Contact Sales
+                <a href="mailto:support@oppexl.com">
+                  Contact Sales
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
               </Button>
             </div>
           </div>
