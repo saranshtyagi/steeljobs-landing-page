@@ -1,50 +1,54 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCandidateProfile } from "@/hooks/useCandidateProfile";
+import { useMyApplications } from "@/hooks/useApplications";
+import { useSavedJobs } from "@/hooks/useSavedJobs";
 import { Button } from "@/components/ui/button";
-import { 
-  Briefcase, 
-  FileText, 
-  Search, 
-  Upload,
-  TrendingUp,
-  Eye,
-  Clock,
-  CheckCircle2,
-  Star
-} from "lucide-react";
+import { FileText, Search, Upload, TrendingUp, Eye, Clock, Star, Edit } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import ProfileSetupModal from "@/components/candidate/ProfileSetupModal";
+import ProfileCompletionCard from "@/components/candidate/ProfileCompletionCard";
+import RecommendedJobsList from "@/components/candidate/RecommendedJobsList";
+import MyApplicationsList from "@/components/candidate/MyApplicationsList";
 
 const CandidateDashboard = () => {
-  const { profile } = useAuth();
+  const { profile: authProfile } = useAuth();
+  const { profile, isLoading, calculateCompletion } = useCandidateProfile();
+  const { data: applications } = useMyApplications();
+  const { data: savedJobs } = useSavedJobs();
+
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Show profile setup modal if no profile exists
+  useEffect(() => {
+    if (!isLoading && !profile) {
+      setShowProfileModal(true);
+      setIsEditing(false);
+    }
+  }, [isLoading, profile]);
+
+  const handleEditProfile = () => {
+    setIsEditing(true);
+    setShowProfileModal(true);
+  };
 
   const stats = [
-    { label: "Applications Sent", value: "24", icon: FileText, trend: "+5 this week" },
-    { label: "Profile Views", value: "156", icon: Eye, trend: "+23% this week" },
-    { label: "Interviews", value: "3", icon: Clock, trend: "1 upcoming" },
-    { label: "Saved Jobs", value: "18", icon: Star, trend: "2 new matches" },
+    { label: "Applications Sent", value: applications?.length || 0, icon: FileText, trend: "Track your progress" },
+    { label: "Profile Views", value: "-", icon: Eye, trend: "Coming soon" },
+    { label: "Interviews", value: applications?.filter(a => a.status === "shortlisted").length || 0, icon: Clock, trend: "Shortlisted" },
+    { label: "Saved Jobs", value: savedJobs?.length || 0, icon: Star, trend: "Your bookmarks" },
   ];
 
-  const recentApplications = [
-    { company: "TechCorp", position: "Senior Developer", status: "In Review", time: "2 days ago" },
-    { company: "DesignStudio", position: "UI/UX Designer", status: "Interview", time: "5 days ago" },
-    { company: "StartupXYZ", position: "Full Stack Dev", status: "Applied", time: "1 week ago" },
-  ];
-
-  const recommendedJobs = [
-    { title: "Frontend Developer", company: "Google", location: "Remote", salary: "$120k - $160k" },
-    { title: "React Developer", company: "Meta", location: "New York", salary: "$130k - $170k" },
-    { title: "Software Engineer", company: "Amazon", location: "Seattle", salary: "$140k - $180k" },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Interview":
-        return "text-green-600 bg-green-100";
-      case "In Review":
-        return "text-amber-600 bg-amber-100";
-      default:
-        return "text-primary bg-primary/10";
-    }
-  };
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -53,16 +57,16 @@ const CandidateDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Welcome back, {profile?.name?.split(" ")[0] || "Candidate"}!
+              Welcome back, {authProfile?.name?.split(" ")[0] || "Candidate"}!
             </h1>
             <p className="text-muted-foreground mt-1">
               Track your applications and find new opportunities
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="heroOutline" size="lg">
-              <Upload className="w-4 h-4" />
-              Update Resume
+            <Button variant="heroOutline" size="lg" onClick={handleEditProfile}>
+              {profile?.resume_url ? <Edit className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+              {profile?.resume_url ? "Edit Profile" : "Upload Resume"}
             </Button>
             <Button variant="hero" size="lg">
               <Search className="w-4 h-4" />
@@ -74,10 +78,7 @@ const CandidateDashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-card rounded-xl border border-border p-6 hover-lift"
-            >
+            <div key={stat.label} className="bg-card rounded-xl border border-border p-6 hover-lift">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -101,95 +102,32 @@ const CandidateDashboard = () => {
           <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-foreground">Recent Applications</h2>
-              <Button variant="ghost" size="sm">View all</Button>
             </div>
-            <div className="space-y-4">
-              {recentApplications.map((app, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-primary-foreground font-medium text-sm">
-                      {app.company.substring(0, 2)}
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{app.position}</p>
-                      <p className="text-sm text-muted-foreground">{app.company} • {app.time}</p>
-                    </div>
-                  </div>
-                  <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(app.status)}`}>
-                    {app.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <MyApplicationsList limit={3} showViewAll={true} />
           </div>
 
           {/* Recommended Jobs */}
           <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-foreground">Recommended for You</h2>
-              <Button variant="ghost" size="sm">View all</Button>
             </div>
-            <div className="space-y-4">
-              {recommendedJobs.map((job, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Briefcase className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{job.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {job.company} • {job.location}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">{job.salary}</p>
-                    <Button variant="ghost" size="sm" className="mt-1 h-7 text-xs">
-                      Apply
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <RecommendedJobsList limit={3} showViewAll={true} />
           </div>
         </div>
 
         {/* Profile Completion */}
-        <div className="bg-card rounded-xl border border-border p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">Complete Your Profile</h2>
-            <span className="text-sm text-primary font-medium">60% Complete</span>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2 mb-6">
-            <div className="gradient-bg h-2 rounded-full" style={{ width: "60%" }} />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: "Upload Resume", done: true },
-              { label: "Add Skills", done: true },
-              { label: "Add Experience", done: false },
-              { label: "Add Education", done: false },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`flex items-center gap-2 p-3 rounded-lg ${
-                  item.done ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"
-                }`}
-              >
-                <CheckCircle2 className={`w-4 h-4 ${item.done ? "" : "opacity-30"}`} />
-                <span className="text-sm font-medium">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {profile && calculateCompletion(profile) < 100 && (
+          <ProfileCompletionCard onEditProfile={handleEditProfile} />
+        )}
       </div>
+
+      {/* Profile Setup/Edit Modal */}
+      <ProfileSetupModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        initialData={isEditing ? profile || undefined : undefined}
+        isEditing={isEditing}
+      />
     </DashboardLayout>
   );
 };
