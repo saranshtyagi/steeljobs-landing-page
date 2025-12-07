@@ -496,27 +496,43 @@ export type Database = {
           body_preview: string | null
           created_at: string
           id: string
+          job_id: string | null
+          recipients: Json | null
           recruiter_id: string
           sent_to_count: number
           subject: string
+          template_id: string | null
         }
         Insert: {
           body_preview?: string | null
           created_at?: string
           id?: string
+          job_id?: string | null
+          recipients?: Json | null
           recruiter_id: string
           sent_to_count?: number
           subject: string
+          template_id?: string | null
         }
         Update: {
           body_preview?: string | null
           created_at?: string
           id?: string
+          job_id?: string | null
+          recipients?: Json | null
           recruiter_id?: string
           sent_to_count?: number
           subject?: string
+          template_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "email_logs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "email_logs_recruiter_id_fkey"
             columns: ["recruiter_id"]

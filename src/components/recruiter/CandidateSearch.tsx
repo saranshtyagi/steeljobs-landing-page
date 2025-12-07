@@ -3,6 +3,8 @@ import { useSearchCandidates, CandidateSearchFilters, CandidateResult, Education
 import CandidateCard from "./CandidateCard";
 import CandidateProfileDrawer from "./CandidateProfileDrawer";
 import ShortlistPopover from "./ShortlistPopover";
+import EmailCandidateModal from "./EmailCandidateModal";
+import { EmailRecipient } from "@/hooks/useEmailCandidates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +50,7 @@ import {
   Loader2,
   Users,
   SlidersHorizontal,
+  Mail,
 } from "lucide-react";
 
 const CandidateSearch = () => {
@@ -61,6 +64,8 @@ const CandidateSearch = () => {
   const [skillInput, setSkillInput] = useState("");
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
   const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailRecipients, setEmailRecipients] = useState<EmailRecipient[]>([]);
 
   const { data, isLoading, error } = useSearchCandidates(filters);
 
@@ -118,6 +123,38 @@ const CandidateSearch = () => {
 
   const clearSelection = () => {
     setSelectedCandidates(new Set());
+  };
+
+  // Email handlers
+  const handleEmailCandidate = (candidate: CandidateResult) => {
+    const recipient: EmailRecipient = {
+      email: "", // Need to fetch from profiles table - will use user lookup
+      name: candidate.full_name || "",
+      candidateId: candidate.id,
+    };
+    // For now, we'll use a placeholder - in production, you'd fetch the user's email
+    setEmailRecipients([{
+      ...recipient,
+      email: `candidate-${candidate.id}@email.com`, // Placeholder
+    }]);
+    setEmailModalOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    if (!data?.candidates) return;
+    
+    const recipients: EmailRecipient[] = Array.from(selectedCandidates)
+      .map(id => {
+        const candidate = data.candidates.find(c => c.id === id);
+        return {
+          email: `candidate-${id}@email.com`, // Placeholder - in production fetch real emails
+          name: candidate?.full_name || "",
+          candidateId: id,
+        };
+      });
+    
+    setEmailRecipients(recipients);
+    setEmailModalOpen(true);
   };
 
   const educationLevels: { value: EducationLevel; label: string }[] = [
@@ -442,6 +479,10 @@ const CandidateSearch = () => {
             <div className="flex items-center gap-2">
               <Badge variant="secondary">{selectedCandidates.size} selected</Badge>
               <ShortlistPopover candidateIds={Array.from(selectedCandidates)} />
+              <Button variant="outline" size="sm" onClick={handleBulkEmail}>
+                <Mail className="w-4 h-4 mr-1" />
+                Email
+              </Button>
               <Button variant="ghost" size="sm" onClick={clearSelection}>
                 Clear
               </Button>
@@ -502,6 +543,7 @@ const CandidateSearch = () => {
               isSelected={selectedCandidates.has(candidate.id)}
               onSelect={() => toggleCandidateSelection(candidate.id)}
               onViewProfile={() => setSelectedCandidateId(candidate.id)}
+              onEmail={() => handleEmailCandidate(candidate)}
             />
           ))}
         </div>
@@ -563,6 +605,16 @@ const CandidateSearch = () => {
         candidateId={selectedCandidateId}
         isOpen={!!selectedCandidateId}
         onClose={() => setSelectedCandidateId(null)}
+      />
+
+      {/* Email Modal */}
+      <EmailCandidateModal
+        isOpen={emailModalOpen}
+        onClose={() => {
+          setEmailModalOpen(false);
+          setEmailRecipients([]);
+        }}
+        recipients={emailRecipients}
       />
     </div>
   );

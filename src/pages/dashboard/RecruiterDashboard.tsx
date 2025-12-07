@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Loader2,
   Search,
+  Mail,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import RecruiterStats from "@/components/recruiter/RecruiterStats";
@@ -20,6 +21,7 @@ import JobsList from "@/components/recruiter/JobsList";
 import JobDetailView from "@/components/recruiter/JobDetailView";
 import JobPostingModal from "@/components/recruiter/JobPostingModal";
 import CandidateSearch from "@/components/recruiter/CandidateSearch";
+import EmailHistoryTab from "@/components/recruiter/EmailHistoryTab";
 
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
@@ -103,7 +105,7 @@ const RecruiterDashboard = () => {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full sm:w-auto grid grid-cols-4 sm:flex gap-1">
+          <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:flex gap-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 hidden sm:block" />
               Overview
@@ -119,6 +121,10 @@ const RecruiterDashboard = () => {
             <TabsTrigger value="company" className="flex items-center gap-2">
               <Building2 className="w-4 h-4 hidden sm:block" />
               Company
+            </TabsTrigger>
+            <TabsTrigger value="emails" className="flex items-center gap-2">
+              <Mail className="w-4 h-4 hidden sm:block" />
+              Emails
             </TabsTrigger>
           </TabsList>
 
@@ -287,6 +293,11 @@ const RecruiterDashboard = () => {
                 )}
               </div>
             </div>
+          </TabsContent>
+
+          {/* Emails Tab */}
+          <TabsContent value="emails" className="mt-6">
+            <EmailHistoryTab />
           </TabsContent>
         </Tabs>
 
