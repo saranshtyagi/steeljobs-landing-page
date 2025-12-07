@@ -13,6 +13,7 @@ import {
   FileText,
   Eye,
   Star,
+  Mail,
 } from "lucide-react";
 
 interface CandidateCardProps {
@@ -20,6 +21,7 @@ interface CandidateCardProps {
   isSelected: boolean;
   onSelect: () => void;
   onViewProfile: () => void;
+  onEmail?: () => void;
 }
 
 const formatSalary = (min: number | null, max: number | null): string => {
@@ -57,7 +59,7 @@ const getTimeAgo = (dateStr: string): string => {
   return `Updated ${Math.floor(diffDays / 30)} months ago`;
 };
 
-const CandidateCard = ({ candidate, isSelected, onSelect, onViewProfile }: CandidateCardProps) => {
+const CandidateCard = ({ candidate, isSelected, onSelect, onViewProfile, onEmail }: CandidateCardProps) => {
   const latestEducation = candidate.education?.find((e) => e.is_highest) || candidate.education?.[0];
   const currentJob = candidate.employment?.find((e) => e.is_current);
 
@@ -100,6 +102,11 @@ const CandidateCard = ({ candidate, isSelected, onSelect, onViewProfile }: Candi
             {/* Actions */}
             <div className="flex items-center gap-2 flex-shrink-0">
               <ShortlistPopover candidateId={candidate.id} />
+              {onEmail && (
+                <Button variant="outline" size="sm" onClick={onEmail}>
+                  <Mail className="w-4 h-4" />
+                </Button>
+              )}
               <Button variant="outline" size="sm" onClick={onViewProfile}>
                 <Eye className="w-4 h-4 mr-1" />
                 View Profile
