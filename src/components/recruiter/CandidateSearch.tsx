@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchCandidates, CandidateSearchFilters, CandidateResult, EducationLevel, WorkPreference } from "@/hooks/useSearchCandidates";
 import CandidateCard from "./CandidateCard";
 import CandidateProfileDrawer from "./CandidateProfileDrawer";
+import ShortlistPopover from "./ShortlistPopover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -440,6 +441,7 @@ const CandidateSearch = () => {
           {selectedCandidates.size > 0 && (
             <div className="flex items-center gap-2">
               <Badge variant="secondary">{selectedCandidates.size} selected</Badge>
+              <ShortlistPopover candidateIds={Array.from(selectedCandidates)} />
               <Button variant="ghost" size="sm" onClick={clearSelection}>
                 Clear
               </Button>
