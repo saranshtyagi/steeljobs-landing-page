@@ -528,6 +528,7 @@ export type Database = {
       }
       jobs: {
         Row: {
+          application_deadline: string | null
           company_name: string
           created_at: string
           description: string
@@ -539,15 +540,21 @@ export type Database = {
           experience_min: number | null
           id: string
           is_active: boolean
+          job_visibility: string | null
           location: string
+          num_positions: number | null
           recruiter_id: string
+          role_category: string | null
           salary_max: number | null
           salary_min: number | null
+          screening_questions: Json | null
           skills_required: string[] | null
           title: string
           updated_at: string
+          work_mode: string | null
         }
         Insert: {
+          application_deadline?: string | null
           company_name: string
           created_at?: string
           description: string
@@ -559,15 +566,21 @@ export type Database = {
           experience_min?: number | null
           id?: string
           is_active?: boolean
+          job_visibility?: string | null
           location: string
+          num_positions?: number | null
           recruiter_id: string
+          role_category?: string | null
           salary_max?: number | null
           salary_min?: number | null
+          screening_questions?: Json | null
           skills_required?: string[] | null
           title: string
           updated_at?: string
+          work_mode?: string | null
         }
         Update: {
+          application_deadline?: string | null
           company_name?: string
           created_at?: string
           description?: string
@@ -579,13 +592,18 @@ export type Database = {
           experience_min?: number | null
           id?: string
           is_active?: boolean
+          job_visibility?: string | null
           location?: string
+          num_positions?: number | null
           recruiter_id?: string
+          role_category?: string | null
           salary_max?: number | null
           salary_min?: number | null
+          screening_questions?: Json | null
           skills_required?: string[] | null
           title?: string
           updated_at?: string
+          work_mode?: string | null
         }
         Relationships: [
           {
@@ -630,9 +648,15 @@ export type Database = {
           company_location: string | null
           company_logo_url: string | null
           company_name: string
+          company_size: string | null
           company_website: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
           created_at: string
           id: string
+          industry: string | null
+          onboarding_completed: boolean | null
           updated_at: string
           user_id: string
         }
@@ -641,9 +665,15 @@ export type Database = {
           company_location?: string | null
           company_logo_url?: string | null
           company_name: string
+          company_size?: string | null
           company_website?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
+          industry?: string | null
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -652,9 +682,15 @@ export type Database = {
           company_location?: string | null
           company_logo_url?: string | null
           company_name?: string
+          company_size?: string | null
           company_website?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
+          industry?: string | null
+          onboarding_completed?: boolean | null
           updated_at?: string
           user_id?: string
         }
@@ -736,7 +772,13 @@ export type Database = {
     }
     Enums: {
       app_role: "recruiter" | "candidate"
-      application_status: "applied" | "shortlisted" | "rejected" | "hired"
+      application_status:
+        | "applied"
+        | "shortlisted"
+        | "rejected"
+        | "hired"
+        | "in_review"
+        | "interview"
       education_level:
         | "high_school"
         | "associate"
@@ -878,7 +920,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["recruiter", "candidate"],
-      application_status: ["applied", "shortlisted", "rejected", "hired"],
+      application_status: [
+        "applied",
+        "shortlisted",
+        "rejected",
+        "hired",
+        "in_review",
+        "interview",
+      ],
       education_level: [
         "high_school",
         "associate",
