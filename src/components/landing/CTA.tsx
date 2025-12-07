@@ -1,7 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CTA = () => {
+  const navigate = useNavigate();
+  const { user, role } = useAuth();
+
+  const handleGetStarted = () => {
+    if (user && role) {
+      navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
+
   return (
     <section className="section-padding">
       <div className="container-narrow">
@@ -33,8 +46,9 @@ const CTA = () => {
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
+                onClick={handleGetStarted}
               >
-                Get Started for Free
+                {user ? "Go to Dashboard" : "Get Started for Free"}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
