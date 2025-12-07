@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { X, Search, Loader2, Plus } from "lucide-react";
+import { Search, Loader2, Plus, X } from "lucide-react";
 
 interface Props {
   data: OnboardingData;
@@ -39,21 +38,35 @@ const SPECIALIZATION_SUGGESTIONS = [
 ];
 
 const GRADING_SYSTEMS = [
-  "Scale 10 Grading System", "Scale 4 Grading System", 
-  "% Marks of 100 Maximum", "Course Requires a Pass"
+  { value: "cgpa_10", label: "Scale 10 Grading System", placeholder: "Enter CGPA (out of 10)", max: "10" },
+  { value: "cgpa_4", label: "Scale 4 Grading System", placeholder: "Enter GPA (out of 4)", max: "4" },
+  { value: "percentage", label: "% Marks of 100 Maximum", placeholder: "Enter Percentage", max: "100" },
+  { value: "pass", label: "Course Requires a Pass", placeholder: "", max: "" },
 ];
 
 const SKILL_SUGGESTIONS = [
-  "Computer Science Faculty", "Assistant Professor", "Computer Engineer",
-  "Teacher", "BCA Fresher", "Computer Science Engineer",
-  "Computer and Science Teacher", "Professor", "Computer Teacher", 
-  "Associate Professor", "Software Developer", "Data Analyst"
+  "JavaScript", "React", "Python", "Java", "Node.js", "SQL",
+  "TypeScript", "HTML/CSS", "Git", "AWS", "Docker", "MongoDB",
+  "Machine Learning", "Data Analysis", "Communication", "Problem Solving",
+  "Leadership", "Project Management", "Excel", "C++", "C#", ".NET"
+];
+
+const UNIVERSITY_SUGGESTIONS = [
+  "Indian Institute of Technology (IIT)", "National Institute of Technology (NIT)",
+  "Birla Institute of Technology and Science (BITS)", "Delhi University",
+  "Mumbai University", "Anna University", "Jawaharlal Nehru University",
+  "VIT University", "SRM University", "Amity University"
 ];
 
 const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }: Props) => {
   const [educationStep, setEducationStep] = useState(data.degreeLevel ? 2 : 1);
   const [skillInput, setSkillInput] = useState("");
+  const [universityInput, setUniversityInput] = useState(data.university || "");
+  const [courseInput, setCourseInput] = useState("");
+  const [specializationInput, setSpecializationInput] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showUniversitySuggestions, setShowUniversitySuggestions] = useState(false);
+  const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
 
   const currentYear = new Date().getFullYear();
   const startYears = Array.from({ length: 10 }, (_, i) => currentYear - i);
@@ -86,6 +99,10 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
       if (!data.startingYear) newErrors.startingYear = "Starting year is required";
       if (!data.passingYear) newErrors.passingYear = "Passing year is required";
       if (!data.gradingSystem) newErrors.gradingSystem = "Grading system is required";
+      // Validate grade value if grading system is not "pass"
+      if (data.gradingSystem && data.gradingSystem !== "pass" && !data.gradeValue) {
+        newErrors.gradeValue = "Please enter your grade/marks";
+      }
       if (data.skills.length === 0) newErrors.skills = "Add at least one skill";
     }
 
@@ -165,43 +182,45 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
               <Label className="text-foreground">
                 Course<span className="text-destructive">*</span>
               </Label>
-              {data.course ? (
+              <div className="relative">
+                <Input
+                  placeholder="Type or select your course (e.g., B.Tech, BCA)"
+                  value={courseInput || data.course}
+                  onChange={(e) => {
+                    setCourseInput(e.target.value);
+                    updateData({ course: e.target.value });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && courseInput.trim()) {
+                      e.preventDefault();
+                      updateData({ course: courseInput.trim() });
+                    }
+                  }}
+                  className={errors.course ? "border-destructive" : ""}
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Quick select:</p>
                 <div className="flex flex-wrap gap-2">
-                  <Badge 
-                    variant="secondary" 
-                    className="px-3 py-2 text-sm bg-foreground text-background"
-                  >
-                    {data.course}
-                    <button onClick={() => updateData({ course: "" })} className="ml-2 hover:opacity-70">
-                      <X className="w-3 h-3" />
+                  {courseSuggestions.map((course) => (
+                    <button
+                      key={course}
+                      type="button"
+                      onClick={() => {
+                        updateData({ course });
+                        setCourseInput(course);
+                      }}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
+                        data.course === course
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary hover:bg-primary/5"
+                      }`}
+                    >
+                      {course}
                     </button>
-                  </Badge>
+                  ))}
                 </div>
-              ) : (
-                <>
-                  <Input
-                    placeholder="Eg. B.Tech"
-                    value={data.course}
-                    onChange={(e) => updateData({ course: e.target.value })}
-                    className={errors.course ? "border-destructive" : ""}
-                  />
-                  <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground">Suggestions</p>
-                    <div className="flex flex-wrap gap-2">
-                      {courseSuggestions.map((course) => (
-                        <button
-                          key={course}
-                          type="button"
-                          onClick={() => updateData({ course })}
-                          className="px-3 py-1.5 rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-colors text-sm"
-                        >
-                          {course}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+              </div>
               {errors.course && (
                 <p className="text-sm text-destructive">{errors.course}</p>
               )}
@@ -238,59 +257,111 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
               <Label className="text-foreground">
                 Specialization<span className="text-destructive">*</span>
               </Label>
-              {data.specialization ? (
+              <div className="relative">
+                <Input
+                  placeholder="Type or select your specialization (e.g., Computer Science)"
+                  value={specializationInput || data.specialization}
+                  onChange={(e) => {
+                    setSpecializationInput(e.target.value);
+                    updateData({ specialization: e.target.value });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && specializationInput.trim()) {
+                      e.preventDefault();
+                      updateData({ specialization: specializationInput.trim() });
+                    }
+                  }}
+                  className={errors.specialization ? "border-destructive" : ""}
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Quick select:</p>
                 <div className="flex flex-wrap gap-2">
-                  <Badge 
-                    variant="secondary" 
-                    className="px-3 py-2 text-sm bg-foreground text-background"
-                  >
-                    {data.specialization}
-                    <button onClick={() => updateData({ specialization: "" })} className="ml-2 hover:opacity-70">
-                      <X className="w-3 h-3" />
+                  {SPECIALIZATION_SUGGESTIONS.slice(0, 6).map((spec) => (
+                    <button
+                      key={spec}
+                      type="button"
+                      onClick={() => {
+                        updateData({ specialization: spec });
+                        setSpecializationInput(spec);
+                      }}
+                      className={`px-3 py-1.5 rounded-full border transition-colors text-xs ${
+                        data.specialization === spec
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary hover:bg-primary/5"
+                      }`}
+                    >
+                      {spec}
                     </button>
-                  </Badge>
+                  ))}
                 </div>
-              ) : (
-                <>
-                  <Input
-                    placeholder="Eg. Computer Science"
-                    value={data.specialization}
-                    onChange={(e) => updateData({ specialization: e.target.value })}
-                    className={errors.specialization ? "border-destructive" : ""}
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    {SPECIALIZATION_SUGGESTIONS.slice(0, 4).map((spec) => (
-                      <button
-                        key={spec}
-                        type="button"
-                        onClick={() => updateData({ specialization: spec })}
-                        className="px-3 py-1.5 rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-colors text-xs"
-                      >
-                        {spec}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+              </div>
               {errors.specialization && (
                 <p className="text-sm text-destructive">{errors.specialization}</p>
               )}
             </div>
 
             {/* University */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label className="text-foreground">
                 University / Institute<span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Input
-                  placeholder="Eg. National Institute of Technology (NIT)"
-                  value={data.university}
-                  onChange={(e) => updateData({ university: e.target.value })}
+                  placeholder="Type your university name"
+                  value={universityInput}
+                  onChange={(e) => {
+                    setUniversityInput(e.target.value);
+                    updateData({ university: e.target.value });
+                    setShowUniversitySuggestions(e.target.value.length > 0);
+                  }}
+                  onFocus={() => setShowUniversitySuggestions(universityInput.length > 0)}
+                  onBlur={() => setTimeout(() => setShowUniversitySuggestions(false), 200)}
                   className={`pr-10 ${errors.university ? "border-destructive" : ""}`}
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                
+                {/* University Suggestions Dropdown */}
+                {showUniversitySuggestions && (
+                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {UNIVERSITY_SUGGESTIONS
+                      .filter(u => !universityInput || u.toLowerCase().includes(universityInput.toLowerCase()))
+                      .slice(0, 6)
+                      .map((uni) => (
+                        <button
+                          key={uni}
+                          type="button"
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setUniversityInput(uni);
+                            updateData({ university: uni });
+                            setShowUniversitySuggestions(false);
+                          }}
+                        >
+                          {uni}
+                        </button>
+                      ))}
+                    {universityInput.trim() && !UNIVERSITY_SUGGESTIONS.some(u => u.toLowerCase() === universityInput.toLowerCase()) && (
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors text-primary flex items-center gap-2"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          updateData({ university: universityInput.trim() });
+                          setShowUniversitySuggestions(false);
+                        }}
+                      >
+                        <Plus className="w-4 h-4" />
+                        Use "{universityInput.trim()}"
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
+              <p className="text-xs text-muted-foreground">
+                Start typing to see suggestions, or enter your own university name
+              </p>
               {errors.university && (
                 <p className="text-sm text-destructive">{errors.university}</p>
               )}
@@ -367,57 +438,59 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
               <Label className="text-foreground">
                 Grading System<span className="text-destructive">*</span>
               </Label>
-              <Input
-                placeholder="Select grading system"
-                value={data.gradingSystem}
-                onChange={(e) => updateData({ gradingSystem: e.target.value })}
-                className={errors.gradingSystem ? "border-destructive" : ""}
-              />
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Suggestions</p>
-                <div className="flex flex-wrap gap-2">
-                  {GRADING_SYSTEMS.map((system) => (
-                    <button
-                      key={system}
-                      type="button"
-                      onClick={() => updateData({ gradingSystem: system })}
-                      className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
-                        data.gradingSystem === system
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary hover:bg-primary/5"
-                      }`}
-                    >
-                      {system}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {GRADING_SYSTEMS.map((system) => (
+                  <button
+                    key={system.value}
+                    type="button"
+                    onClick={() => updateData({ gradingSystem: system.value, gradeValue: "" })}
+                    className={`px-3 py-1.5 rounded-full border transition-colors text-sm ${
+                      data.gradingSystem === system.value
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary hover:bg-primary/5"
+                    }`}
+                  >
+                    {system.label}
+                  </button>
+                ))}
               </div>
               {errors.gradingSystem && (
                 <p className="text-sm text-destructive">{errors.gradingSystem}</p>
               )}
             </div>
 
+            {/* Grade Value - shows after grading system selection */}
+            {data.gradingSystem && data.gradingSystem !== "pass" && (
+              <div className="space-y-2">
+                <Label className="text-foreground">
+                  {GRADING_SYSTEMS.find(g => g.value === data.gradingSystem)?.placeholder || "Enter Grade"}<span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  placeholder={GRADING_SYSTEMS.find(g => g.value === data.gradingSystem)?.placeholder || "Enter your grade"}
+                  value={data.gradeValue}
+                  onChange={(e) => updateData({ gradeValue: e.target.value })}
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max={GRADING_SYSTEMS.find(g => g.value === data.gradingSystem)?.max || "100"}
+                  className={errors.gradeValue ? "border-destructive" : ""}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {data.gradingSystem === "cgpa_10" && "Enter your CGPA on a scale of 10 (e.g., 8.5)"}
+                  {data.gradingSystem === "cgpa_4" && "Enter your GPA on a scale of 4 (e.g., 3.7)"}
+                  {data.gradingSystem === "percentage" && "Enter your percentage marks (e.g., 85)"}
+                </p>
+                {errors.gradeValue && (
+                  <p className="text-sm text-destructive">{errors.gradeValue}</p>
+                )}
+              </div>
+            )}
+
             {/* Key Skills */}
             <div className="space-y-3">
               <Label className="text-foreground">
                 Key skills<span className="text-destructive">*</span>
               </Label>
-              <Textarea
-                placeholder="Key skills are crucial for recruiters to hire you"
-                value={skillInput}
-                onChange={(e) => setSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addSkill(skillInput.trim());
-                  }
-                }}
-                rows={3}
-                className={errors.skills ? "border-destructive" : ""}
-              />
-              <p className="text-xs text-muted-foreground">
-                Recruiters look for candidates with specific key skills
-              </p>
               
               {/* Selected Skills */}
               {data.skills.length > 0 && (
@@ -433,9 +506,80 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
                 </div>
               )}
 
-              {/* Skill Suggestions */}
+              {/* Skills Input */}
+              <div className="relative">
+                <Input
+                  placeholder="Type a skill and press Enter or comma to add"
+                  value={skillInput}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Check for comma to add skill
+                    if (value.includes(",")) {
+                      const skills = value.split(",").map(s => s.trim()).filter(s => s);
+                      skills.forEach(skill => addSkill(skill));
+                    } else {
+                      setSkillInput(value);
+                      setShowSkillSuggestions(value.length > 0);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && skillInput.trim()) {
+                      e.preventDefault();
+                      addSkill(skillInput.trim());
+                      setShowSkillSuggestions(false);
+                    }
+                  }}
+                  onFocus={() => setShowSkillSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSkillSuggestions(false), 200)}
+                  className={errors.skills ? "border-destructive" : ""}
+                />
+                
+                {/* Filtered Suggestions Dropdown */}
+                {showSkillSuggestions && (
+                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {SKILL_SUGGESTIONS
+                      .filter(s => !data.skills.includes(s))
+                      .filter(s => !skillInput || s.toLowerCase().includes(skillInput.toLowerCase()))
+                      .slice(0, 8)
+                      .map((skill) => (
+                        <button
+                          key={skill}
+                          type="button"
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            addSkill(skill);
+                            setShowSkillSuggestions(false);
+                          }}
+                        >
+                          {skill}
+                        </button>
+                      ))}
+                    {skillInput.trim() && !SKILL_SUGGESTIONS.some(s => s.toLowerCase() === skillInput.toLowerCase()) && (
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors text-primary flex items-center gap-2"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          addSkill(skillInput.trim());
+                          setShowSkillSuggestions(false);
+                        }}
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add "{skillInput.trim()}"
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-xs text-muted-foreground">
+                Type skills separated by comma or press Enter. You can add any skill you want.
+              </p>
+
+              {/* Quick Add Suggestions */}
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Suggestions:</p>
+                <p className="text-xs text-muted-foreground">Quick add:</p>
                 <div className="flex flex-wrap gap-2">
                   {SKILL_SUGGESTIONS.filter(s => !data.skills.includes(s)).slice(0, 8).map((skill) => (
                     <button
