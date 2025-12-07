@@ -49,6 +49,7 @@ import {
   Flame,
   Zap,
 } from "lucide-react";
+import SEOHead from "@/components/seo/SEOHead";
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Not disclosed";
@@ -464,6 +465,12 @@ const Jobs = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title={filters.keywords ? `${filters.keywords} Jobs | SteelJobs.com` : "Steel, Power & Mining Jobs | SteelJobs.com"}
+        description="Browse thousands of jobs in Steel, Power, and Mining industries. Find your next career opportunity with India's specialized industrial job portal."
+        keywords="steel jobs, power sector jobs, mining jobs, industrial jobs, plant manager, metallurgy, engineering jobs India"
+        canonicalUrl="https://steeljobs.com/jobs"
+      />
       {/* Simple Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container-narrow flex items-center justify-between h-16">
