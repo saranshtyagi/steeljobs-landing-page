@@ -12,12 +12,14 @@ import {
   Building2,
   LayoutDashboard,
   Loader2,
+  Search,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import RecruiterStats from "@/components/recruiter/RecruiterStats";
 import JobsList from "@/components/recruiter/JobsList";
 import JobDetailView from "@/components/recruiter/JobDetailView";
 import JobPostingModal from "@/components/recruiter/JobPostingModal";
+import CandidateSearch from "@/components/recruiter/CandidateSearch";
 
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
@@ -101,7 +103,7 @@ const RecruiterDashboard = () => {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex gap-1">
+          <TabsList className="w-full sm:w-auto grid grid-cols-4 sm:flex gap-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 hidden sm:block" />
               Overview
@@ -109,6 +111,10 @@ const RecruiterDashboard = () => {
             <TabsTrigger value="jobs" className="flex items-center gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Jobs ({jobs.length})
+            </TabsTrigger>
+            <TabsTrigger value="candidates" className="flex items-center gap-2">
+              <Search className="w-4 h-4 hidden sm:block" />
+              Candidates
             </TabsTrigger>
             <TabsTrigger value="company" className="flex items-center gap-2">
               <Building2 className="w-4 h-4 hidden sm:block" />
@@ -188,6 +194,11 @@ const RecruiterDashboard = () => {
               onEdit={handleEditJob}
               onPostNew={() => setIsPostingModalOpen(true)}
             />
+          </TabsContent>
+
+          {/* Candidates Tab */}
+          <TabsContent value="candidates" className="mt-6">
+            <CandidateSearch />
           </TabsContent>
 
           {/* Company Tab */}
