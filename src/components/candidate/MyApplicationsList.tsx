@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMyApplications, useWithdrawApplication, ApplicationStatus } from "@/hooks/useApplications";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, MapPin, Building2, Calendar, Trash2 } from "lucide-react";
@@ -22,13 +23,16 @@ const getStatusColor = (status: ApplicationStatus) => {
   }
 };
 
-const formatStatus = (status: ApplicationStatus) => {
-  return status.charAt(0).toUpperCase() + status.slice(1);
-};
-
 const MyApplicationsList = ({ limit, showViewAll = true, onViewAll }: MyApplicationsListProps) => {
+  const { t } = useTranslation();
   const { data: applications, isLoading, error } = useMyApplications();
   const withdrawApplication = useWithdrawApplication();
+
+  const formatStatus = (status: ApplicationStatus) => {
+    const statusKey = status.replace("_", "") as string;
+    const key = `candidate.applications.${statusKey === "inreview" ? "inReview" : status}`;
+    return t(key, status.charAt(0).toUpperCase() + status.slice(1));
+  };
 
   if (isLoading) {
     return (
@@ -41,7 +45,7 @@ const MyApplicationsList = ({ limit, showViewAll = true, onViewAll }: MyApplicat
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Failed to load applications</p>
+        <p className="text-destructive">{t("candidate.applications.failedToLoad")}</p>
       </div>
     );
   }
@@ -52,8 +56,8 @@ const MyApplicationsList = ({ limit, showViewAll = true, onViewAll }: MyApplicat
     return (
       <div className="text-center py-12 bg-muted/50 rounded-lg">
         <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground">No applications yet</p>
-        <p className="text-sm text-muted-foreground mt-1">Start applying to jobs to track your progress</p>
+        <p className="text-muted-foreground">{t("candidate.applications.noApplications")}</p>
+        <p className="text-sm text-muted-foreground mt-1">{t("candidate.applications.startApplying")}</p>
       </div>
     );
   }
@@ -113,7 +117,7 @@ const MyApplicationsList = ({ limit, showViewAll = true, onViewAll }: MyApplicat
 
       {showViewAll && applications && applications.length > (limit || 0) && (
         <Button variant="ghost" className="w-full" onClick={onViewAll}>
-          View all {applications.length} applications
+          {t("candidate.jobs.viewAllApplications", { count: applications.length })}
         </Button>
       )}
     </div>

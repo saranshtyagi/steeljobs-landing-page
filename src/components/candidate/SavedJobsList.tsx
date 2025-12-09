@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSavedJobs, useToggleSaveJob } from "@/hooks/useSavedJobs";
 import { useJobById, Job } from "@/hooks/useJobs";
 import JobDetailsModal from "./JobDetailsModal";
@@ -20,6 +21,7 @@ const formatSalary = (min: number | null, max: number | null): string => {
 };
 
 const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListProps) => {
+  const { t } = useTranslation();
   const { data: savedJobs, isLoading, error, refetch } = useSavedJobs();
   const toggleSaveJob = useToggleSaveJob();
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
@@ -36,9 +38,9 @@ const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListPr
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Failed to load saved jobs</p>
+        <p className="text-destructive">{t("candidate.jobs.failedToLoadSaved")}</p>
         <Button variant="ghost" onClick={() => refetch()} className="mt-2">
-          Try again
+          {t("candidate.jobs.tryAgain")}
         </Button>
       </div>
     );
@@ -50,8 +52,8 @@ const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListPr
     return (
       <div className="text-center py-12 bg-muted/50 rounded-lg">
         <Bookmark className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground">No saved jobs yet</p>
-        <p className="text-sm text-muted-foreground mt-1">Save jobs to apply later</p>
+        <p className="text-muted-foreground">{t("candidate.jobs.noSavedJobs")}</p>
+        <p className="text-sm text-muted-foreground mt-1">{t("candidate.jobs.saveForLater")}</p>
       </div>
     );
   }
@@ -115,7 +117,7 @@ const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListPr
 
         {showViewAll && savedJobs && savedJobs.length > (limit || 0) && (
           <Button variant="ghost" className="w-full" onClick={onViewAll}>
-            View all {savedJobs.length} saved jobs
+            {t("candidate.jobs.viewAllSaved", { count: savedJobs.length })}
           </Button>
         )}
       </div>

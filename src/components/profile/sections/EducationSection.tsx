@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateEducation, CandidateEducation } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,7 @@ const DEGREE_OPTIONS = [
 ];
 
 const EducationSection = () => {
+  const { t } = useTranslation();
   const { education, isLoading, addEducation, updateEducation, deleteEducation } = useCandidateEducation();
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<CandidateEducation | null>(null);
@@ -101,7 +103,7 @@ const EducationSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this education?")) {
+    if (confirm(t("common.confirm"))) {
       await deleteEducation.mutateAsync(id);
     }
   };
@@ -111,11 +113,11 @@ const EducationSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-primary" />
-          Education
+          {t("candidate.profile.education")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -144,7 +146,7 @@ const EducationSection = () => {
                     <h3 className="font-medium text-foreground">
                       {edu.course || DEGREE_OPTIONS.find(d => d.value === edu.degree_level)?.label || edu.degree_level}
                     </h3>
-                    {edu.is_highest && <Badge variant="secondary" className="text-xs">Highest</Badge>}
+                    {edu.is_highest && <Badge variant="secondary" className="text-xs">{t("candidate.profile.highest")}</Badge>}
                   </div>
                   {edu.specialization && (
                     <p className="text-sm text-muted-foreground">{edu.specialization}</p>
@@ -153,7 +155,7 @@ const EducationSection = () => {
                     <p className="text-sm text-muted-foreground">{edu.university}</p>
                   )}
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                    {edu.passing_year && <span>Passed: {edu.passing_year}</span>}
+                    {edu.passing_year && <span>{t("candidate.profile.passed")}: {edu.passing_year}</span>}
                     {edu.course_type && <span>{edu.course_type}</span>}
                     {edu.grade_value && <span>{edu.grade_value}</span>}
                   </div>
@@ -163,21 +165,21 @@ const EducationSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add your education details</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addEducationDetails")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Education" : "Add Education"}</DialogTitle>
+            <DialogTitle>{editingItem ? t("candidate.profile.editEducation") : t("candidate.profile.addEducation")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Degree Level*</Label>
+              <Label>{t("candidate.profile.degreeLevel")}*</Label>
               <Select value={formData.degree_level} onValueChange={(v) => setFormData(prev => ({ ...prev, degree_level: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select degree" />
+                  <SelectValue placeholder={t("candidate.profile.selectDegree")} />
                 </SelectTrigger>
                 <SelectContent>
                   {DEGREE_OPTIONS.map((opt) => (
@@ -187,32 +189,32 @@ const EducationSection = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Course</Label>
+              <Label>{t("candidate.profile.course")}</Label>
               <Input
-                placeholder="e.g., B.Tech, BCA"
+                placeholder={t("candidate.profile.coursePlaceholder")}
                 value={formData.course}
                 onChange={(e) => setFormData(prev => ({ ...prev, course: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Specialization</Label>
+              <Label>{t("candidate.profile.specialization")}</Label>
               <Input
-                placeholder="e.g., Computer Science"
+                placeholder={t("candidate.profile.specializationPlaceholder")}
                 value={formData.specialization}
                 onChange={(e) => setFormData(prev => ({ ...prev, specialization: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>University/Institute</Label>
+              <Label>{t("candidate.profile.universityInstitute")}</Label>
               <Input
-                placeholder="University name"
+                placeholder={t("candidate.profile.universityPlaceholder")}
                 value={formData.university}
                 onChange={(e) => setFormData(prev => ({ ...prev, university: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Starting Year</Label>
+                <Label>{t("candidate.profile.startingYear")}</Label>
                 <Input
                   type="number"
                   placeholder="2020"
@@ -221,7 +223,7 @@ const EducationSection = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Passing Year</Label>
+                <Label>{t("candidate.profile.passingYear")}</Label>
                 <Input
                   type="number"
                   placeholder="2024"
@@ -231,24 +233,24 @@ const EducationSection = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Course Type</Label>
+              <Label>{t("candidate.profile.courseType")}</Label>
               <Select value={formData.course_type} onValueChange={(v) => setFormData(prev => ({ ...prev, course_type: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
+                  <SelectValue placeholder={t("candidate.profile.selectType")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Full Time">Full Time</SelectItem>
-                  <SelectItem value="Part Time">Part Time</SelectItem>
-                  <SelectItem value="Distance Learning">Distance Learning</SelectItem>
+                  <SelectItem value="Full Time">{t("candidate.profile.fullTime")}</SelectItem>
+                  <SelectItem value="Part Time">{t("candidate.profile.partTime")}</SelectItem>
+                  <SelectItem value="Distance Learning">{t("candidate.profile.distanceLearning")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Grading System</Label>
+                <Label>{t("candidate.profile.gradingSystem")}</Label>
                 <Select value={formData.grading_system} onValueChange={(v) => setFormData(prev => ({ ...prev, grading_system: v }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select" />
+                    <SelectValue placeholder={t("common.select")} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="cgpa_10">CGPA (Scale 10)</SelectItem>
@@ -258,7 +260,7 @@ const EducationSection = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Grade/Marks</Label>
+                <Label>{t("candidate.profile.gradeMarks")}</Label>
                 <Input
                   placeholder="e.g., 8.5"
                   value={formData.grade_value}
@@ -268,9 +270,9 @@ const EducationSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={addEducation.isPending || updateEducation.isPending || !formData.degree_level}>
-              {(addEducation.isPending || updateEducation.isPending) ? "Saving..." : "Save"}
+              {(addEducation.isPending || updateEducation.isPending) ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>
