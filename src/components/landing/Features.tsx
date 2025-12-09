@@ -12,54 +12,57 @@ import {
   MousePointer, 
   BarChart3 
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Features = () => {
+  const { t } = useTranslation();
+
   const features = [
     {
       icon: Search,
-      title: "Industry-Specific Search",
-      description: "Filter candidates by technical skills, certifications, plant experience, and more with lightning-fast results.",
+      title: t("features.industrySearch.title"),
+      description: t("features.industrySearch.description"),
       color: "from-blue-500 to-indigo-500",
     },
     {
       icon: Shield,
-      title: "Secure Authentication",
-      description: "Enterprise-grade security with encrypted data and secure login for all users.",
+      title: t("features.secureAuth.title"),
+      description: t("features.secureAuth.description"),
       color: "from-green-500 to-emerald-500",
     },
     {
       icon: Zap,
-      title: "Blazing Fast Performance",
-      description: "Optimized architecture handles thousands of industrial job listings with sub-second response times.",
+      title: t("features.fastPerformance.title"),
+      description: t("features.fastPerformance.description"),
       color: "from-yellow-500 to-orange-500",
     },
     {
       icon: Users,
-      title: "Smart Matching",
-      description: "AI-powered recommendations connect skilled professionals with the right industrial opportunities.",
+      title: t("features.smartMatching.title"),
+      description: t("features.smartMatching.description"),
       color: "from-purple-500 to-pink-500",
     },
     {
       icon: FileText,
-      title: "Resume Parsing",
-      description: "Automatically extract certifications, safety training, and technical skills from resumes.",
+      title: t("features.resumeParsing.title"),
+      description: t("features.resumeParsing.description"),
       color: "from-cyan-500 to-blue-500",
     },
     {
       icon: MousePointer,
-      title: "One-Click Apply",
-      description: "Streamlined application process lets professionals apply in seconds, not minutes.",
+      title: t("features.oneClickApply.title"),
+      description: t("features.oneClickApply.description"),
       color: "from-rose-500 to-red-500",
     },
   ];
 
   const filterCategories = [
-    { icon: Sparkles, label: "Skills", example: "Welding, PLC, Metallurgy" },
-    { icon: MapPin, label: "Location", example: "Jamshedpur, Bokaro, Rourkela" },
-    { icon: DollarSign, label: "Salary Range", example: "₹8L - ₹25L" },
-    { icon: GraduationCap, label: "Education", example: "B.Tech, Diploma, ITI" },
-    { icon: BarChart3, label: "Experience", example: "5-10 years, Senior" },
-    { icon: Upload, label: "Certifications", example: "Safety, ISO, Six Sigma" },
+    { icon: Sparkles, label: t("features.filters.skills"), example: t("features.filters.skillsExample") },
+    { icon: MapPin, label: t("features.filters.location"), example: t("features.filters.locationExample") },
+    { icon: DollarSign, label: t("features.filters.salary"), example: t("features.filters.salaryExample") },
+    { icon: GraduationCap, label: t("features.filters.education"), example: t("features.filters.educationExample") },
+    { icon: BarChart3, label: t("features.filters.experience"), example: t("features.filters.experienceExample") },
+    { icon: Upload, label: t("features.filters.certifications"), example: t("features.filters.certificationsExample") },
   ];
 
   return (
@@ -67,12 +70,12 @@ const Features = () => {
       <div className="container-narrow">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">Features</span>
+          <span className="text-sm font-semibold text-primary uppercase tracking-wider">{t("features.sectionLabel")}</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mt-4 mb-4">
-            Built for Heavy Industries
+            {t("features.title")}
           </h2>
           <p className="text-muted-foreground">
-            Powerful tools designed specifically for Steel, Power, and Mining recruitment and job search.
+            {t("features.subtitle")}
           </p>
         </div>
 
@@ -96,10 +99,10 @@ const Features = () => {
         <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-3xl p-8 md:p-12 border border-border/50">
           <div className="text-center mb-10">
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Powerful Search Filters
+              {t("features.filterTitle")}
             </h3>
             <p className="text-muted-foreground">
-              Find exactly what you're looking for with our comprehensive filtering system
+              {t("features.filterSubtitle")}
             </p>
           </div>
 

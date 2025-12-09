@@ -54,15 +54,16 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-              Features
+              {t("nav.features")}
             </a>
             <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-              How It Works
+              {t("nav.howItWorks")}
             </a>
           </div>
 
           {/* Desktop CTA / User Menu */}
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
             {loading ? (
               <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             ) : user && profile ? (
@@ -84,22 +85,22 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(getDashboardLink())}>
                     <User className="w-4 h-4 mr-2" />
-                    Dashboard
+                    {t("nav.dashboard")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
+                    {t("nav.signOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
-                  Sign In
+                  {t("nav.signIn")}
                 </Button>
                 <Button variant="hero" size="sm" onClick={() => navigate("/auth?mode=signup")}>
-                  Get Started
+                  {t("nav.getStarted")}
                 </Button>
               </>
             )}
@@ -119,11 +120,14 @@ const Navbar = () => {
           <div className="md:hidden py-4 border-t border-border/50 animate-fade-up">
             <div className="flex flex-col gap-4">
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2">
-                Features
+                {t("nav.features")}
               </a>
               <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2">
-                How It Works
+                {t("nav.howItWorks")}
               </a>
+              <div className="py-2">
+                <LanguageSwitcher />
+              </div>
               <div className="flex flex-col gap-2 pt-4 border-t border-border/50">
                 {user && profile ? (
                   <>
@@ -137,19 +141,19 @@ const Navbar = () => {
                       </div>
                     </div>
                     <Button variant="heroOutline" onClick={() => navigate(getDashboardLink())}>
-                      Dashboard
+                      {t("nav.dashboard")}
                     </Button>
                     <Button variant="ghost" onClick={handleSignOut} className="text-destructive">
-                      Sign Out
+                      {t("nav.signOut")}
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button variant="ghost" className="justify-start" onClick={() => navigate("/auth")}>
-                      Sign In
+                      {t("nav.signIn")}
                     </Button>
                     <Button variant="hero" onClick={() => navigate("/auth?mode=signup")}>
-                      Get Started
+                      {t("nav.getStarted")}
                     </Button>
                   </>
                 )}

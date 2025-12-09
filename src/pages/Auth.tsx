@@ -7,15 +7,13 @@ import { Briefcase, Users, Building2, ArrowLeft, Eye, EyeOff } from "lucide-reac
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 
 type AuthMode = "signin" | "signup" | "role-select";
 type AppRole = "recruiter" | "candidate";
 
-const emailSchema = z.string().trim().email("Please enter a valid email address").max(255, "Email is too long");
-const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(72, "Password is too long");
-const nameSchema = z.string().trim().min(1, "Name is required").max(100, "Name is too long");
-
 const Auth = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get("mode") === "signup" ? "role-select" : "signin";
   
@@ -27,6 +25,10 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
+
+  const emailSchema = z.string().trim().email(t("auth.emailInvalid")).max(255, t("validation.emailInvalid"));
+  const passwordSchema = z.string().min(6, t("auth.passwordTooShort")).max(72, t("validation.passwordTooLong"));
+  const nameSchema = z.string().trim().min(1, t("auth.nameRequired")).max(100, t("validation.nameTooLong"));
 
   const { signIn, signUp, user, role } = useAuth();
   const navigate = useNavigate();
@@ -71,12 +73,12 @@ const Auth = () => {
 
     if (error) {
       if (error.message.includes("Invalid login credentials")) {
-        toast.error("Invalid email or password");
+        toast.error(t("auth.invalidCredentials"));
       } else {
         toast.error(error.message);
       }
     } else {
-      toast.success("Signed in successfully!");
+      toast.success(t("auth.signedInSuccessfully"));
     }
   };
 
@@ -91,12 +93,12 @@ const Auth = () => {
 
     if (error) {
       if (error.message.includes("already registered")) {
-        toast.error("This email is already registered. Please sign in instead.");
+        toast.error(t("auth.emailAlreadyRegistered"));
       } else {
         toast.error(error.message);
       }
     } else {
-      toast.success("Account created successfully!");
+      toast.success(t("auth.accountCreatedSuccessfully"));
     }
   };
 
@@ -108,8 +110,8 @@ const Auth = () => {
   const renderRoleSelect = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Create Your Account</h1>
-        <p className="text-muted-foreground">Choose how you want to use SteelJobs</p>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("auth.createAccount")}</h1>
+        <p className="text-muted-foreground">{t("auth.chooseRole")}</p>
       </div>
 
       <div className="grid gap-4">
@@ -122,9 +124,9 @@ const Auth = () => {
               <Building2 className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-foreground mb-1">I'm a Recruiter</h3>
+              <h3 className="font-semibold text-lg text-foreground mb-1">{t("auth.imRecruiter")}</h3>
               <p className="text-sm text-muted-foreground">
-                Post jobs, search candidates, and manage applications
+                {t("auth.recruiterDescription")}
               </p>
             </div>
           </div>
@@ -139,9 +141,9 @@ const Auth = () => {
               <Users className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-foreground mb-1">I'm a Job Seeker</h3>
+              <h3 className="font-semibold text-lg text-foreground mb-1">{t("auth.imJobSeeker")}</h3>
               <p className="text-sm text-muted-foreground">
-                Create your profile, upload resume, and apply to jobs
+                {t("auth.jobSeekerDescription")}
               </p>
             </div>
           </div>
@@ -150,12 +152,12 @@ const Auth = () => {
 
       <div className="text-center pt-4">
         <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t("auth.alreadyHaveAccount")}{" "}
           <button
             onClick={() => setMode("signin")}
             className="text-primary hover:underline font-medium"
           >
-            Sign in
+            {t("auth.signIn")}
           </button>
         </p>
       </div>
@@ -171,21 +173,21 @@ const Auth = () => {
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          {t("common.back")}
         </button>
         <h1 className="text-2xl font-bold text-foreground mb-2">
-          Create {selectedRole === "recruiter" ? "Recruiter" : "Candidate"} Account
+          {selectedRole === "recruiter" ? t("auth.createRecruiterAccount") : t("auth.createCandidateAccount")}
         </h1>
-        <p className="text-muted-foreground">Enter your details to get started</p>
+        <p className="text-muted-foreground">{t("auth.enterDetails")}</p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{t("auth.fullName")}</Label>
           <Input
             id="name"
             type="text"
-            placeholder="John Doe"
+            placeholder={t("auth.fullNamePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             className={errors.name ? "border-destructive" : ""}
@@ -194,11 +196,11 @@ const Auth = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("auth.email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t("auth.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={errors.email ? "border-destructive" : ""}
@@ -207,12 +209,12 @@ const Auth = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("auth.password")}</Label>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
+              placeholder={t("auth.passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={errors.password ? "border-destructive pr-10" : "pr-10"}
@@ -230,18 +232,18 @@ const Auth = () => {
       </div>
 
       <Button type="submit" variant="hero" className="w-full" disabled={isLoading}>
-        {isLoading ? "Creating account..." : "Create Account"}
+        {isLoading ? t("auth.creatingAccount") : t("hero.createAccount")}
       </Button>
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t("auth.alreadyHaveAccount")}{" "}
           <button
             type="button"
             onClick={() => setMode("signin")}
             className="text-primary hover:underline font-medium"
           >
-            Sign in
+            {t("auth.signIn")}
           </button>
         </p>
       </div>
@@ -251,17 +253,17 @@ const Auth = () => {
   const renderSignInForm = () => (
     <form onSubmit={handleSignIn} className="space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
-        <p className="text-muted-foreground">Sign in to your SteelJobs account</p>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("auth.welcomeBack")}</h1>
+        <p className="text-muted-foreground">{t("auth.signInToAccount")}</p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("auth.email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t("auth.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={errors.email ? "border-destructive" : ""}
@@ -270,12 +272,12 @@ const Auth = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("auth.password")}</Label>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
+              placeholder={t("auth.passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={errors.password ? "border-destructive pr-10" : "pr-10"}
@@ -293,18 +295,18 @@ const Auth = () => {
       </div>
 
       <Button type="submit" variant="hero" className="w-full" disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign In"}
+        {isLoading ? t("auth.signingIn") : t("common.signIn")}
       </Button>
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          {t("auth.dontHaveAccount")}{" "}
           <button
             type="button"
             onClick={() => setMode("role-select")}
             className="text-primary hover:underline font-medium"
           >
-            Create one
+            {t("auth.createOne")}
           </button>
         </p>
       </div>
@@ -323,10 +325,10 @@ const Auth = () => {
             <span className="text-3xl font-bold">SteelJobs</span>
           </a>
           <h2 className="text-2xl font-semibold mb-4">
-            Where Talent Meets Opportunity
+            {t("auth.whereTalentMeets")}
           </h2>
           <p className="text-primary-foreground/80">
-            Join thousands of recruiters and job seekers connecting through our modern platform.
+            {t("auth.joinThousands")}
           </p>
         </div>
       </div>

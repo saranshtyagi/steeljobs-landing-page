@@ -1,49 +1,52 @@
 import { LogIn, Search, FileText, CheckCircle, UserPlus, Upload, Send, Trophy } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const HowItWorks = () => {
+  const { t } = useTranslation();
+
   const recruiterSteps = [
     {
       icon: LogIn,
-      title: "Login",
-      description: "Access your recruiter dashboard securely",
+      title: t("howItWorks.recruiter.login.title"),
+      description: t("howItWorks.recruiter.login.description"),
     },
     {
       icon: Search,
-      title: "Search Candidates",
-      description: "Use advanced filters to find perfect matches",
+      title: t("howItWorks.recruiter.searchCandidates.title"),
+      description: t("howItWorks.recruiter.searchCandidates.description"),
     },
     {
       icon: FileText,
-      title: "Post Jobs",
-      description: "Create compelling job listings in minutes",
+      title: t("howItWorks.recruiter.postJobs.title"),
+      description: t("howItWorks.recruiter.postJobs.description"),
     },
     {
       icon: CheckCircle,
-      title: "Manage Applicants",
-      description: "Track and organize all applications",
+      title: t("howItWorks.recruiter.manageApplicants.title"),
+      description: t("howItWorks.recruiter.manageApplicants.description"),
     },
   ];
 
   const seekerSteps = [
     {
       icon: UserPlus,
-      title: "Create Profile",
-      description: "Showcase your industrial expertise",
+      title: t("howItWorks.seeker.createProfile.title"),
+      description: t("howItWorks.seeker.createProfile.description"),
     },
     {
       icon: Upload,
-      title: "Upload Resume",
-      description: "AI extracts your skills and certifications",
+      title: t("howItWorks.seeker.uploadResume.title"),
+      description: t("howItWorks.seeker.uploadResume.description"),
     },
     {
       icon: Send,
-      title: "Apply",
-      description: "One-click applications to top positions",
+      title: t("howItWorks.seeker.apply.title"),
+      description: t("howItWorks.seeker.apply.description"),
     },
     {
       icon: Trophy,
-      title: "Get Hired",
-      description: "Join leading industry employers",
+      title: t("howItWorks.seeker.getHired.title"),
+      description: t("howItWorks.seeker.getHired.description"),
     },
   ];
 
@@ -52,12 +55,12 @@ const HowItWorks = () => {
       <div className="container-narrow">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">How It Works</span>
+          <span className="text-sm font-semibold text-primary uppercase tracking-wider">{t("howItWorks.sectionLabel")}</span>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mt-4 mb-4">
-            Simple steps to success
+            {t("howItWorks.title")}
           </h2>
           <p className="text-muted-foreground">
-            Whether you're hiring skilled professionals or seeking your next role in Steel, Power, or Mining, SteelJobs.com makes it effortless.
+            {t("howItWorks.subtitle")}
           </p>
         </div>
 
@@ -69,7 +72,7 @@ const HowItWorks = () => {
               <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shadow-md">
                 <Search className="w-6 h-6 text-primary-foreground" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">For Recruiters</h3>
+              <h3 className="text-2xl font-bold text-foreground">{t("howItWorks.forRecruiters")}</h3>
             </div>
 
             <div className="space-y-6">
@@ -83,7 +86,7 @@ const HowItWorks = () => {
                   <div className="pt-1">
                     <div className="flex items-center gap-3 mb-1">
                       <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                        Step {index + 1}
+                        {t("howItWorks.step")} {index + 1}
                       </span>
                       <h4 className="font-semibold text-foreground">{step.title}</h4>
                     </div>
@@ -100,7 +103,7 @@ const HowItWorks = () => {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-md">
                 <Trophy className="w-6 h-6 text-primary-foreground" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground">For Job Seekers</h3>
+              <h3 className="text-2xl font-bold text-foreground">{t("howItWorks.forJobSeekers")}</h3>
             </div>
 
             <div className="space-y-6">
@@ -114,7 +117,7 @@ const HowItWorks = () => {
                   <div className="pt-1">
                     <div className="flex items-center gap-3 mb-1">
                       <span className="text-xs font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
-                        Step {index + 1}
+                        {t("howItWorks.step")} {index + 1}
                       </span>
                       <h4 className="font-semibold text-foreground">{step.title}</h4>
                     </div>

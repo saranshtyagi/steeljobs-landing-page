@@ -1,19 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const CTA = () => {
-  const navigate = useNavigate();
-  const { user, role } = useAuth();
-
-  const handleGetStarted = () => {
-    if (user && role) {
-      navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
-    } else {
-      navigate("/auth?mode=signup");
-    }
-  };
+  const { t } = useTranslation();
 
   return (
     <section className="section-padding">
@@ -31,15 +21,15 @@ const CTA = () => {
           <div className="relative px-8 py-16 md:px-16 md:py-20 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              <span>Trusted by leading Steel, Power & Mining companies</span>
+              <span>{t("cta.badge")}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-6 max-w-3xl mx-auto">
-              Ready to transform your industrial hiring?
+              {t("cta.title")}
             </h2>
 
             <p className="text-lg text-primary-foreground/80 mb-10 max-w-xl mx-auto">
-              Partner with us to find the skilled professionals that power your operations. Connect with our team today.
+              {t("cta.subtitle")}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -49,7 +39,7 @@ const CTA = () => {
                 asChild
               >
                 <a href="mailto:support@oppexl.com">
-                  Contact Sales
+                  {t("cta.contactSales")}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </a>
               </Button>
