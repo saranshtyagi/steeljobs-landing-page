@@ -1,30 +1,33 @@
 import { Briefcase, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   const footerLinks = {
     company: [
-      { label: "About Us", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press", href: "#" },
-      { label: "Blog", href: "#" },
+      { label: t("footer.aboutUs"), href: "#" },
+      { label: t("footer.careers"), href: "#" },
+      { label: t("footer.press"), href: "#" },
+      { label: t("footer.blog"), href: "#" },
     ],
     product: [
-      { label: "Features", href: "#features" },
-      { label: "Pricing", href: "#" },
-      { label: "Enterprise", href: "#" },
-      { label: "API", href: "#" },
+      { label: t("footer.features"), href: "#features" },
+      { label: t("footer.pricing"), href: "#" },
+      { label: t("footer.enterprise"), href: "#" },
+      { label: t("footer.api"), href: "#" },
     ],
     resources: [
-      { label: "Help Center", href: "#" },
-      { label: "Documentation", href: "#" },
-      { label: "Webinars", href: "#" },
-      { label: "Community", href: "#" },
+      { label: t("footer.helpCenter"), href: "#" },
+      { label: t("footer.documentation"), href: "#" },
+      { label: t("footer.webinars"), href: "#" },
+      { label: t("footer.community"), href: "#" },
     ],
     legal: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
-      { label: "GDPR", href: "#" },
+      { label: t("footer.privacyPolicy"), href: "#" },
+      { label: t("footer.termsOfService"), href: "#" },
+      { label: t("footer.cookiePolicy"), href: "#" },
+      { label: t("footer.gdpr"), href: "#" },
     ],
   };
 
@@ -51,7 +54,7 @@ const Footer = () => {
               </span>
             </a>
             <p className="text-primary-foreground/70 text-sm mb-6 max-w-xs">
-              India's specialized job portal for Steel, Power, and Mining industries. Connecting skilled professionals with top employers.
+              {t("footer.description")}
             </p>
             <div className="space-y-3 text-sm text-primary-foreground/70">
               <div className="flex items-center gap-3">
@@ -64,14 +67,14 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4" />
-                <span>India</span>
+                <span>{t("footer.india")}</span>
               </div>
             </div>
           </div>
 
           {/* Links Columns */}
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
+            <h4 className="font-semibold mb-4">{t("footer.company")}</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
@@ -87,7 +90,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
+            <h4 className="font-semibold mb-4">{t("footer.product")}</h4>
             <ul className="space-y-3">
               {footerLinks.product.map((link, index) => (
                 <li key={index}>
@@ -103,7 +106,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
+            <h4 className="font-semibold mb-4">{t("footer.resources")}</h4>
             <ul className="space-y-3">
               {footerLinks.resources.map((link, index) => (
                 <li key={index}>
@@ -119,7 +122,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold mb-4">{t("footer.legal")}</h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link, index) => (
                 <li key={index}>
@@ -141,7 +144,7 @@ const Footer = () => {
         <div className="container-narrow py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-primary-foreground/60">
-              © {new Date().getFullYear()} SteelJobs.com. All rights reserved.
+              {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map((social, index) => (

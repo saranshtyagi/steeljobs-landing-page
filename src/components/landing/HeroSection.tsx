@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Users, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const { user, role } = useAuth();
+  const { t } = useTranslation();
 
   const handleGetStarted = () => {
     if (user && role) {
@@ -32,25 +34,24 @@ const HeroSection = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-sm font-medium mb-8 animate-fade-up">
             <Sparkles className="w-4 h-4" />
-            <span>Trusted by 500+ Steel, Power & Mining companies</span>
+            <span>{t("hero.badge")}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-up-delay-1">
-            Build the Workforce That Powers{" "}
-            <span className="gradient-text">Industry</span>
+            {t("hero.title")}{" "}
+            <span className="gradient-text">{t("hero.titleHighlight")}</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-up-delay-2">
-            The specialized job portal for Steel, Power, and Mining industries. 
-            Connect with skilled professionals and top employers in heavy industries.
+            {t("hero.subtitle")}
           </p>
 
           {/* CTA Button */}
           <div className="flex items-center justify-center mb-16 animate-fade-up-delay-3">
             <Button variant="hero" size="xl" className="w-full sm:w-auto group" onClick={handleGetStarted}>
-              {user ? "Go to Dashboard" : "Create Account"}
+              {user ? t("hero.goToDashboard") : t("hero.createAccount")}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -59,19 +60,19 @@ const HeroSection = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-up-delay-3">
             <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">15K+</div>
-              <div className="text-sm text-muted-foreground">Industry Jobs</div>
+              <div className="text-sm text-muted-foreground">{t("hero.stats.jobs")}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">50K+</div>
-              <div className="text-sm text-muted-foreground">Professionals</div>
+              <div className="text-sm text-muted-foreground">{t("hero.stats.professionals")}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">500+</div>
-              <div className="text-sm text-muted-foreground">Companies</div>
+              <div className="text-sm text-muted-foreground">{t("hero.stats.companies")}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl sm:text-4xl font-bold gradient-text mb-1">92%</div>
-              <div className="text-sm text-muted-foreground">Placement Rate</div>
+              <div className="text-sm text-muted-foreground">{t("hero.stats.placementRate")}</div>
             </div>
           </div>
         </div>
@@ -84,8 +85,8 @@ const HeroSection = () => {
                 <Users className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-foreground">New Hire</div>
-                <div className="text-xs text-muted-foreground">Plant Manager</div>
+                <div className="text-sm font-semibold text-foreground">{t("hero.floatingCard.newHire")}</div>
+                <div className="text-xs text-muted-foreground">{t("hero.floatingCard.plantManager")}</div>
               </div>
             </div>
           </div>
@@ -98,8 +99,8 @@ const HeroSection = () => {
                 <Building2 className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-foreground">Application Sent</div>
-                <div className="text-xs text-muted-foreground">Tata Steel Ltd.</div>
+                <div className="text-sm font-semibold text-foreground">{t("hero.floatingCard.applicationSent")}</div>
+                <div className="text-xs text-muted-foreground">{t("hero.floatingCard.tataSteelLtd")}</div>
               </div>
             </div>
           </div>

@@ -30,8 +30,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Briefcase, FileText, Bookmark, User, Sparkles, Search, ExternalLink } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CandidateDashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { role } = useAuth();
   const { profile, isLoading } = useCandidateProfile();
@@ -110,35 +112,35 @@ const CandidateDashboard = () => {
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Briefcase className="w-4 h-4" />
-              Overview
+              {t("candidate.dashboard.overview")}
             </TabsTrigger>
             <TabsTrigger 
               value="jobs" 
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Search className="w-4 h-4" />
-              Find Jobs
+              {t("candidate.dashboard.findJobs")}
             </TabsTrigger>
             <TabsTrigger 
               value="applications" 
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <FileText className="w-4 h-4" />
-              Applications
+              {t("candidate.dashboard.applications")}
             </TabsTrigger>
             <TabsTrigger 
               value="saved" 
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Bookmark className="w-4 h-4" />
-              Saved Jobs
+              {t("candidate.dashboard.savedJobs")}
             </TabsTrigger>
             <TabsTrigger 
               value="profile" 
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <User className="w-4 h-4" />
-              Profile
+              {t("candidate.dashboard.profile")}
             </TabsTrigger>
           </TabsList>
 
@@ -156,9 +158,9 @@ const CandidateDashboard = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-lg">Recommended for You</CardTitle>
+                    <CardTitle className="text-lg">{t("candidate.dashboard.recommendedForYou")}</CardTitle>
                   </div>
-                  <CardDescription>Jobs matching your profile and preferences</CardDescription>
+                  <CardDescription>{t("candidate.dashboard.jobsMatchingProfile")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <RecommendedJobsList 
@@ -174,9 +176,9 @@ const CandidateDashboard = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-lg">Recent Applications</CardTitle>
+                    <CardTitle className="text-lg">{t("candidate.dashboard.recentApplications")}</CardTitle>
                   </div>
-                  <CardDescription>Track your application status</CardDescription>
+                  <CardDescription>{t("candidate.dashboard.trackApplicationStatus")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <MyApplicationsList 
@@ -196,15 +198,15 @@ const CandidateDashboard = () => {
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <Search className="w-5 h-5 text-primary" />
-                    Browse All Jobs
+                    {t("candidate.dashboard.browseAllJobs")}
                   </CardTitle>
                   <CardDescription>
-                    Explore job opportunities from top companies
+                    {t("candidate.dashboard.exploreOpportunities")}
                   </CardDescription>
                 </div>
                 <Button variant="hero" onClick={() => navigate("/jobs")} className="gap-2">
                   <ExternalLink className="w-4 h-4" />
-                  Browse Jobs
+                  {t("candidate.dashboard.browseJobs")}
                 </Button>
               </CardHeader>
               <CardContent>
@@ -219,10 +221,10 @@ const CandidateDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
-                  My Applications
+                  {t("candidate.dashboard.myApplications")}
                 </CardTitle>
                 <CardDescription>
-                  Track and manage all your job applications
+                  {t("candidate.dashboard.trackAndManage")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -237,10 +239,10 @@ const CandidateDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Bookmark className="w-5 h-5 text-primary" />
-                  Saved Jobs
+                  {t("candidate.dashboard.savedJobsTitle")}
                 </CardTitle>
                 <CardDescription>
-                  Jobs you've saved for later
+                  {t("candidate.dashboard.savedForLater")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -262,8 +264,8 @@ const CandidateDashboard = () => {
             {/* Profile Subtabs */}
             <Tabs defaultValue="edit" className="w-full mt-6">
               <TabsList className="bg-card border border-border">
-                <TabsTrigger value="edit">View & Edit</TabsTrigger>
-                <TabsTrigger value="activity">Activity Insights</TabsTrigger>
+                <TabsTrigger value="edit">{t("candidate.dashboard.viewAndEdit")}</TabsTrigger>
+                <TabsTrigger value="activity">{t("candidate.dashboard.activityInsights")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="edit" className="mt-6">
@@ -296,7 +298,7 @@ const CandidateDashboard = () => {
 
               <TabsContent value="activity" className="mt-6">
                 <div className="bg-card rounded-xl border border-border p-8 text-center">
-                  <p className="text-muted-foreground">Activity insights coming soon...</p>
+                  <p className="text-muted-foreground">{t("candidate.dashboard.activityComingSoon")}</p>
                 </div>
               </TabsContent>
             </Tabs>

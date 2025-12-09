@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Briefcase,
-  Users,
   Plus,
   Building2,
   LayoutDashboard,
@@ -25,8 +24,10 @@ import CandidateSearch from "@/components/recruiter/CandidateSearch";
 import EmailHistoryTab from "@/components/recruiter/EmailHistoryTab";
 import RecruiterAnalytics from "@/components/recruiter/RecruiterAnalytics";
 import SEOHead from "@/components/seo/SEOHead";
+import { useTranslation } from "react-i18next";
 
 const RecruiterDashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { profile: authProfile } = useAuth();
   const { profile: recruiterProfile, isLoading: profileLoading } = useRecruiterProfile();
@@ -99,15 +100,15 @@ const RecruiterDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Welcome back, {authProfile?.name?.split(" ")[0] || recruiterProfile?.contact_name || "Recruiter"}!
+              {t("recruiter.dashboard.welcomeBack", { name: authProfile?.name?.split(" ")[0] || recruiterProfile?.contact_name || "Recruiter" })}
             </h1>
             <p className="text-muted-foreground mt-1">
-              {recruiterProfile?.company_name} • Manage your job postings and candidates
+              {recruiterProfile?.company_name} • {t("recruiter.dashboard.manageJobsAndCandidates")}
             </p>
           </div>
           <Button variant="hero" size="lg" onClick={() => setIsPostingModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Post New Job
+            {t("recruiter.dashboard.postNewJob")}
           </Button>
         </div>
 
@@ -116,27 +117,27 @@ const RecruiterDashboard = () => {
           <TabsList className="w-full sm:w-auto grid grid-cols-6 sm:flex gap-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 hidden sm:block" />
-              Overview
+              {t("recruiter.dashboard.overview")}
             </TabsTrigger>
             <TabsTrigger value="jobs" className="flex items-center gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
-              Jobs ({jobs.length})
+              {t("recruiter.dashboard.jobs")} ({jobs.length})
             </TabsTrigger>
             <TabsTrigger value="candidates" className="flex items-center gap-2">
               <Search className="w-4 h-4 hidden sm:block" />
-              Candidates
+              {t("recruiter.dashboard.candidates")}
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 hidden sm:block" />
-              Analytics
+              {t("recruiter.dashboard.analytics")}
             </TabsTrigger>
             <TabsTrigger value="company" className="flex items-center gap-2">
               <Building2 className="w-4 h-4 hidden sm:block" />
-              Company
+              {t("recruiter.dashboard.company")}
             </TabsTrigger>
             <TabsTrigger value="emails" className="flex items-center gap-2">
               <Mail className="w-4 h-4 hidden sm:block" />
-              Emails
+              {t("recruiter.dashboard.emails")}
             </TabsTrigger>
           </TabsList>
 
@@ -147,9 +148,9 @@ const RecruiterDashboard = () => {
             {/* Recent Jobs Preview */}
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground">Recent Jobs</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t("recruiter.dashboard.recentJobs")}</h2>
                 <Button variant="ghost" size="sm" onClick={() => setActiveTab("jobs")}>
-                  View all
+                  {t("recruiter.dashboard.viewAll")}
                 </Button>
               </div>
 
@@ -160,10 +161,10 @@ const RecruiterDashboard = () => {
               ) : jobs.length === 0 ? (
                 <div className="text-center py-8">
                   <Briefcase className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-4">No jobs posted yet</p>
+                  <p className="text-muted-foreground mb-4">{t("recruiter.dashboard.noJobsPosted")}</p>
                   <Button variant="hero" onClick={() => setIsPostingModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Post Your First Job
+                    {t("recruiter.dashboard.postFirstJob")}
                   </Button>
                 </div>
               ) : (
@@ -181,7 +182,7 @@ const RecruiterDashboard = () => {
                         <div>
                           <p className="font-medium text-foreground">{job.title}</p>
                           <p className="text-sm text-muted-foreground">
-                            {job.location} • {job.applications_count || 0} applicants
+                            {job.location} • {job.applications_count || 0} {t("recruiter.dashboard.applicants")}
                           </p>
                         </div>
                       </div>
@@ -193,7 +194,7 @@ const RecruiterDashboard = () => {
                               : "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {job.is_active ? "Active" : "Closed"}
+                          {job.is_active ? t("recruiter.dashboard.active") : t("recruiter.dashboard.closed")}
                         </span>
                       </div>
                     </div>
@@ -260,7 +261,7 @@ const RecruiterDashboard = () => {
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline"
                       >
-                        Visit Website
+                        {t("recruiter.company.visitWebsite")}
                       </a>
                     )}
                     <Button
@@ -268,7 +269,7 @@ const RecruiterDashboard = () => {
                       size="sm"
                       onClick={() => navigate("/onboarding/recruiter")}
                     >
-                      Edit Profile
+                      {t("recruiter.company.editProfile")}
                     </Button>
                   </div>
                 </div>
@@ -276,7 +277,7 @@ const RecruiterDashboard = () => {
 
               {recruiterProfile?.about && (
                 <div className="mt-6 pt-6 border-t border-border">
-                  <h3 className="font-semibold text-foreground mb-2">About</h3>
+                  <h3 className="font-semibold text-foreground mb-2">{t("recruiter.company.about")}</h3>
                   <p className="text-muted-foreground whitespace-pre-wrap">
                     {recruiterProfile.about}
                   </p>
@@ -286,25 +287,25 @@ const RecruiterDashboard = () => {
               <div className="mt-6 pt-6 border-t border-border grid sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {recruiterProfile?.company_size && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Company Size</p>
+                    <p className="text-sm text-muted-foreground">{t("recruiter.company.companySize")}</p>
                     <p className="font-medium text-foreground">{recruiterProfile.company_size}</p>
                   </div>
                 )}
                 {recruiterProfile?.contact_name && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Contact Person</p>
+                    <p className="text-sm text-muted-foreground">{t("recruiter.company.contactPerson")}</p>
                     <p className="font-medium text-foreground">{recruiterProfile.contact_name}</p>
                   </div>
                 )}
                 {recruiterProfile?.contact_email && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Contact Email</p>
+                    <p className="text-sm text-muted-foreground">{t("recruiter.company.contactEmail")}</p>
                     <p className="font-medium text-foreground">{recruiterProfile.contact_email}</p>
                   </div>
                 )}
                 {recruiterProfile?.contact_phone && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Contact Phone</p>
+                    <p className="text-sm text-muted-foreground">{t("recruiter.company.contactPhone")}</p>
                     <p className="font-medium text-foreground">{recruiterProfile.contact_phone}</p>
                   </div>
                 )}
