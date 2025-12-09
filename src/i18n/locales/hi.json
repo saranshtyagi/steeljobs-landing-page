@@ -30,7 +30,10 @@
     "success": "सफलता",
     "confirm": "पुष्टि करें",
     "yes": "हाँ",
-    "no": "नहीं"
+    "no": "नहीं",
+    "select": "चुनें",
+    "add": "जोड़ें",
+    "quickLinks": "त्वरित लिंक"
   },
   "nav": {
     "features": "विशेषताएं",
@@ -413,7 +416,10 @@
       "exams": "प्रतियोगी परीक्षाएं",
       "employment": "रोजगार",
       "achievements": "शैक्षणिक उपलब्धियां",
-      "resume": "रिज्यूमे"
+      "resume": "रिज्यूमे",
+      "gender": "लिंग",
+      "birthday": "जन्मदिन",
+      "yourName": "आपका नाम"
     },
     "applications": {
       "applied": "आवेदन किया",
