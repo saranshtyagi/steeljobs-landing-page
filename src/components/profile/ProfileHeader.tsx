@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, CheckCircle, Edit2, MapPin, Phone, Mail, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   profile: CandidateProfile;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMissingDetails }: Props) => {
+  const { t } = useTranslation();
   const { profile: authProfile } = useAuth();
   const { education } = useCandidateEducation();
   const { updateProfile } = useCandidateProfile();
@@ -23,9 +25,9 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
   const highestEducation = education.find(e => e.is_highest) || education[0];
   
   const missingDetails = [];
-  if (!profile.gender) missingDetails.push("Gender");
-  if (!profile.date_of_birth) missingDetails.push("Birthday");
-  if (!profile.profile_summary) missingDetails.push("Profile Summary");
+  if (!profile.gender) missingDetails.push(t("candidate.profile.gender", "Gender"));
+  if (!profile.date_of_birth) missingDetails.push(t("candidate.profile.birthday", "Birthday"));
+  if (!profile.profile_summary) missingDetails.push(t("candidate.profile.summary"));
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,7 +35,6 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
 
     setIsUploadingPhoto(true);
     try {
-      // For now, create a data URL (in production, upload to storage)
       const reader = new FileReader();
       reader.onload = async (event) => {
         const photoUrl = event.target?.result as string;
@@ -49,7 +50,6 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
-      {/* Background gradient */}
       <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-accent/20" />
       
       <div className="px-6 pb-6">
@@ -81,7 +81,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                  {profile.full_name || authProfile?.name || "Your Name"}
+                  {profile.full_name || authProfile?.name || t("candidate.profile.yourName", "Your Name")}
                 </h1>
                 {profile.headline && (
                   <p className="text-muted-foreground">{profile.headline}</p>
@@ -95,7 +95,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
               </div>
               <Button variant="outline" size="sm" onClick={onEditBasicInfo}>
                 <Edit2 className="w-4 h-4 mr-1" />
-                Edit
+                {t("common.edit")}
               </Button>
             </div>
 
@@ -126,7 +126,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
             {/* Missing Details */}
             {missingDetails.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 pt-2">
-                <span className="text-sm text-muted-foreground">Add:</span>
+                <span className="text-sm text-muted-foreground">{t("common.add", "Add")}:</span>
                 {missingDetails.map((detail) => (
                   <Badge 
                     key={detail} 
@@ -172,10 +172,10 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
                 <span className="text-lg font-bold text-foreground">{completionPercentage}%</span>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground text-center">Profile Complete</p>
+            <p className="text-xs text-muted-foreground text-center">{t("candidate.profile.completion")}</p>
             {completionPercentage < 100 && (
               <Button variant="link" size="sm" className="text-xs p-0 h-auto" onClick={onAddMissingDetails}>
-                Add {Math.round((100 - completionPercentage) / 10)} missing details
+                {t("candidate.profile.addMissingDetails")}
               </Button>
             )}
           </div>

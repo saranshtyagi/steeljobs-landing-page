@@ -30,7 +30,10 @@
     "success": "Success",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "select": "Select",
+    "add": "Add",
+    "quickLinks": "Quick Links"
   },
   "nav": {
     "features": "Features",
@@ -413,7 +416,10 @@
       "exams": "Competitive Exams",
       "employment": "Employment",
       "achievements": "Academic Achievements",
-      "resume": "Resume"
+      "resume": "Resume",
+      "gender": "Gender",
+      "birthday": "Birthday",
+      "yourName": "Your Name"
     },
     "applications": {
       "applied": "Applied",

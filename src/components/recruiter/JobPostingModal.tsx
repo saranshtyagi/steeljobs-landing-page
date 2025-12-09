@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, X, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface JobPostingModalProps {
   isOpen: boolean;
@@ -28,27 +29,10 @@ interface JobPostingModalProps {
   editJob?: Job | null;
 }
 
-const employmentTypes: { value: EmploymentType; label: string }[] = [
-  { value: "full_time", label: "Full Time" },
-  { value: "part_time", label: "Part Time" },
-  { value: "contract", label: "Contract" },
-  { value: "internship", label: "Internship" },
-  { value: "remote", label: "Remote" },
-];
-
-const educationLevels: { value: EducationLevel; label: string }[] = [
-  { value: "high_school", label: "High School" },
-  { value: "associate", label: "Associate Degree" },
-  { value: "bachelor", label: "Bachelor's Degree" },
-  { value: "master", label: "Master's Degree" },
-  { value: "doctorate", label: "Doctorate" },
-  { value: "other", label: "Other" },
-];
-
-const workModes = [
-  { value: "onsite", label: "On-site" },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
+const skillSuggestions = [
+  "JavaScript", "TypeScript", "React", "Node.js", "Python", "Java", "SQL",
+  "AWS", "Docker", "Kubernetes", "Git", "REST API", "GraphQL", "MongoDB",
+  "PostgreSQL", "Machine Learning", "Data Analysis", "Agile", "Scrum"
 ];
 
 const roleCategories = [
@@ -65,15 +49,33 @@ const roleCategories = [
   "Other",
 ];
 
-const skillSuggestions = [
-  "JavaScript", "TypeScript", "React", "Node.js", "Python", "Java", "SQL",
-  "AWS", "Docker", "Kubernetes", "Git", "REST API", "GraphQL", "MongoDB",
-  "PostgreSQL", "Machine Learning", "Data Analysis", "Agile", "Scrum"
-];
-
 const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => {
+  const { t } = useTranslation();
   const { profile } = useRecruiterProfile();
   const { createJob, updateJob } = useRecruiterJobs();
+
+  const employmentTypes: { value: EmploymentType; label: string }[] = [
+    { value: "full_time", label: t("recruiter.jobPosting.fullTime") },
+    { value: "part_time", label: t("recruiter.jobPosting.partTime") },
+    { value: "contract", label: t("recruiter.jobPosting.contract") },
+    { value: "internship", label: t("recruiter.jobPosting.internship") },
+    { value: "remote", label: t("recruiter.jobPosting.remote") },
+  ];
+
+  const educationLevels: { value: EducationLevel; label: string }[] = [
+    { value: "high_school", label: t("recruiter.jobPosting.highSchool") },
+    { value: "associate", label: t("recruiter.jobPosting.associate") },
+    { value: "bachelor", label: t("recruiter.jobPosting.bachelor") },
+    { value: "master", label: t("recruiter.jobPosting.master") },
+    { value: "doctorate", label: t("recruiter.jobPosting.doctorate") },
+    { value: "other", label: t("recruiter.jobPosting.other") },
+  ];
+
+  const workModes = [
+    { value: "onsite", label: t("recruiter.jobPosting.onsite") },
+    { value: "remote", label: t("recruiter.jobPosting.remote") },
+    { value: "hybrid", label: t("recruiter.jobPosting.hybrid") },
+  ];
 
   const [formData, setFormData] = useState<JobInput>({
     title: "",
@@ -175,17 +177,17 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editJob ? "Edit Job" : "Post a New Job"}</DialogTitle>
+          <DialogTitle>{editJob ? t("recruiter.jobPosting.editJob") : t("recruiter.jobPosting.postNewJob")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {/* Basic Info */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Job Title *</Label>
+              <Label htmlFor="title">{t("recruiter.jobPosting.jobTitle")} *</Label>
               <Input
                 id="title"
-                placeholder="e.g., Senior Software Engineer"
+                placeholder={t("recruiter.jobPosting.jobTitlePlaceholder")}
                 value={formData.title}
                 onChange={(e) => updateField("title", e.target.value)}
                 required
@@ -193,7 +195,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company_name">Company Name *</Label>
+              <Label htmlFor="company_name">{t("recruiter.jobPosting.companyName")} *</Label>
               <Input
                 id="company_name"
                 value={formData.company_name}
@@ -203,10 +205,10 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location *</Label>
+              <Label htmlFor="location">{t("recruiter.jobPosting.location")} *</Label>
               <Input
                 id="location"
-                placeholder="e.g., Mumbai, India"
+                placeholder={t("recruiter.jobPosting.locationPlaceholder")}
                 value={formData.location}
                 onChange={(e) => updateField("location", e.target.value)}
                 required
@@ -214,7 +216,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             </div>
 
             <div className="space-y-2">
-              <Label>Work Mode</Label>
+              <Label>{t("recruiter.jobPosting.workMode")}</Label>
               <Select
                 value={formData.work_mode || "onsite"}
                 onValueChange={(value) => updateField("work_mode", value)}
@@ -233,7 +235,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             </div>
 
             <div className="space-y-2">
-              <Label>Employment Type *</Label>
+              <Label>{t("recruiter.jobPosting.employmentType")} *</Label>
               <Select
                 value={formData.employment_type}
                 onValueChange={(value) => updateField("employment_type", value as EmploymentType)}
@@ -252,13 +254,13 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             </div>
 
             <div className="space-y-2">
-              <Label>Role Category</Label>
+              <Label>{t("recruiter.jobPosting.roleCategory")}</Label>
               <Select
                 value={formData.role_category || ""}
                 onValueChange={(value) => updateField("role_category", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t("recruiter.jobPosting.roleCategoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {roleCategories.map((cat) => (
@@ -274,14 +276,14 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
           {/* Salary */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Salary Range</Label>
+              <Label>{t("recruiter.jobPosting.salaryRange")}</Label>
               <div className="flex items-center gap-2">
                 <Switch
                   checked={showSalary}
                   onCheckedChange={setShowSalary}
                 />
                 <span className="text-sm text-muted-foreground">
-                  {showSalary ? "Show on listing" : "Hidden"}
+                  {showSalary ? t("common.active") : t("common.closed")}
                 </span>
               </div>
             </div>
@@ -289,7 +291,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
             {showSalary && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="salary_min">Minimum (₹/year)</Label>
+                  <Label htmlFor="salary_min">{t("recruiter.jobPosting.minimum")} (₹/year)</Label>
                   <Input
                     id="salary_min"
                     type="number"
@@ -299,7 +301,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="salary_max">Maximum (₹/year)</Label>
+                  <Label htmlFor="salary_max">{t("recruiter.jobPosting.maximum")} (₹/year)</Label>
                   <Input
                     id="salary_max"
                     type="number"
@@ -315,7 +317,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
           {/* Experience & Education */}
           <div className="grid md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="experience_min">Min Experience (years)</Label>
+              <Label htmlFor="experience_min">{t("recruiter.jobPosting.experienceRange")} (min)</Label>
               <Input
                 id="experience_min"
                 type="number"
@@ -325,7 +327,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="experience_max">Max Experience (years)</Label>
+              <Label htmlFor="experience_max">{t("recruiter.jobPosting.experienceRange")} (max)</Label>
               <Input
                 id="experience_max"
                 type="number"
@@ -336,13 +338,13 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
               />
             </div>
             <div className="space-y-2">
-              <Label>Education Required</Label>
+              <Label>{t("recruiter.jobPosting.educationRequired")}</Label>
               <Select
                 value={formData.education_required || ""}
                 onValueChange={(value) => updateField("education_required", value as EducationLevel)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select level" />
+                  <SelectValue placeholder={t("common.select")} />
                 </SelectTrigger>
                 <SelectContent>
                   {educationLevels.map((level) => (
@@ -357,10 +359,10 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
 
           {/* Skills */}
           <div className="space-y-3">
-            <Label>Required Skills</Label>
+            <Label>{t("recruiter.jobPosting.skillsRequired")}</Label>
             <div className="flex gap-2">
               <Input
-                placeholder="Add a skill..."
+                placeholder={t("recruiter.jobPosting.skillsPlaceholder")}
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -415,10 +417,10 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Job Description *</Label>
+            <Label htmlFor="description">{t("recruiter.jobPosting.jobDescription")} *</Label>
             <Textarea
               id="description"
-              placeholder="Describe the role, responsibilities, requirements, and what the ideal candidate looks like..."
+              placeholder={t("recruiter.jobPosting.jobDescriptionPlaceholder")}
               value={formData.description}
               onChange={(e) => updateField("description", e.target.value)}
               rows={8}
@@ -429,7 +431,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
           {/* Additional Options */}
           <div className="grid md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="num_positions">Number of Positions</Label>
+              <Label htmlFor="num_positions">{t("recruiter.jobPosting.numberOfPositions")}</Label>
               <Input
                 id="num_positions"
                 type="number"
@@ -439,7 +441,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="deadline">Application Deadline</Label>
+              <Label htmlFor="deadline">{t("recruiter.jobPosting.applicationDeadline")}</Label>
               <Input
                 id="deadline"
                 type="date"
@@ -448,7 +450,7 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
               />
             </div>
             <div className="space-y-2">
-              <Label>Job Visibility</Label>
+              <Label>{t("common.active")}</Label>
               <Select
                 value={formData.job_visibility || "public"}
                 onValueChange={(value) => updateField("job_visibility", value)}
@@ -467,11 +469,11 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
           {/* Active Status */}
           <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
             <div>
-              <p className="font-medium text-foreground">Publish Job</p>
+              <p className="font-medium text-foreground">{t("recruiter.jobPosting.postJob")}</p>
               <p className="text-sm text-muted-foreground">
                 {formData.is_active
-                  ? "Job will be visible to candidates"
-                  : "Save as draft (not visible to candidates)"}
+                  ? t("common.active")
+                  : t("common.closed")}
               </p>
             </div>
             <Switch
@@ -483,18 +485,18 @@ const JobPostingModal = ({ isOpen, onClose, editJob }: JobPostingModalProps) => 
           {/* Actions */}
           <div className="flex gap-3 justify-end pt-4 border-t">
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" variant="hero" disabled={isSaving}>
               {isSaving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {editJob ? "Saving..." : "Posting..."}
+                  {editJob ? t("recruiter.jobPosting.updating") : t("recruiter.jobPosting.posting")}
                 </>
               ) : editJob ? (
-                "Save Changes"
+                t("recruiter.jobPosting.updateJob")
               ) : (
-                "Post Job"
+                t("recruiter.jobPosting.postJob")
               )}
             </Button>
           </div>

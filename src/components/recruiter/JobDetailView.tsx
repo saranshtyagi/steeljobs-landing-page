@@ -28,6 +28,7 @@ import {
   User,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface JobDetailViewProps {
   job: Job;
@@ -37,19 +38,20 @@ interface JobDetailViewProps {
 
 type ApplicationStatus = "applied" | "in_review" | "shortlisted" | "interview" | "hired" | "rejected";
 
-const applicationStatuses: { value: ApplicationStatus; label: string; color: string }[] = [
-  { value: "applied", label: "Applied", color: "bg-amber-100 text-amber-700" },
-  { value: "in_review", label: "In Review", color: "bg-blue-100 text-blue-700" },
-  { value: "shortlisted", label: "Shortlisted", color: "bg-purple-100 text-purple-700" },
-  { value: "interview", label: "Interview", color: "bg-indigo-100 text-indigo-700" },
-  { value: "hired", label: "Hired", color: "bg-green-100 text-green-700" },
-  { value: "rejected", label: "Rejected", color: "bg-red-100 text-red-700" },
-];
-
 const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
+  const { t } = useTranslation();
   const { applications, isLoading, updateApplicationStatus, bulkUpdateStatus } = useJobApplications(job.id);
   const [selectedApplications, setSelectedApplications] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const applicationStatuses: { value: ApplicationStatus; label: string; color: string }[] = [
+    { value: "applied", label: t("candidate.applications.applied"), color: "bg-amber-100 text-amber-700" },
+    { value: "in_review", label: t("candidate.applications.inReview"), color: "bg-blue-100 text-blue-700" },
+    { value: "shortlisted", label: t("candidate.applications.shortlisted"), color: "bg-purple-100 text-purple-700" },
+    { value: "interview", label: t("candidate.applications.interview"), color: "bg-indigo-100 text-indigo-700" },
+    { value: "hired", label: t("candidate.applications.hired"), color: "bg-green-100 text-green-700" },
+    { value: "rejected", label: t("candidate.applications.rejected"), color: "bg-red-100 text-red-700" },
+  ];
 
   const filteredApplications = applications.filter((app) => {
     if (statusFilter === "all") return true;
@@ -106,7 +108,7 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-foreground">{job.title}</h1>
             <Badge variant={job.is_active ? "default" : "secondary"}>
-              {job.is_active ? "Active" : "Closed"}
+              {job.is_active ? t("common.active") : t("common.closed")}
             </Badge>
           </div>
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
@@ -116,12 +118,12 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
             </span>
             <span className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+              {t("candidate.jobs.postedOn")} {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
             </span>
           </div>
         </div>
         <Button variant="outline" onClick={onEdit}>
-          Edit Job
+          {t("common.edit")}
         </Button>
       </div>
 

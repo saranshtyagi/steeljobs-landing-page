@@ -52,8 +52,10 @@ import {
   SlidersHorizontal,
   Mail,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CandidateSearch = () => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<CandidateSearchFilters>({
     page: 1,
     pageSize: 10,
@@ -438,7 +440,7 @@ const CandidateSearch = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by skills, headline, job title..."
+              placeholder={t("recruiter.candidateSearch.searchPlaceholder")}
               value={keywordInput}
               onChange={(e) => setKeywordInput(e.target.value)}
               className="pl-10"
@@ -447,7 +449,7 @@ const CandidateSearch = () => {
           <div className="relative flex-1 sm:max-w-xs">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Location"
+              placeholder={t("recruiter.candidateSearch.location")}
               value={locationInput}
               onChange={(e) => setLocationInput(e.target.value)}
               className="pl-10"
@@ -455,7 +457,7 @@ const CandidateSearch = () => {
           </div>
           <Button type="submit" variant="hero">
             <Search className="w-4 h-4 mr-2" />
-            Search
+            {t("common.search")}
           </Button>
         </form>
 
@@ -553,10 +555,10 @@ const CandidateSearch = () => {
       {data && data.candidates.length === 0 && (
         <div className="text-center py-12 bg-muted/50 rounded-xl">
           <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-foreground font-medium mb-2">No candidates found</p>
-          <p className="text-sm text-muted-foreground mb-4">Try adjusting your search or filters</p>
+          <p className="text-foreground font-medium mb-2">{t("recruiter.candidateSearch.noCandidatesFound")}</p>
+          <p className="text-sm text-muted-foreground mb-4">{t("recruiter.candidateSearch.tryAdjustingFilters")}</p>
           <Button variant="outline" onClick={clearFilters}>
-            Clear filters
+            {t("recruiter.candidateSearch.clearFilters")}
           </Button>
         </div>
       )}

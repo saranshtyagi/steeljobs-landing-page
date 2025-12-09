@@ -1,27 +1,28 @@
 import { 
   Briefcase, GraduationCap, Wrench, Languages, Building2, 
-  FolderGit2, FileText, Award, BookOpen, Trophy, Star
+  FolderGit2, FileText, Award, BookOpen, Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface SidebarItem {
   id: string;
-  label: string;
+  labelKey: string;
   icon: React.ElementType;
 }
 
 const SIDEBAR_ITEMS: SidebarItem[] = [
-  { id: "preferences", label: "Preference", icon: Briefcase },
-  { id: "education", label: "Education", icon: GraduationCap },
-  { id: "skills", label: "Key Skills", icon: Wrench },
-  { id: "languages", label: "Languages", icon: Languages },
-  { id: "internships", label: "Internships", icon: Building2 },
-  { id: "projects", label: "Projects", icon: FolderGit2 },
-  { id: "summary", label: "Profile Summary", icon: FileText },
-  { id: "accomplishments", label: "Accomplishments", icon: Award },
-  { id: "exams", label: "Competitive Exams", icon: BookOpen },
-  { id: "employment", label: "Employment", icon: Briefcase },
-  { id: "achievements", label: "Academic Achievements", icon: Trophy },
+  { id: "preferences", labelKey: "candidate.profile.preferences", icon: Briefcase },
+  { id: "education", labelKey: "candidate.profile.education", icon: GraduationCap },
+  { id: "skills", labelKey: "candidate.profile.skills", icon: Wrench },
+  { id: "languages", labelKey: "candidate.profile.languages", icon: Languages },
+  { id: "internships", labelKey: "candidate.profile.internships", icon: Building2 },
+  { id: "projects", labelKey: "candidate.profile.projects", icon: FolderGit2 },
+  { id: "summary", labelKey: "candidate.profile.summary", icon: FileText },
+  { id: "accomplishments", labelKey: "candidate.profile.accomplishments", icon: Award },
+  { id: "exams", labelKey: "candidate.profile.exams", icon: BookOpen },
+  { id: "employment", labelKey: "candidate.profile.employment", icon: Briefcase },
+  { id: "achievements", labelKey: "candidate.profile.achievements", icon: Trophy },
 ];
 
 interface Props {
@@ -31,10 +32,12 @@ interface Props {
 }
 
 const ProfileSidebar = ({ activeSection, onSectionClick, sectionStatus }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-card rounded-xl border border-border p-4 sticky top-24">
       <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 px-2">
-        Quick Links
+        {t("common.quickLinks", "Quick Links")}
       </h3>
       <nav className="space-y-1">
         {SIDEBAR_ITEMS.map((item) => {
@@ -54,7 +57,7 @@ const ProfileSidebar = ({ activeSection, onSectionClick, sectionStatus }: Props)
               )}
             >
               <item.icon className="w-4 h-4 flex-shrink-0" />
-              <span className="flex-1">{item.label}</span>
+              <span className="flex-1">{t(item.labelKey)}</span>
               {isFilled ? (
                 <span className="w-2 h-2 rounded-full bg-green-500" />
               ) : (
