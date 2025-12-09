@@ -47,14 +47,11 @@ const HeroSection = () => {
             Connect with skilled professionals and top employers in heavy industries.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-up-delay-3">
+          {/* CTA Button */}
+          <div className="flex items-center justify-center mb-16 animate-fade-up-delay-3">
             <Button variant="hero" size="xl" className="w-full sm:w-auto group" onClick={handleGetStarted}>
               {user ? "Go to Dashboard" : "Create Account"}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="heroOutline" size="xl" className="w-full sm:w-auto">
-              Explore Jobs
             </Button>
           </div>
 
