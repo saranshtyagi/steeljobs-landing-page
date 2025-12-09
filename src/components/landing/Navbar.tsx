@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Briefcase, Menu, X, ChevronDown, LogOut, User, Home } from "lucide-react";
+import { Briefcase, Menu, X, ChevronDown, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,7 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, profile, role, signOut, loading } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {

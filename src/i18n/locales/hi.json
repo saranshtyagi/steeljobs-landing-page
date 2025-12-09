@@ -1,0 +1,529 @@
+{
+  "common": {
+    "signIn": "साइन इन करें",
+    "signUp": "साइन अप करें",
+    "signOut": "साइन आउट",
+    "getStarted": "शुरू करें",
+    "dashboard": "डैशबोर्ड",
+    "features": "विशेषताएं",
+    "howItWorks": "कैसे काम करता है",
+    "loading": "लोड हो रहा है...",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "view": "देखें",
+    "back": "वापस",
+    "next": "आगे",
+    "submit": "जमा करें",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "apply": "आवेदन करें",
+    "applied": "आवेदन किया",
+    "close": "बंद करें",
+    "open": "खोलें",
+    "active": "सक्रिय",
+    "closed": "बंद",
+    "viewAll": "सभी देखें",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "confirm": "पुष्टि करें",
+    "yes": "हाँ",
+    "no": "नहीं"
+  },
+  "nav": {
+    "features": "विशेषताएं",
+    "howItWorks": "कैसे काम करता है",
+    "signIn": "साइन इन करें",
+    "getStarted": "शुरू करें",
+    "dashboard": "डैशबोर्ड",
+    "signOut": "साइन आउट"
+  },
+  "hero": {
+    "badge": "500+ स्टील, पावर और माइनिंग कंपनियों द्वारा विश्वसनीय",
+    "title": "उद्योग को शक्ति देने वाला कार्यबल बनाएं",
+    "titleHighlight": "उद्योग",
+    "subtitle": "स्टील, पावर और माइनिंग उद्योगों के लिए विशेष जॉब पोर्टल। कुशल पेशेवरों और शीर्ष नियोक्ताओं से जुड़ें।",
+    "createAccount": "खाता बनाएं",
+    "goToDashboard": "डैशबोर्ड पर जाएं",
+    "exploreJobs": "नौकरियां देखें",
+    "stats": {
+      "jobs": "उद्योग नौकरियां",
+      "professionals": "पेशेवर",
+      "companies": "कंपनियां",
+      "placementRate": "प्लेसमेंट दर"
+    },
+    "floatingCard": {
+      "newHire": "नई भर्ती",
+      "plantManager": "प्लांट मैनेजर",
+      "applicationSent": "आवेदन भेजा गया",
+      "tataSteelLtd": "टाटा स्टील लि."
+    }
+  },
+  "features": {
+    "sectionLabel": "विशेषताएं",
+    "title": "भारी उद्योगों के लिए निर्मित",
+    "subtitle": "स्टील, पावर और माइनिंग भर्ती और नौकरी खोज के लिए विशेष रूप से डिज़ाइन किए गए शक्तिशाली उपकरण।",
+    "industrySearch": {
+      "title": "उद्योग-विशिष्ट खोज",
+      "description": "तकनीकी कौशल, प्रमाणपत्र, प्लांट अनुभव और अधिक द्वारा उम्मीदवारों को फ़िल्टर करें।"
+    },
+    "secureAuth": {
+      "title": "सुरक्षित प्रमाणीकरण",
+      "description": "सभी उपयोगकर्ताओं के लिए एन्क्रिप्टेड डेटा और सुरक्षित लॉगिन के साथ एंटरप्राइज़-ग्रेड सुरक्षा।"
+    },
+    "fastPerformance": {
+      "title": "अत्यधिक तेज़ प्रदर्शन",
+      "description": "अनुकूलित आर्किटेक्चर हज़ारों औद्योगिक नौकरी लिस्टिंग को सब-सेकंड प्रतिक्रिया समय के साथ संभालता है।"
+    },
+    "smartMatching": {
+      "title": "स्मार्ट मैचिंग",
+      "description": "AI-संचालित अनुशंसाएं कुशल पेशेवरों को सही औद्योगिक अवसरों से जोड़ती हैं।"
+    },
+    "resumeParsing": {
+      "title": "रिज्यूमे पार्सिंग",
+      "description": "रिज्यूमे से स्वचालित रूप से प्रमाणपत्र, सुरक्षा प्रशिक्षण और तकनीकी कौशल निकालें।"
+    },
+    "oneClickApply": {
+      "title": "वन-क्लिक आवेदन",
+      "description": "सुव्यवस्थित आवेदन प्रक्रिया पेशेवरों को सेकंडों में आवेदन करने देती है।"
+    },
+    "filterTitle": "शक्तिशाली खोज फ़िल्टर",
+    "filterSubtitle": "हमारी व्यापक फ़िल्टरिंग प्रणाली के साथ आप जो खोज रहे हैं उसे बिल्कुल खोजें",
+    "filters": {
+      "skills": "कौशल",
+      "skillsExample": "वेल्डिंग, PLC, मेटलर्जी",
+      "location": "स्थान",
+      "locationExample": "जमशेदपुर, बोकारो, राउरकेला",
+      "salary": "वेतन सीमा",
+      "salaryExample": "₹8L - ₹25L",
+      "education": "शिक्षा",
+      "educationExample": "B.Tech, डिप्लोमा, ITI",
+      "experience": "अनुभव",
+      "experienceExample": "5-10 वर्ष, सीनियर",
+      "certifications": "प्रमाणपत्र",
+      "certificationsExample": "सुरक्षा, ISO, सिक्स सिग्मा"
+    }
+  },
+  "howItWorks": {
+    "sectionLabel": "कैसे काम करता है",
+    "title": "सफलता के सरल कदम",
+    "subtitle": "चाहे आप कुशल पेशेवरों को नियुक्त कर रहे हों या स्टील, पावर या माइनिंग में अपनी अगली भूमिका खोज रहे हों, SteelJobs.com इसे आसान बनाता है।",
+    "forRecruiters": "भर्तीकर्ताओं के लिए",
+    "forJobSeekers": "नौकरी चाहने वालों के लिए",
+    "step": "चरण",
+    "recruiter": {
+      "login": {
+        "title": "लॉगिन",
+        "description": "अपने भर्तीकर्ता डैशबोर्ड तक सुरक्षित रूप से पहुंचें"
+      },
+      "searchCandidates": {
+        "title": "उम्मीदवार खोजें",
+        "description": "सही मिलान खोजने के लिए उन्नत फ़िल्टर का उपयोग करें"
+      },
+      "postJobs": {
+        "title": "नौकरियां पोस्ट करें",
+        "description": "मिनटों में आकर्षक नौकरी लिस्टिंग बनाएं"
+      },
+      "manageApplicants": {
+        "title": "आवेदकों का प्रबंधन करें",
+        "description": "सभी आवेदनों को ट्रैक और व्यवस्थित करें"
+      }
+    },
+    "seeker": {
+      "createProfile": {
+        "title": "प्रोफ़ाइल बनाएं",
+        "description": "अपनी औद्योगिक विशेषज्ञता दिखाएं"
+      },
+      "uploadResume": {
+        "title": "रिज्यूमे अपलोड करें",
+        "description": "AI आपके कौशल और प्रमाणपत्र निकालता है"
+      },
+      "apply": {
+        "title": "आवेदन करें",
+        "description": "शीर्ष पदों के लिए वन-क्लिक आवेदन"
+      },
+      "getHired": {
+        "title": "नौकरी पाएं",
+        "description": "अग्रणी उद्योग नियोक्ताओं से जुड़ें"
+      }
+    }
+  },
+  "whyChoose": {
+    "sectionLabel": "SteelJobs क्यों",
+    "title": "औद्योगिक भर्ती लाभ",
+    "subtitle": "स्टील, पावर और माइनिंग पेशेवरों के लिए सबसे महत्वपूर्ण विशेषज्ञता और सुविधाओं के साथ विशेष रूप से भारी उद्योगों के लिए निर्मित।",
+    "industryExpertise": {
+      "title": "उद्योग विशेषज्ञता",
+      "description": "तकनीकी भूमिकाओं और प्रमाणपत्रों के लिए विशेष फ़िल्टर के साथ स्टील, पावर और माइनिंग क्षेत्रों के लिए उद्देश्य-निर्मित।",
+      "points": ["उद्योग-विशिष्ट नौकरी श्रेणियां", "तकनीकी कौशल मिलान", "प्रमाणपत्र सत्यापन"]
+    },
+    "modernUI": {
+      "title": "आधुनिक UI",
+      "description": "एक स्वच्छ, सहज इंटरफ़ेस जो फील्ड पेशेवरों और HR टीमों दोनों के लिए नेविगेशन को आसान बनाता है।",
+      "points": ["स्वच्छ, न्यूनतम डिज़ाइन", "सभी उपकरणों पर उत्तरदायी", "पहुंच-पहले"]
+    },
+    "smoothExperience": {
+      "title": "सहज अनुभव",
+      "description": "बिना किसी लैग, प्रतीक्षा या निराशा के बिजली की तरह तेज़ प्रदर्शन। बस निर्बाध कार्यप्रवाह।",
+      "points": ["सब-सेकंड खोज", "तत्काल अपडेट", "रीयल-टाइम सूचनाएं"]
+    },
+    "secureReliable": {
+      "title": "सुरक्षित और विश्वसनीय",
+      "description": "भारत भर में अग्रणी औद्योगिक कंपनियों द्वारा विश्वसनीय एंटरप्राइज़-ग्रेड सुरक्षा।",
+      "points": ["एंड-टू-एंड एन्क्रिप्शन", "डेटा अनुपालन", "99.9% अपटाइम SLA"]
+    }
+  },
+  "cta": {
+    "badge": "अग्रणी स्टील, पावर और माइनिंग कंपनियों द्वारा विश्वसनीय",
+    "title": "अपनी औद्योगिक भर्ती को बदलने के लिए तैयार हैं?",
+    "subtitle": "अपने संचालन को शक्ति देने वाले कुशल पेशेवरों को खोजने के लिए हमारे साथ साझेदारी करें। आज ही हमारी टीम से जुड़ें।",
+    "contactSales": "बिक्री से संपर्क करें"
+  },
+  "footer": {
+    "description": "स्टील, पावर और माइनिंग उद्योगों के लिए भारत का विशेष जॉब पोर्टल। कुशल पेशेवरों को शीर्ष नियोक्ताओं से जोड़ना।",
+    "company": "कंपनी",
+    "aboutUs": "हमारे बारे में",
+    "careers": "करियर",
+    "press": "प्रेस",
+    "blog": "ब्लॉग",
+    "product": "उत्पाद",
+    "features": "विशेषताएं",
+    "pricing": "मूल्य निर्धारण",
+    "enterprise": "एंटरप्राइज़",
+    "api": "API",
+    "resources": "संसाधन",
+    "helpCenter": "सहायता केंद्र",
+    "documentation": "दस्तावेज़ीकरण",
+    "webinars": "वेबिनार",
+    "community": "समुदाय",
+    "legal": "कानूनी",
+    "privacyPolicy": "गोपनीयता नीति",
+    "termsOfService": "सेवा की शर्तें",
+    "cookiePolicy": "कुकी नीति",
+    "gdpr": "GDPR",
+    "copyright": "© {{year}} SteelJobs.com. सर्वाधिकार सुरक्षित।",
+    "india": "भारत"
+  },
+  "auth": {
+    "createAccount": "अपना खाता बनाएं",
+    "chooseRole": "चुनें कि आप SteelJobs का उपयोग कैसे करना चाहते हैं",
+    "imRecruiter": "मैं एक भर्तीकर्ता हूं",
+    "recruiterDescription": "नौकरियां पोस्ट करें, उम्मीदवार खोजें और आवेदनों का प्रबंधन करें",
+    "imJobSeeker": "मैं नौकरी खोज रहा हूं",
+    "jobSeekerDescription": "अपनी प्रोफ़ाइल बनाएं, रिज्यूमे अपलोड करें और नौकरियों के लिए आवेदन करें",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "signIn": "साइन इन करें",
+    "createRecruiterAccount": "भर्तीकर्ता खाता बनाएं",
+    "createCandidateAccount": "उम्मीदवार खाता बनाएं",
+    "enterDetails": "शुरू करने के लिए अपना विवरण दर्ज करें",
+    "fullName": "पूरा नाम",
+    "fullNamePlaceholder": "जॉन डो",
+    "email": "ईमेल",
+    "emailPlaceholder": "you@example.com",
+    "password": "पासवर्ड",
+    "passwordPlaceholder": "••••••••",
+    "creatingAccount": "खाता बना रहे हैं...",
+    "signingIn": "साइन इन हो रहा है...",
+    "welcomeBack": "वापसी पर स्वागत है",
+    "signInToAccount": "अपने SteelJobs खाते में साइन इन करें",
+    "dontHaveAccount": "खाता नहीं है?",
+    "createOne": "एक बनाएं",
+    "whereTalentMeets": "जहां प्रतिभा अवसर से मिलती है",
+    "joinThousands": "हमारे आधुनिक प्लेटफ़ॉर्म के माध्यम से जुड़ने वाले हज़ारों भर्तीकर्ताओं और नौकरी खोजने वालों में शामिल हों।",
+    "invalidCredentials": "अमान्य ईमेल या पासवर्ड",
+    "emailAlreadyRegistered": "यह ईमेल पहले से पंजीकृत है। कृपया इसके बजाय साइन इन करें।",
+    "signedInSuccessfully": "सफलतापूर्वक साइन इन किया!",
+    "accountCreatedSuccessfully": "खाता सफलतापूर्वक बनाया गया!",
+    "nameRequired": "नाम आवश्यक है",
+    "emailInvalid": "कृपया एक वैध ईमेल पता दर्ज करें",
+    "passwordTooShort": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए"
+  },
+  "recruiter": {
+    "dashboard": {
+      "welcomeBack": "वापसी पर स्वागत है, {{name}}!",
+      "manageJobsAndCandidates": "अपनी नौकरी पोस्टिंग और उम्मीदवारों का प्रबंधन करें",
+      "postNewJob": "नई नौकरी पोस्ट करें",
+      "overview": "अवलोकन",
+      "jobs": "नौकरियां",
+      "candidates": "उम्मीदवार",
+      "analytics": "विश्लेषिकी",
+      "company": "कंपनी",
+      "emails": "ईमेल",
+      "recentJobs": "हाल की नौकरियां",
+      "viewAll": "सभी देखें",
+      "noJobsPosted": "अभी तक कोई नौकरी पोस्ट नहीं की",
+      "postFirstJob": "अपनी पहली नौकरी पोस्ट करें",
+      "applicants": "आवेदक",
+      "active": "सक्रिय",
+      "closed": "बंद"
+    },
+    "stats": {
+      "activeJobs": "सक्रिय नौकरियां",
+      "totalApplications": "कुल आवेदन",
+      "shortlisted": "शॉर्टलिस्ट किए गए",
+      "hired": "नियुक्त",
+      "closedJobs": "बंद नौकरियां"
+    },
+    "analytics": {
+      "title": "भर्ती विश्लेषिकी",
+      "subtitle": "अपनी भर्ती प्रदर्शन और पाइपलाइन मेट्रिक्स ट्रैक करें",
+      "jobsOverview": "नौकरियों का अवलोकन",
+      "totalJobs": "कुल नौकरियां",
+      "activeJobs": "सक्रिय",
+      "closedJobs": "बंद",
+      "applicationsPipeline": "आवेदन पाइपलाइन",
+      "applied": "आवेदन किया",
+      "inReview": "समीक्षा में",
+      "shortlisted": "शॉर्टलिस्ट किए गए",
+      "interview": "साक्षात्कार",
+      "hired": "नियुक्त",
+      "rejected": "अस्वीकृत",
+      "applicationsByJob": "नौकरी के अनुसार आवेदन",
+      "applicationsBreakdown": "प्रति नौकरी पोस्टिंग आवेदन विश्लेषण",
+      "applications": "आवेदन"
+    },
+    "jobPosting": {
+      "postNewJob": "नई नौकरी पोस्ट करें",
+      "editJob": "नौकरी संपादित करें",
+      "jobTitle": "नौकरी का शीर्षक",
+      "jobTitlePlaceholder": "जैसे, प्लांट मैनेजर, सुरक्षा अधिकारी",
+      "companyName": "कंपनी का नाम",
+      "location": "स्थान",
+      "locationPlaceholder": "जैसे, जमशेदपुर, झारखंड",
+      "employmentType": "रोजगार प्रकार",
+      "fullTime": "पूर्णकालिक",
+      "partTime": "अंशकालिक",
+      "contract": "अनुबंध",
+      "internship": "इंटर्नशिप",
+      "remote": "रिमोट",
+      "workMode": "कार्य मोड",
+      "onsite": "ऑनसाइट",
+      "hybrid": "हाइब्रिड",
+      "salaryRange": "वेतन सीमा (₹ LPA)",
+      "minimum": "न्यूनतम",
+      "maximum": "अधिकतम",
+      "experienceRange": "अनुभव सीमा (वर्ष)",
+      "educationRequired": "आवश्यक शिक्षा",
+      "highSchool": "हाई स्कूल",
+      "associate": "एसोसिएट",
+      "bachelor": "स्नातक",
+      "master": "स्नातकोत्तर",
+      "doctorate": "डॉक्टरेट",
+      "other": "अन्य",
+      "skillsRequired": "आवश्यक कौशल",
+      "skillsPlaceholder": "कौशल जोड़ें और Enter दबाएं",
+      "roleCategory": "भूमिका श्रेणी",
+      "roleCategoryPlaceholder": "जैसे, उत्पादन, रखरखाव, सुरक्षा",
+      "jobDescription": "नौकरी विवरण",
+      "jobDescriptionPlaceholder": "भूमिका, जिम्मेदारियों और आवश्यकताओं का वर्णन करें...",
+      "numberOfPositions": "पदों की संख्या",
+      "applicationDeadline": "आवेदन की अंतिम तिथि",
+      "postJob": "नौकरी पोस्ट करें",
+      "updateJob": "नौकरी अपडेट करें",
+      "posting": "पोस्ट हो रहा है...",
+      "updating": "अपडेट हो रहा है..."
+    },
+    "candidateSearch": {
+      "title": "उम्मीदवार खोजें",
+      "subtitle": "अपने खुले पदों के लिए कुशल पेशेवर खोजें",
+      "searchPlaceholder": "नाम, कौशल, स्थान से खोजें...",
+      "filters": "फ़िल्टर",
+      "clearFilters": "फ़िल्टर साफ़ करें",
+      "experience": "अनुभव",
+      "allExperience": "सभी अनुभव स्तर",
+      "fresher": "फ्रेशर (0-1 वर्ष)",
+      "junior": "जूनियर (1-3 वर्ष)",
+      "mid": "मिड-लेवल (3-5 वर्ष)",
+      "senior": "सीनियर (5-10 वर्ष)",
+      "expert": "एक्सपर्ट (10+ वर्ष)",
+      "education": "शिक्षा",
+      "allEducation": "सभी शिक्षा स्तर",
+      "location": "स्थान",
+      "locationPlaceholder": "स्थान से फ़िल्टर करें",
+      "skills": "कौशल",
+      "skillsPlaceholder": "कौशल से फ़िल्टर करें",
+      "noCandidatesFound": "कोई उम्मीदवार नहीं मिला",
+      "tryAdjustingFilters": "अपने खोज फ़िल्टर समायोजित करने का प्रयास करें",
+      "viewProfile": "प्रोफ़ाइल देखें",
+      "shortlist": "शॉर्टलिस्ट करें",
+      "shortlisted": "शॉर्टलिस्ट किया गया",
+      "sendEmail": "ईमेल भेजें"
+    },
+    "company": {
+      "about": "के बारे में",
+      "companySize": "कंपनी का आकार",
+      "contactPerson": "संपर्क व्यक्ति",
+      "contactEmail": "संपर्क ईमेल",
+      "contactPhone": "संपर्क फोन",
+      "visitWebsite": "वेबसाइट देखें",
+      "editProfile": "प्रोफ़ाइल संपादित करें"
+    },
+    "emails": {
+      "title": "ईमेल इतिहास",
+      "subtitle": "उम्मीदवारों को भेजे गए सभी ईमेल ट्रैक करें",
+      "noEmails": "अभी तक कोई ईमेल नहीं भेजा",
+      "sentTo": "को भेजा गया",
+      "recipients": "प्राप्तकर्ता",
+      "subject": "विषय",
+      "sentOn": "भेजने की तारीख"
+    }
+  },
+  "candidate": {
+    "dashboard": {
+      "overview": "अवलोकन",
+      "findJobs": "नौकरियां खोजें",
+      "applications": "आवेदन",
+      "savedJobs": "सहेजी गई नौकरियां",
+      "profile": "प्रोफ़ाइल",
+      "recommendedForYou": "आपके लिए अनुशंसित",
+      "jobsMatchingProfile": "आपकी प्रोफ़ाइल और प्राथमिकताओं से मेल खाने वाली नौकरियां",
+      "recentApplications": "हाल के आवेदन",
+      "trackApplicationStatus": "अपने आवेदन की स्थिति ट्रैक करें",
+      "browseAllJobs": "सभी नौकरियां ब्राउज़ करें",
+      "exploreOpportunities": "शीर्ष कंपनियों से नौकरी के अवसर देखें",
+      "browseJobs": "नौकरियां ब्राउज़ करें",
+      "myApplications": "मेरे आवेदन",
+      "trackAndManage": "अपने सभी नौकरी आवेदनों को ट्रैक और प्रबंधित करें",
+      "savedJobsTitle": "सहेजी गई नौकरियां",
+      "savedForLater": "बाद के लिए सहेजी गई नौकरियां",
+      "viewAndEdit": "देखें और संपादित करें",
+      "activityInsights": "गतिविधि अंतर्दृष्टि",
+      "activityComingSoon": "गतिविधि अंतर्दृष्टि जल्द आ रही है..."
+    },
+    "stats": {
+      "totalApplications": "कुल आवेदन",
+      "interviewScheduled": "साक्षात्कार निर्धारित",
+      "profileViews": "प्रोफ़ाइल व्यू",
+      "savedJobs": "सहेजी गई नौकरियां"
+    },
+    "profile": {
+      "completion": "प्रोफ़ाइल पूर्णता",
+      "editBasicInfo": "बुनियादी जानकारी संपादित करें",
+      "addMissingDetails": "गायब विवरण जोड़ें",
+      "preferences": "करियर प्राथमिकताएं",
+      "education": "शिक्षा",
+      "skills": "मुख्य कौशल",
+      "languages": "भाषाएं",
+      "internships": "इंटर्नशिप",
+      "projects": "प्रोजेक्ट्स",
+      "summary": "प्रोफ़ाइल सारांश",
+      "accomplishments": "उपलब्धियां",
+      "exams": "प्रतियोगी परीक्षाएं",
+      "employment": "रोजगार",
+      "achievements": "शैक्षणिक उपलब्धियां",
+      "resume": "रिज्यूमे"
+    },
+    "applications": {
+      "applied": "आवेदन किया",
+      "inReview": "समीक्षा में",
+      "shortlisted": "शॉर्टलिस्ट किया गया",
+      "interview": "साक्षात्कार",
+      "hired": "नियुक्त",
+      "rejected": "अस्वीकृत",
+      "withdraw": "वापस लें",
+      "noApplications": "अभी तक कोई आवेदन नहीं",
+      "startApplying": "अपनी प्रोफ़ाइल से मेल खाने वाली नौकरियों के लिए आवेदन शुरू करें"
+    },
+    "jobs": {
+      "applyNow": "अभी आवेदन करें",
+      "quickApply": "त्वरित आवेदन",
+      "saveJob": "नौकरी सहेजें",
+      "unsaveJob": "नौकरी हटाएं",
+      "alreadyApplied": "पहले से आवेदन किया",
+      "jobDetails": "नौकरी विवरण",
+      "description": "विवरण",
+      "requirements": "आवश्यकताएं",
+      "skills": "आवश्यक कौशल",
+      "salary": "वेतन",
+      "experience": "अनुभव",
+      "location": "स्थान",
+      "postedOn": "पोस्ट किया गया",
+      "deadline": "आवेदन की अंतिम तिथि",
+      "openings": "रिक्तियां",
+      "employmentType": "रोजगार प्रकार",
+      "workMode": "कार्य मोड",
+      "noJobs": "कोई नौकरी नहीं मिली",
+      "tryDifferentFilters": "अलग-अलग खोज फ़िल्टर आज़माएं"
+    }
+  },
+  "jobs": {
+    "pageTitle": "नौकरियां ब्राउज़ करें",
+    "searchPlaceholder": "शीर्षक, कंपनी, कौशल से नौकरियां खोजें...",
+    "filters": {
+      "location": "स्थान",
+      "experience": "अनुभव",
+      "salary": "वेतन",
+      "employmentType": "रोजगार प्रकार",
+      "education": "शिक्षा",
+      "postedDate": "पोस्ट की तारीख",
+      "workMode": "कार्य मोड"
+    },
+    "sort": {
+      "relevance": "प्रासंगिकता",
+      "newest": "नवीनतम",
+      "salaryHighToLow": "वेतन: उच्च से निम्न",
+      "salaryLowToHigh": "वेतन: निम्न से उच्च"
+    },
+    "perPage": "प्रति पृष्ठ",
+    "showingResults": "{{total}} में से {{from}}-{{to}} नौकरियां दिखा रहे हैं"
+  },
+  "onboarding": {
+    "candidate": {
+      "step1Title": "बुनियादी विवरण",
+      "step2Title": "शिक्षा",
+      "step3Title": "अंतिम चरण",
+      "fullName": "पूरा नाम",
+      "mobileNumber": "मोबाइल नंबर",
+      "currentCity": "वर्तमान शहर",
+      "workStatus": "कार्य स्थिति",
+      "experienced": "अनुभवी",
+      "fresher": "फ्रेशर",
+      "continue": "जारी रखें",
+      "uploadResume": "रिज्यूमे अपलोड करें",
+      "uploadResumeDescription": "अपनी प्रोफ़ाइल ऑटो-फिल करने के लिए अपना रिज्यूमे अपलोड करें",
+      "parsing": "आपका रिज्यूमे पार्स हो रहा है...",
+      "finish": "समाप्त करें और डैशबोर्ड पर जाएं"
+    },
+    "recruiter": {
+      "title": "कंपनी प्रोफ़ाइल सेटअप",
+      "subtitle": "हमें अपनी कंपनी के बारे में बताएं",
+      "companyName": "कंपनी का नाम",
+      "companyWebsite": "कंपनी वेबसाइट",
+      "companySize": "कंपनी का आकार",
+      "industry": "उद्योग",
+      "companyLocation": "कंपनी का स्थान",
+      "about": "कंपनी के बारे में",
+      "contactName": "संपर्क व्यक्ति का नाम",
+      "contactEmail": "संपर्क ईमेल",
+      "contactPhone": "संपर्क फोन",
+      "uploadLogo": "कंपनी लोगो अपलोड करें",
+      "completeSetup": "सेटअप पूरा करें"
+    }
+  },
+  "validation": {
+    "required": "यह फ़ील्ड आवश्यक है",
+    "emailInvalid": "कृपया एक वैध ईमेल पता दर्ज करें",
+    "passwordTooShort": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए",
+    "passwordTooLong": "पासवर्ड बहुत लंबा है",
+    "nameTooLong": "नाम बहुत लंबा है",
+    "invalidPhoneNumber": "कृपया एक वैध फोन नंबर दर्ज करें"
+  },
+  "notifications": {
+    "jobPostedSuccess": "नौकरी सफलतापूर्वक पोस्ट की गई!",
+    "jobUpdatedSuccess": "नौकरी सफलतापूर्वक अपडेट की गई!",
+    "jobDeletedSuccess": "नौकरी सफलतापूर्वक हटाई गई!",
+    "applicationSuccess": "आवेदन सफलतापूर्वक जमा किया गया!",
+    "applicationWithdrawn": "आवेदन वापस लिया गया",
+    "profileUpdatedSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई!",
+    "emailSentSuccess": "ईमेल सफलतापूर्वक भेजा गया!",
+    "errorOccurred": "एक त्रुटि हुई। कृपया पुनः प्रयास करें।",
+    "savedJob": "नौकरी सहेजी गई!",
+    "unsavedJob": "नौकरी सहेजी गई सूची से हटा दी गई"
+  },
+  "language": {
+    "english": "English",
+    "hindi": "हिंदी"
+  }
+}

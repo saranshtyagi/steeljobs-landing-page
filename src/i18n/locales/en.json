@@ -1,0 +1,529 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "applied": "Applied",
+    "close": "Close",
+    "open": "Open",
+    "active": "Active",
+    "closed": "Closed",
+    "viewAll": "View all",
+    "noResults": "No results found",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "signOut": "Sign Out"
+  },
+  "hero": {
+    "badge": "Trusted by 500+ Steel, Power & Mining companies",
+    "title": "Build the Workforce That Powers",
+    "titleHighlight": "Industry",
+    "subtitle": "The specialized job portal for Steel, Power, and Mining industries. Connect with skilled professionals and top employers in heavy industries.",
+    "createAccount": "Create Account",
+    "goToDashboard": "Go to Dashboard",
+    "exploreJobs": "Explore Jobs",
+    "stats": {
+      "jobs": "Industry Jobs",
+      "professionals": "Professionals",
+      "companies": "Companies",
+      "placementRate": "Placement Rate"
+    },
+    "floatingCard": {
+      "newHire": "New Hire",
+      "plantManager": "Plant Manager",
+      "applicationSent": "Application Sent",
+      "tataSteelLtd": "Tata Steel Ltd."
+    }
+  },
+  "features": {
+    "sectionLabel": "Features",
+    "title": "Built for Heavy Industries",
+    "subtitle": "Powerful tools designed specifically for Steel, Power, and Mining recruitment and job search.",
+    "industrySearch": {
+      "title": "Industry-Specific Search",
+      "description": "Filter candidates by technical skills, certifications, plant experience, and more with lightning-fast results."
+    },
+    "secureAuth": {
+      "title": "Secure Authentication",
+      "description": "Enterprise-grade security with encrypted data and secure login for all users."
+    },
+    "fastPerformance": {
+      "title": "Blazing Fast Performance",
+      "description": "Optimized architecture handles thousands of industrial job listings with sub-second response times."
+    },
+    "smartMatching": {
+      "title": "Smart Matching",
+      "description": "AI-powered recommendations connect skilled professionals with the right industrial opportunities."
+    },
+    "resumeParsing": {
+      "title": "Resume Parsing",
+      "description": "Automatically extract certifications, safety training, and technical skills from resumes."
+    },
+    "oneClickApply": {
+      "title": "One-Click Apply",
+      "description": "Streamlined application process lets professionals apply in seconds, not minutes."
+    },
+    "filterTitle": "Powerful Search Filters",
+    "filterSubtitle": "Find exactly what you're looking for with our comprehensive filtering system",
+    "filters": {
+      "skills": "Skills",
+      "skillsExample": "Welding, PLC, Metallurgy",
+      "location": "Location",
+      "locationExample": "Jamshedpur, Bokaro, Rourkela",
+      "salary": "Salary Range",
+      "salaryExample": "₹8L - ₹25L",
+      "education": "Education",
+      "educationExample": "B.Tech, Diploma, ITI",
+      "experience": "Experience",
+      "experienceExample": "5-10 years, Senior",
+      "certifications": "Certifications",
+      "certificationsExample": "Safety, ISO, Six Sigma"
+    }
+  },
+  "howItWorks": {
+    "sectionLabel": "How It Works",
+    "title": "Simple steps to success",
+    "subtitle": "Whether you're hiring skilled professionals or seeking your next role in Steel, Power, or Mining, SteelJobs.com makes it effortless.",
+    "forRecruiters": "For Recruiters",
+    "forJobSeekers": "For Job Seekers",
+    "step": "Step",
+    "recruiter": {
+      "login": {
+        "title": "Login",
+        "description": "Access your recruiter dashboard securely"
+      },
+      "searchCandidates": {
+        "title": "Search Candidates",
+        "description": "Use advanced filters to find perfect matches"
+      },
+      "postJobs": {
+        "title": "Post Jobs",
+        "description": "Create compelling job listings in minutes"
+      },
+      "manageApplicants": {
+        "title": "Manage Applicants",
+        "description": "Track and organize all applications"
+      }
+    },
+    "seeker": {
+      "createProfile": {
+        "title": "Create Profile",
+        "description": "Showcase your industrial expertise"
+      },
+      "uploadResume": {
+        "title": "Upload Resume",
+        "description": "AI extracts your skills and certifications"
+      },
+      "apply": {
+        "title": "Apply",
+        "description": "One-click applications to top positions"
+      },
+      "getHired": {
+        "title": "Get Hired",
+        "description": "Join leading industry employers"
+      }
+    }
+  },
+  "whyChoose": {
+    "sectionLabel": "Why SteelJobs",
+    "title": "The Industrial Hiring Advantage",
+    "subtitle": "Built specifically for heavy industries with the expertise and features that matter most to Steel, Power, and Mining professionals.",
+    "industryExpertise": {
+      "title": "Industry Expertise",
+      "description": "Purpose-built for Steel, Power, and Mining sectors with specialized filters for technical roles and certifications.",
+      "points": ["Industry-specific job categories", "Technical skill matching", "Certification verification"]
+    },
+    "modernUI": {
+      "title": "Modern UI",
+      "description": "A clean, intuitive interface that makes navigation effortless for both field professionals and HR teams.",
+      "points": ["Clean, minimal design", "Responsive on all devices", "Accessibility-first"]
+    },
+    "smoothExperience": {
+      "title": "Smooth Experience",
+      "description": "Lightning-fast performance with no lag, no waiting, and no frustration. Just seamless workflows.",
+      "points": ["Sub-second search", "Instant updates", "Real-time notifications"]
+    },
+    "secureReliable": {
+      "title": "Secure & Reliable",
+      "description": "Enterprise-grade security trusted by leading industrial companies across India.",
+      "points": ["End-to-end encryption", "Data compliance", "99.9% uptime SLA"]
+    }
+  },
+  "cta": {
+    "badge": "Trusted by leading Steel, Power & Mining companies",
+    "title": "Ready to transform your industrial hiring?",
+    "subtitle": "Partner with us to find the skilled professionals that power your operations. Connect with our team today.",
+    "contactSales": "Contact Sales"
+  },
+  "footer": {
+    "description": "India's specialized job portal for Steel, Power, and Mining industries. Connecting skilled professionals with top employers.",
+    "company": "Company",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "press": "Press",
+    "blog": "Blog",
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "enterprise": "Enterprise",
+    "api": "API",
+    "resources": "Resources",
+    "helpCenter": "Help Center",
+    "documentation": "Documentation",
+    "webinars": "Webinars",
+    "community": "Community",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "gdpr": "GDPR",
+    "copyright": "© {{year}} SteelJobs.com. All rights reserved.",
+    "india": "India"
+  },
+  "auth": {
+    "createAccount": "Create Your Account",
+    "chooseRole": "Choose how you want to use SteelJobs",
+    "imRecruiter": "I'm a Recruiter",
+    "recruiterDescription": "Post jobs, search candidates, and manage applications",
+    "imJobSeeker": "I'm a Job Seeker",
+    "jobSeekerDescription": "Create your profile, upload resume, and apply to jobs",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "createRecruiterAccount": "Create Recruiter Account",
+    "createCandidateAccount": "Create Candidate Account",
+    "enterDetails": "Enter your details to get started",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "creatingAccount": "Creating account...",
+    "signingIn": "Signing in...",
+    "welcomeBack": "Welcome Back",
+    "signInToAccount": "Sign in to your SteelJobs account",
+    "dontHaveAccount": "Don't have an account?",
+    "createOne": "Create one",
+    "whereTalentMeets": "Where Talent Meets Opportunity",
+    "joinThousands": "Join thousands of recruiters and job seekers connecting through our modern platform.",
+    "invalidCredentials": "Invalid email or password",
+    "emailAlreadyRegistered": "This email is already registered. Please sign in instead.",
+    "signedInSuccessfully": "Signed in successfully!",
+    "accountCreatedSuccessfully": "Account created successfully!",
+    "nameRequired": "Name is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters"
+  },
+  "recruiter": {
+    "dashboard": {
+      "welcomeBack": "Welcome back, {{name}}!",
+      "manageJobsAndCandidates": "Manage your job postings and candidates",
+      "postNewJob": "Post New Job",
+      "overview": "Overview",
+      "jobs": "Jobs",
+      "candidates": "Candidates",
+      "analytics": "Analytics",
+      "company": "Company",
+      "emails": "Emails",
+      "recentJobs": "Recent Jobs",
+      "viewAll": "View all",
+      "noJobsPosted": "No jobs posted yet",
+      "postFirstJob": "Post Your First Job",
+      "applicants": "applicants",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "stats": {
+      "activeJobs": "Active Jobs",
+      "totalApplications": "Total Applications",
+      "shortlisted": "Shortlisted",
+      "hired": "Hired",
+      "closedJobs": "Closed Jobs"
+    },
+    "analytics": {
+      "title": "Recruitment Analytics",
+      "subtitle": "Track your hiring performance and pipeline metrics",
+      "jobsOverview": "Jobs Overview",
+      "totalJobs": "Total Jobs",
+      "activeJobs": "Active",
+      "closedJobs": "Closed",
+      "applicationsPipeline": "Applications Pipeline",
+      "applied": "Applied",
+      "inReview": "In Review",
+      "shortlisted": "Shortlisted",
+      "interview": "Interview",
+      "hired": "Hired",
+      "rejected": "Rejected",
+      "applicationsByJob": "Applications by Job",
+      "applicationsBreakdown": "Applications breakdown per job posting",
+      "applications": "applications"
+    },
+    "jobPosting": {
+      "postNewJob": "Post New Job",
+      "editJob": "Edit Job",
+      "jobTitle": "Job Title",
+      "jobTitlePlaceholder": "e.g., Plant Manager, Safety Officer",
+      "companyName": "Company Name",
+      "location": "Location",
+      "locationPlaceholder": "e.g., Jamshedpur, Jharkhand",
+      "employmentType": "Employment Type",
+      "fullTime": "Full Time",
+      "partTime": "Part Time",
+      "contract": "Contract",
+      "internship": "Internship",
+      "remote": "Remote",
+      "workMode": "Work Mode",
+      "onsite": "Onsite",
+      "hybrid": "Hybrid",
+      "salaryRange": "Salary Range (₹ LPA)",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "experienceRange": "Experience Range (Years)",
+      "educationRequired": "Education Required",
+      "highSchool": "High School",
+      "associate": "Associate",
+      "bachelor": "Bachelor's",
+      "master": "Master's",
+      "doctorate": "Doctorate",
+      "other": "Other",
+      "skillsRequired": "Skills Required",
+      "skillsPlaceholder": "Add skill and press Enter",
+      "roleCategory": "Role Category",
+      "roleCategoryPlaceholder": "e.g., Production, Maintenance, Safety",
+      "jobDescription": "Job Description",
+      "jobDescriptionPlaceholder": "Describe the role, responsibilities, and requirements...",
+      "numberOfPositions": "Number of Positions",
+      "applicationDeadline": "Application Deadline",
+      "postJob": "Post Job",
+      "updateJob": "Update Job",
+      "posting": "Posting...",
+      "updating": "Updating..."
+    },
+    "candidateSearch": {
+      "title": "Search Candidates",
+      "subtitle": "Find skilled professionals for your open positions",
+      "searchPlaceholder": "Search by name, skills, location...",
+      "filters": "Filters",
+      "clearFilters": "Clear filters",
+      "experience": "Experience",
+      "allExperience": "All experience levels",
+      "fresher": "Fresher (0-1 years)",
+      "junior": "Junior (1-3 years)",
+      "mid": "Mid-level (3-5 years)",
+      "senior": "Senior (5-10 years)",
+      "expert": "Expert (10+ years)",
+      "education": "Education",
+      "allEducation": "All education levels",
+      "location": "Location",
+      "locationPlaceholder": "Filter by location",
+      "skills": "Skills",
+      "skillsPlaceholder": "Filter by skills",
+      "noCandidatesFound": "No candidates found",
+      "tryAdjustingFilters": "Try adjusting your search filters",
+      "viewProfile": "View Profile",
+      "shortlist": "Shortlist",
+      "shortlisted": "Shortlisted",
+      "sendEmail": "Send Email"
+    },
+    "company": {
+      "about": "About",
+      "companySize": "Company Size",
+      "contactPerson": "Contact Person",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "visitWebsite": "Visit Website",
+      "editProfile": "Edit Profile"
+    },
+    "emails": {
+      "title": "Email History",
+      "subtitle": "Track all emails sent to candidates",
+      "noEmails": "No emails sent yet",
+      "sentTo": "Sent to",
+      "recipients": "recipients",
+      "subject": "Subject",
+      "sentOn": "Sent on"
+    }
+  },
+  "candidate": {
+    "dashboard": {
+      "overview": "Overview",
+      "findJobs": "Find Jobs",
+      "applications": "Applications",
+      "savedJobs": "Saved Jobs",
+      "profile": "Profile",
+      "recommendedForYou": "Recommended for You",
+      "jobsMatchingProfile": "Jobs matching your profile and preferences",
+      "recentApplications": "Recent Applications",
+      "trackApplicationStatus": "Track your application status",
+      "browseAllJobs": "Browse All Jobs",
+      "exploreOpportunities": "Explore job opportunities from top companies",
+      "browseJobs": "Browse Jobs",
+      "myApplications": "My Applications",
+      "trackAndManage": "Track and manage all your job applications",
+      "savedJobsTitle": "Saved Jobs",
+      "savedForLater": "Jobs you've saved for later",
+      "viewAndEdit": "View & Edit",
+      "activityInsights": "Activity Insights",
+      "activityComingSoon": "Activity insights coming soon..."
+    },
+    "stats": {
+      "totalApplications": "Total Applications",
+      "interviewScheduled": "Interview Scheduled",
+      "profileViews": "Profile Views",
+      "savedJobs": "Saved Jobs"
+    },
+    "profile": {
+      "completion": "Profile Completion",
+      "editBasicInfo": "Edit Basic Info",
+      "addMissingDetails": "Add missing details",
+      "preferences": "Career Preferences",
+      "education": "Education",
+      "skills": "Key Skills",
+      "languages": "Languages",
+      "internships": "Internships",
+      "projects": "Projects",
+      "summary": "Profile Summary",
+      "accomplishments": "Accomplishments",
+      "exams": "Competitive Exams",
+      "employment": "Employment",
+      "achievements": "Academic Achievements",
+      "resume": "Resume"
+    },
+    "applications": {
+      "applied": "Applied",
+      "inReview": "In Review",
+      "shortlisted": "Shortlisted",
+      "interview": "Interview",
+      "hired": "Hired",
+      "rejected": "Rejected",
+      "withdraw": "Withdraw",
+      "noApplications": "No applications yet",
+      "startApplying": "Start applying to jobs that match your profile"
+    },
+    "jobs": {
+      "applyNow": "Apply Now",
+      "quickApply": "Quick Apply",
+      "saveJob": "Save Job",
+      "unsaveJob": "Unsave Job",
+      "alreadyApplied": "Already Applied",
+      "jobDetails": "Job Details",
+      "description": "Description",
+      "requirements": "Requirements",
+      "skills": "Required Skills",
+      "salary": "Salary",
+      "experience": "Experience",
+      "location": "Location",
+      "postedOn": "Posted on",
+      "deadline": "Application Deadline",
+      "openings": "Openings",
+      "employmentType": "Employment Type",
+      "workMode": "Work Mode",
+      "noJobs": "No jobs found",
+      "tryDifferentFilters": "Try different search filters"
+    }
+  },
+  "jobs": {
+    "pageTitle": "Browse Jobs",
+    "searchPlaceholder": "Search jobs by title, company, skills...",
+    "filters": {
+      "location": "Location",
+      "experience": "Experience",
+      "salary": "Salary",
+      "employmentType": "Employment Type",
+      "education": "Education",
+      "postedDate": "Posted Date",
+      "workMode": "Work Mode"
+    },
+    "sort": {
+      "relevance": "Relevance",
+      "newest": "Newest",
+      "salaryHighToLow": "Salary: High to Low",
+      "salaryLowToHigh": "Salary: Low to High"
+    },
+    "perPage": "per page",
+    "showingResults": "Showing {{from}}-{{to}} of {{total}} jobs"
+  },
+  "onboarding": {
+    "candidate": {
+      "step1Title": "Basic Details",
+      "step2Title": "Education",
+      "step3Title": "Final Step",
+      "fullName": "Full Name",
+      "mobileNumber": "Mobile Number",
+      "currentCity": "Current City",
+      "workStatus": "Work Status",
+      "experienced": "Experienced",
+      "fresher": "Fresher",
+      "continue": "Continue",
+      "uploadResume": "Upload Resume",
+      "uploadResumeDescription": "Upload your resume to auto-fill your profile",
+      "parsing": "Parsing your resume...",
+      "finish": "Finish & Go to Dashboard"
+    },
+    "recruiter": {
+      "title": "Company Profile Setup",
+      "subtitle": "Tell us about your company",
+      "companyName": "Company Name",
+      "companyWebsite": "Company Website",
+      "companySize": "Company Size",
+      "industry": "Industry",
+      "companyLocation": "Company Location",
+      "about": "About Company",
+      "contactName": "Contact Person Name",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "uploadLogo": "Upload Company Logo",
+      "completeSetup": "Complete Setup"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordTooLong": "Password is too long",
+    "nameTooLong": "Name is too long",
+    "invalidPhoneNumber": "Please enter a valid phone number"
+  },
+  "notifications": {
+    "jobPostedSuccess": "Job posted successfully!",
+    "jobUpdatedSuccess": "Job updated successfully!",
+    "jobDeletedSuccess": "Job deleted successfully!",
+    "applicationSuccess": "Application submitted successfully!",
+    "applicationWithdrawn": "Application withdrawn",
+    "profileUpdatedSuccess": "Profile updated successfully!",
+    "emailSentSuccess": "Email sent successfully!",
+    "errorOccurred": "An error occurred. Please try again.",
+    "savedJob": "Job saved!",
+    "unsavedJob": "Job removed from saved list"
+  },
+  "language": {
+    "english": "English",
+    "hindi": "हिंदी"
+  }
+}
