@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateProjects, CandidateProject } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 const ProjectsSection = () => {
+  const { t } = useTranslation();
   const { projects, isLoading, addProject, updateProject, deleteProject } = useCandidateProjects();
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<CandidateProject | null>(null);
@@ -79,7 +81,7 @@ const ProjectsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this project?")) {
+    if (confirm(t("candidate.profile.deleteProject"))) {
       await deleteProject.mutateAsync(id);
     }
   };
@@ -89,11 +91,11 @@ const ProjectsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FolderGit2 className="w-5 h-5 text-primary" />
-          Projects
+          {t("candidate.profile.projects")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -130,7 +132,7 @@ const ProjectsSection = () => {
                     {proj.live_url && (
                       <a href={proj.live_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                         <ExternalLink className="w-3 h-3" />
-                        Live Demo
+                        {t("candidate.profile.liveDemo")}
                       </a>
                     )}
                   </div>
@@ -147,43 +149,43 @@ const ProjectsSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add your projects to showcase your work</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addProjectsPrompt")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Project" : "Add Project"}</DialogTitle>
+            <DialogTitle>{editingItem ? t("candidate.profile.editProject") : t("candidate.profile.addProject")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Project Title*</Label>
+              <Label>{t("candidate.profile.projectTitle")}*</Label>
               <Input
-                placeholder="Project name"
+                placeholder={t("candidate.profile.projectTitlePlaceholder")}
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t("candidate.profile.description")}</Label>
               <Textarea
-                placeholder="Describe your project"
+                placeholder={t("candidate.profile.describeProject")}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Technologies/Skills Used</Label>
+              <Label>{t("candidate.profile.technologiesSkills")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add skill"
+                  placeholder={t("candidate.profile.addSkill")}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill(skillInput))}
                 />
-                <Button type="button" onClick={() => addSkill(skillInput)}>Add</Button>
+                <Button type="button" onClick={() => addSkill(skillInput)}>{t("common.add")}</Button>
               </div>
               {formData.skills_used.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -196,7 +198,7 @@ const ProjectsSection = () => {
               )}
             </div>
             <div className="space-y-2">
-              <Label>GitHub URL</Label>
+              <Label>{t("candidate.profile.githubUrl")}</Label>
               <Input
                 placeholder="https://github.com/..."
                 value={formData.github_url}
@@ -204,7 +206,7 @@ const ProjectsSection = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Live Demo URL</Label>
+              <Label>{t("candidate.profile.liveDemoUrl")}</Label>
               <Input
                 placeholder="https://..."
                 value={formData.live_url}
@@ -213,12 +215,12 @@ const ProjectsSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
             <Button 
               onClick={handleSave} 
               disabled={addProject.isPending || updateProject.isPending || !formData.title}
             >
-              {(addProject.isPending || updateProject.isPending) ? "Saving..." : "Save"}
+              {(addProject.isPending || updateProject.isPending) ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>

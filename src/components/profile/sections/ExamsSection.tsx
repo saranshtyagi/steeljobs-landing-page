@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateExams } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Plus, BookOpen, Trash2 } from "lucide-react";
@@ -12,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 const ExamsSection = () => {
+  const { t } = useTranslation();
   const { exams, isLoading, addExam, deleteExam } = useCandidateExams();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
@@ -34,7 +36,7 @@ const ExamsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this exam?")) {
+    if (confirm(t("candidate.profile.deleteExam"))) {
       await deleteExam.mutateAsync(id);
     }
   };
@@ -44,11 +46,11 @@ const ExamsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
-          Competitive Exams
+          {t("candidate.profile.exams")}
         </h2>
         <Button variant="ghost" size="sm" onClick={() => setIsAdding(true)}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -61,9 +63,9 @@ const ExamsSection = () => {
               <div>
                 <span className="font-medium text-foreground">{exam.exam_name}</span>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                  {exam.score && <span>Score: {exam.score}</span>}
-                  {exam.rank && <span>Rank: {exam.rank}</span>}
-                  {exam.year && <span>Year: {exam.year}</span>}
+                  {exam.score && <span>{t("candidate.profile.score")}: {exam.score}</span>}
+                  {exam.rank && <span>{t("candidate.profile.rank")}: {exam.rank}</span>}
+                  {exam.year && <span>{t("candidate.profile.year")}: {exam.year}</span>}
                 </div>
               </div>
               <Button 
@@ -78,44 +80,44 @@ const ExamsSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add competitive exams you've appeared for</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addExamsPrompt")}</p>
       )}
 
       {/* Add Dialog */}
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Competitive Exam</DialogTitle>
+            <DialogTitle>{t("candidate.profile.addCompetitiveExam")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Exam Name*</Label>
+              <Label>{t("candidate.profile.examName")}*</Label>
               <Input
-                placeholder="e.g., GATE, CAT, GRE"
+                placeholder={t("candidate.profile.examNamePlaceholder")}
                 value={formData.exam_name}
                 onChange={(e) => setFormData(prev => ({ ...prev, exam_name: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Score</Label>
+                <Label>{t("candidate.profile.score")}</Label>
                 <Input
-                  placeholder="e.g., 650"
+                  placeholder={t("candidate.profile.scorePlaceholder")}
                   value={formData.score}
                   onChange={(e) => setFormData(prev => ({ ...prev, score: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Rank</Label>
+                <Label>{t("candidate.profile.rank")}</Label>
                 <Input
-                  placeholder="e.g., AIR 1234"
+                  placeholder={t("candidate.profile.rankPlaceholder")}
                   value={formData.rank}
                   onChange={(e) => setFormData(prev => ({ ...prev, rank: e.target.value }))}
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Year</Label>
+              <Label>{t("candidate.profile.year")}</Label>
               <Input
                 type="number"
                 placeholder="2024"
@@ -125,9 +127,9 @@ const ExamsSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={addExam.isPending || !formData.exam_name.trim()}>
-              {addExam.isPending ? "Adding..." : "Add"}
+              {addExam.isPending ? t("candidate.profile.adding") : t("common.add")}
             </Button>
           </div>
         </DialogContent>

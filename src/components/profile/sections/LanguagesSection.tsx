@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateLanguages, CandidateLanguage } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Proficient", "Expert", "Native"];
 
 const LanguagesSection = () => {
+  const { t } = useTranslation();
   const { languages, isLoading, addLanguage, deleteLanguage } = useCandidateLanguages();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,7 +49,7 @@ const LanguagesSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Remove this language?")) {
+    if (confirm(t("candidate.profile.removeLanguageConfirm"))) {
       await deleteLanguage.mutateAsync(id);
     }
   };
@@ -57,11 +59,11 @@ const LanguagesSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Languages className="w-5 h-5 text-primary" />
-          Languages
+          {t("candidate.profile.languages")}
         </h2>
         <Button variant="ghost" size="sm" onClick={() => setIsAdding(true)}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -77,9 +79,9 @@ const LanguagesSection = () => {
                   <span className="text-sm text-muted-foreground ml-2">• {lang.proficiency}</span>
                 )}
                 <div className="flex gap-2 mt-1">
-                  {lang.can_read && <Badge variant="outline" className="text-xs">Read</Badge>}
-                  {lang.can_write && <Badge variant="outline" className="text-xs">Write</Badge>}
-                  {lang.can_speak && <Badge variant="outline" className="text-xs">Speak</Badge>}
+                  {lang.can_read && <Badge variant="outline" className="text-xs">{t("candidate.profile.read")}</Badge>}
+                  {lang.can_write && <Badge variant="outline" className="text-xs">{t("candidate.profile.write")}</Badge>}
+                  {lang.can_speak && <Badge variant="outline" className="text-xs">{t("candidate.profile.speak")}</Badge>}
                 </div>
               </div>
               <Button 
@@ -94,29 +96,29 @@ const LanguagesSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add languages you know</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addLanguagesPrompt")}</p>
       )}
 
       {/* Add Dialog */}
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Language</DialogTitle>
+            <DialogTitle>{t("candidate.profile.addLanguage")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Language*</Label>
+              <Label>{t("candidate.profile.language")}*</Label>
               <Input
-                placeholder="e.g., English, Hindi"
+                placeholder={t("candidate.profile.languagePlaceholder")}
                 value={formData.language}
                 onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Proficiency</Label>
+              <Label>{t("candidate.profile.proficiency")}</Label>
               <Select value={formData.proficiency} onValueChange={(v) => setFormData(prev => ({ ...prev, proficiency: v }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select level" />
+                  <SelectValue placeholder={t("candidate.profile.selectLevel")} />
                 </SelectTrigger>
                 <SelectContent>
                   {PROFICIENCY_LEVELS.map((level) => (
@@ -131,28 +133,28 @@ const LanguagesSection = () => {
                   checked={formData.can_read}
                   onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_read: !!c }))}
                 />
-                <span className="text-sm">Can Read</span>
+                <span className="text-sm">{t("candidate.profile.canRead")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_write}
                   onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_write: !!c }))}
                 />
-                <span className="text-sm">Can Write</span>
+                <span className="text-sm">{t("candidate.profile.canWrite")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_speak}
                   onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_speak: !!c }))}
                 />
-                <span className="text-sm">Can Speak</span>
+                <span className="text-sm">{t("candidate.profile.canSpeak")}</span>
               </label>
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={addLanguage.isPending || !formData.language.trim()}>
-              {addLanguage.isPending ? "Adding..." : "Add"}
+              {addLanguage.isPending ? t("candidate.profile.adding") : t("common.add")}
             </Button>
           </div>
         </DialogContent>

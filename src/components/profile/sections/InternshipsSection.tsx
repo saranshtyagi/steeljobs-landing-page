@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateInternships, CandidateInternship } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 
 const InternshipsSection = () => {
+  const { t } = useTranslation();
   const { internships, isLoading, addInternship, updateInternship, deleteInternship } = useCandidateInternships();
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<CandidateInternship | null>(null);
@@ -89,7 +91,7 @@ const InternshipsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this internship?")) {
+    if (confirm(t("candidate.profile.deleteInternship"))) {
       await deleteInternship.mutateAsync(id);
     }
   };
@@ -108,11 +110,11 @@ const InternshipsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Building2 className="w-5 h-5 text-primary" />
-          Internships
+          {t("candidate.profile.internships")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -139,7 +141,7 @@ const InternshipsSection = () => {
                   <p className="text-sm text-muted-foreground">{intern.company_name}</p>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                     <Calendar className="w-3 h-3" />
-                    {formatDate(intern.start_date)} - {intern.is_current ? "Present" : formatDate(intern.end_date)}
+                    {formatDate(intern.start_date)} - {intern.is_current ? t("candidate.profile.present") : formatDate(intern.end_date)}
                   </div>
                   {intern.description && (
                     <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{intern.description}</p>
@@ -157,35 +159,35 @@ const InternshipsSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add your internship experiences</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addInternshipsPrompt")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Internship" : "Add Internship"}</DialogTitle>
+            <DialogTitle>{editingItem ? t("candidate.profile.editInternship") : t("candidate.profile.addInternship")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Company Name*</Label>
+              <Label>{t("candidate.profile.companyName")}*</Label>
               <Input
-                placeholder="Company name"
+                placeholder={t("candidate.profile.companyNamePlaceholder")}
                 value={formData.company_name}
                 onChange={(e) => setFormData(prev => ({ ...prev, company_name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Role*</Label>
+              <Label>{t("candidate.profile.role")}*</Label>
               <Input
-                placeholder="Your role"
+                placeholder={t("candidate.profile.rolePlaceholder")}
                 value={formData.role}
                 onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Start Date</Label>
+                <Label>{t("candidate.profile.startDate")}</Label>
                 <Input
                   type="date"
                   value={formData.start_date}
@@ -193,7 +195,7 @@ const InternshipsSection = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>End Date</Label>
+                <Label>{t("candidate.profile.endDate")}</Label>
                 <Input
                   type="date"
                   value={formData.end_date}
@@ -207,27 +209,27 @@ const InternshipsSection = () => {
                 checked={formData.is_current}
                 onCheckedChange={(c) => setFormData(prev => ({ ...prev, is_current: !!c }))}
               />
-              <span className="text-sm">Currently working here</span>
+              <span className="text-sm">{t("candidate.profile.currentlyWorkingHere")}</span>
             </label>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t("candidate.profile.description")}</Label>
               <Textarea
-                placeholder="What did you work on?"
+                placeholder={t("candidate.profile.whatDidYouWorkOn")}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Skills Learned</Label>
+              <Label>{t("candidate.profile.skillsLearned")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add skill"
+                  placeholder={t("candidate.profile.addSkill")}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkillLearned(skillInput))}
                 />
-                <Button type="button" onClick={() => addSkillLearned(skillInput)}>Add</Button>
+                <Button type="button" onClick={() => addSkillLearned(skillInput)}>{t("common.add")}</Button>
               </div>
               {formData.skills_learned.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -241,12 +243,12 @@ const InternshipsSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
             <Button 
               onClick={handleSave} 
               disabled={addInternship.isPending || updateInternship.isPending || !formData.company_name || !formData.role}
             >
-              {(addInternship.isPending || updateInternship.isPending) ? "Saving..." : "Save"}
+              {(addInternship.isPending || updateInternship.isPending) ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>

@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import { Button } from "@/components/ui/button";
-import { Edit2, Upload, FileText, RefreshCw, Calendar } from "lucide-react";
+import { Upload, FileText, RefreshCw, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
 const ResumeSection = () => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useCandidateProfile();
   const [isUploading, setIsUploading] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
@@ -21,20 +23,20 @@ const ResumeSection = () => {
       reader.onload = async (event) => {
         const resumeUrl = event.target?.result as string;
         await updateProfile.mutateAsync({ resume_url: resumeUrl });
-        toast.success("Resume uploaded successfully");
+        toast.success(t("common.success"));
         setIsUploading(false);
       };
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Resume upload error:", error);
-      toast.error("Failed to upload resume");
+      toast.error(t("common.error"));
       setIsUploading(false);
     }
   };
 
   const handleReParse = async () => {
     if (!profile?.resume_url) {
-      toast.error("No resume uploaded");
+      toast.error(t("common.error"));
       return;
     }
 
@@ -51,13 +53,13 @@ const ResumeSection = () => {
       });
 
       if (response.ok) {
-        toast.success("Resume re-parsed. Check your profile for updates.");
+        toast.success(t("common.success"));
       } else {
-        toast.error("Failed to parse resume");
+        toast.error(t("common.error"));
       }
     } catch (error) {
       console.error("Parse error:", error);
-      toast.error("Failed to parse resume");
+      toast.error(t("common.error"));
     } finally {
       setIsParsing(false);
     }
@@ -68,7 +70,7 @@ const ResumeSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" />
-          Resume
+          {t("candidate.profile.resume")}
         </h2>
       </div>
 
@@ -79,10 +81,10 @@ const ResumeSection = () => {
               <FileText className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-foreground">Resume Uploaded</p>
+              <p className="font-medium text-foreground">{t("candidate.profile.resumeUploaded")}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                Last updated: {profile.updated_at ? format(new Date(profile.updated_at), "dd MMM yyyy") : "N/A"}
+                {t("candidate.profile.lastUpdated")}: {profile.updated_at ? format(new Date(profile.updated_at), "dd MMM yyyy") : "N/A"}
               </p>
             </div>
           </div>
@@ -90,7 +92,7 @@ const ResumeSection = () => {
             <label className="flex-1">
               <Button variant="outline" className="w-full" disabled={isUploading}>
                 <Upload className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Update Resume"}
+                {isUploading ? t("candidate.profile.uploading") : t("candidate.profile.updateResume")}
               </Button>
               <input 
                 type="file" 
@@ -102,7 +104,7 @@ const ResumeSection = () => {
             </label>
             <Button variant="outline" onClick={handleReParse} disabled={isParsing}>
               <RefreshCw className={`w-4 h-4 mr-2 ${isParsing ? "animate-spin" : ""}`} />
-              {isParsing ? "Parsing..." : "Re-parse"}
+              {isParsing ? t("candidate.profile.parsing") : t("candidate.profile.reParse")}
             </Button>
           </div>
         </div>
@@ -111,11 +113,11 @@ const ResumeSection = () => {
           <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
             <Upload className="w-8 h-8 text-muted-foreground" />
           </div>
-          <p className="text-muted-foreground mb-4">Upload your resume to auto-fill profile details</p>
+          <p className="text-muted-foreground mb-4">{t("candidate.profile.uploadResumePrompt")}</p>
           <label>
             <Button disabled={isUploading}>
               <Upload className="w-4 h-4 mr-2" />
-              {isUploading ? "Uploading..." : "Upload Resume"}
+              {isUploading ? t("candidate.profile.uploading") : t("candidate.profile.uploadResume")}
             </Button>
             <input 
               type="file" 

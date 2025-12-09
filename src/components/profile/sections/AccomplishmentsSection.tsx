@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateAccomplishments, CandidateAccomplishment } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,13 +22,8 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 
-const ACCOMPLISHMENT_TYPES = [
-  { value: "certification", label: "Certification" },
-  { value: "award", label: "Award" },
-  { value: "leadership", label: "Clubs & Leadership" },
-];
-
 const AccomplishmentsSection = () => {
+  const { t } = useTranslation();
   const { accomplishments, isLoading, addAccomplishment, deleteAccomplishment } = useCandidateAccomplishments();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,6 +35,12 @@ const AccomplishmentsSection = () => {
     expiry_date: "",
     credential_url: "",
   });
+
+  const ACCOMPLISHMENT_TYPES = [
+    { value: "certification", label: t("candidate.profile.certification") },
+    { value: "award", label: t("candidate.profile.award") },
+    { value: "leadership", label: t("candidate.profile.leadership") },
+  ];
 
   const handleSave = async () => {
     if (!formData.title.trim()) return;
@@ -56,7 +58,7 @@ const AccomplishmentsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this accomplishment?")) {
+    if (confirm(t("candidate.profile.deleteAccomplishment"))) {
       await deleteAccomplishment.mutateAsync(id);
     }
   };
@@ -90,7 +92,7 @@ const AccomplishmentsSection = () => {
             {item.credential_url && (
               <a href={item.credential_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 mt-1">
                 <ExternalLink className="w-3 h-3" />
-                View Credential
+                {t("candidate.profile.viewCredential")}
               </a>
             )}
           </div>
@@ -112,11 +114,11 @@ const AccomplishmentsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Award className="w-5 h-5 text-primary" />
-          Accomplishments
+          {t("candidate.profile.accomplishments")}
         </h2>
         <Button variant="ghost" size="sm" onClick={() => setIsAdding(true)}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -124,23 +126,23 @@ const AccomplishmentsSection = () => {
         <div className="animate-pulse h-20 bg-muted rounded-lg" />
       ) : accomplishments.length > 0 ? (
         <div className="space-y-6">
-          {certifications.length > 0 && renderItems(certifications, "Certifications")}
-          {awards.length > 0 && renderItems(awards, "Awards")}
-          {leadership.length > 0 && renderItems(leadership, "Clubs & Leadership")}
+          {certifications.length > 0 && renderItems(certifications, t("candidate.profile.certifications"))}
+          {awards.length > 0 && renderItems(awards, t("candidate.profile.awards"))}
+          {leadership.length > 0 && renderItems(leadership, t("candidate.profile.clubsLeadership"))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add certifications, awards, and leadership roles</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addAccomplishmentsPrompt")}</p>
       )}
 
       {/* Add Dialog */}
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add Accomplishment</DialogTitle>
+            <DialogTitle>{t("candidate.profile.addAccomplishment")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Type*</Label>
+              <Label>{t("candidate.profile.type")}*</Label>
               <Select value={formData.type} onValueChange={(v) => setFormData(prev => ({ ...prev, type: v }))}>
                 <SelectTrigger>
                   <SelectValue />
@@ -153,24 +155,24 @@ const AccomplishmentsSection = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Title*</Label>
+              <Label>{t("candidate.profile.title")}*</Label>
               <Input
-                placeholder="e.g., AWS Certified Developer"
+                placeholder={t("candidate.profile.titlePlaceholder")}
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Issuing Organization</Label>
+              <Label>{t("candidate.profile.issuingOrganization")}</Label>
               <Input
-                placeholder="e.g., Amazon Web Services"
+                placeholder={t("candidate.profile.issuingOrgPlaceholder")}
                 value={formData.issuing_org}
                 onChange={(e) => setFormData(prev => ({ ...prev, issuing_org: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Issue Date</Label>
+                <Label>{t("candidate.profile.issueDate")}</Label>
                 <Input
                   type="date"
                   value={formData.issue_date}
@@ -179,7 +181,7 @@ const AccomplishmentsSection = () => {
               </div>
               {formData.type === "certification" && (
                 <div className="space-y-2">
-                  <Label>Expiry Date</Label>
+                  <Label>{t("candidate.profile.expiryDate")}</Label>
                   <Input
                     type="date"
                     value={formData.expiry_date}
@@ -190,7 +192,7 @@ const AccomplishmentsSection = () => {
             </div>
             {formData.type === "certification" && (
               <div className="space-y-2">
-                <Label>Credential URL</Label>
+                <Label>{t("candidate.profile.credentialUrl")}</Label>
                 <Input
                   placeholder="https://..."
                   value={formData.credential_url}
@@ -199,9 +201,9 @@ const AccomplishmentsSection = () => {
               </div>
             )}
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t("candidate.profile.description")}</Label>
               <Textarea
-                placeholder="Brief description"
+                placeholder={t("candidate.profile.briefDescription")}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={2}
@@ -209,9 +211,9 @@ const AccomplishmentsSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={addAccomplishment.isPending || !formData.title.trim()}>
-              {addAccomplishment.isPending ? "Adding..." : "Add"}
+              {addAccomplishment.isPending ? t("candidate.profile.adding") : t("common.add")}
             </Button>
           </div>
         </DialogContent>

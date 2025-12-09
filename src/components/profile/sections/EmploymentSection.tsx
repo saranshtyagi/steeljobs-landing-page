@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateEmployment, CandidateEmployment } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 
 const EmploymentSection = () => {
+  const { t } = useTranslation();
   const { employment, isLoading, addEmployment, updateEmployment, deleteEmployment } = useCandidateEmployment();
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<CandidateEmployment | null>(null);
@@ -82,7 +84,7 @@ const EmploymentSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Delete this employment?")) {
+    if (confirm(t("candidate.profile.deleteEmployment"))) {
       await deleteEmployment.mutateAsync(id);
     }
   };
@@ -101,11 +103,11 @@ const EmploymentSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Briefcase className="w-5 h-5 text-primary" />
-          Employment
+          {t("candidate.profile.employment")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
-          Add
+          {t("common.add")}
         </Button>
       </div>
 
@@ -130,7 +132,7 @@ const EmploymentSection = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium text-foreground">{emp.designation}</h3>
-                    {emp.is_current && <Badge variant="secondary" className="text-xs">Current</Badge>}
+                    {emp.is_current && <Badge variant="secondary" className="text-xs">{t("candidate.profile.current")}</Badge>}
                   </div>
                   <p className="text-sm text-muted-foreground">{emp.company_name}</p>
                   {emp.department && (
@@ -138,7 +140,7 @@ const EmploymentSection = () => {
                   )}
                   <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                     <Calendar className="w-3 h-3" />
-                    {formatDate(emp.start_date)} - {emp.is_current ? "Present" : formatDate(emp.end_date)}
+                    {formatDate(emp.start_date)} - {emp.is_current ? t("candidate.profile.present") : formatDate(emp.end_date)}
                   </div>
                   {emp.description && (
                     <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{emp.description}</p>
@@ -149,43 +151,43 @@ const EmploymentSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">Add your work experience</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.addWorkExperience")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit Employment" : "Add Employment"}</DialogTitle>
+            <DialogTitle>{editingItem ? t("candidate.profile.editEmployment") : t("candidate.profile.addEmployment")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Company Name*</Label>
+              <Label>{t("candidate.profile.companyName")}*</Label>
               <Input
-                placeholder="Company name"
+                placeholder={t("candidate.profile.companyNamePlaceholder")}
                 value={formData.company_name}
                 onChange={(e) => setFormData(prev => ({ ...prev, company_name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Designation*</Label>
+              <Label>{t("candidate.profile.designation")}*</Label>
               <Input
-                placeholder="Your job title"
+                placeholder={t("candidate.profile.designationPlaceholder")}
                 value={formData.designation}
                 onChange={(e) => setFormData(prev => ({ ...prev, designation: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Department</Label>
+              <Label>{t("candidate.profile.department")}</Label>
               <Input
-                placeholder="e.g., Engineering"
+                placeholder={t("candidate.profile.departmentPlaceholder")}
                 value={formData.department}
                 onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Start Date</Label>
+                <Label>{t("candidate.profile.startDate")}</Label>
                 <Input
                   type="date"
                   value={formData.start_date}
@@ -193,7 +195,7 @@ const EmploymentSection = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>End Date</Label>
+                <Label>{t("candidate.profile.endDate")}</Label>
                 <Input
                   type="date"
                   value={formData.end_date}
@@ -207,21 +209,21 @@ const EmploymentSection = () => {
                 checked={formData.is_current}
                 onCheckedChange={(c) => setFormData(prev => ({ ...prev, is_current: !!c }))}
               />
-              <span className="text-sm">Currently working here</span>
+              <span className="text-sm">{t("candidate.profile.currentlyWorkingHere")}</span>
             </label>
             <div className="space-y-2">
-              <Label>Roles & Responsibilities</Label>
+              <Label>{t("candidate.profile.rolesResponsibilities")}</Label>
               <Textarea
-                placeholder="Describe your role"
+                placeholder={t("candidate.profile.describeRole")}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Key Achievements</Label>
+              <Label>{t("candidate.profile.keyAchievements")}</Label>
               <Textarea
-                placeholder="Your achievements in this role"
+                placeholder={t("candidate.profile.achievementsPlaceholder")}
                 value={formData.achievements}
                 onChange={(e) => setFormData(prev => ({ ...prev, achievements: e.target.value }))}
                 rows={2}
@@ -230,18 +232,18 @@ const EmploymentSection = () => {
             {formData.is_current && (
               <>
                 <div className="space-y-2">
-                  <Label>Current Salary (Annual)</Label>
+                  <Label>{t("candidate.profile.currentSalary")}</Label>
                   <Input
                     type="number"
-                    placeholder="e.g., 800000"
+                    placeholder={t("candidate.profile.currentSalaryPlaceholder")}
                     value={formData.current_salary}
                     onChange={(e) => setFormData(prev => ({ ...prev, current_salary: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Notice Period</Label>
+                  <Label>{t("candidate.profile.noticePeriod")}</Label>
                   <Input
-                    placeholder="e.g., 2 months"
+                    placeholder={t("candidate.profile.noticePeriodPlaceholder")}
                     value={formData.notice_period}
                     onChange={(e) => setFormData(prev => ({ ...prev, notice_period: e.target.value }))}
                   />
@@ -250,12 +252,12 @@ const EmploymentSection = () => {
             )}
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
             <Button 
               onClick={handleSave} 
               disabled={addEmployment.isPending || updateEmployment.isPending || !formData.company_name || !formData.designation}
             >
-              {(addEmployment.isPending || updateEmployment.isPending) ? "Saving..." : "Save"}
+              {(addEmployment.isPending || updateEmployment.isPending) ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ const SKILL_SUGGESTIONS = [
 ];
 
 const SkillsSection = () => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useCandidateProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [skills, setSkills] = useState<string[]>(profile?.skills || []);
@@ -54,11 +56,11 @@ const SkillsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Wrench className="w-5 h-5 text-primary" />
-          Key Skills
+          {t("candidate.profile.skills")}
         </h2>
         <Button variant="ghost" size="sm" onClick={handleOpenEdit}>
           <Edit2 className="w-4 h-4 mr-1" />
-          {profile?.skills?.length ? "Edit" : "Add"}
+          {profile?.skills?.length ? t("common.edit") : t("common.add")}
         </Button>
       </div>
 
@@ -72,7 +74,7 @@ const SkillsSection = () => {
         </div>
       ) : (
         <p className="text-muted-foreground text-sm">
-          Add your key skills to showcase your expertise
+          {t("candidate.profile.addSkillsPrompt")}
         </p>
       )}
 
@@ -80,7 +82,7 @@ const SkillsSection = () => {
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Key Skills</DialogTitle>
+            <DialogTitle>{t("candidate.profile.editKeySkills")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             {/* Current Skills */}
@@ -100,7 +102,7 @@ const SkillsSection = () => {
             {/* Input */}
             <div className="relative">
               <Input
-                placeholder="Type a skill and press Enter"
+                placeholder={t("candidate.profile.typeSkillPlaceholder")}
                 value={skillInput}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -121,7 +123,7 @@ const SkillsSection = () => {
 
             {/* Suggestions */}
             <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">Suggestions:</p>
+              <p className="text-xs text-muted-foreground">{t("candidate.profile.suggestions")}:</p>
               <div className="flex flex-wrap gap-2">
                 {(skillInput ? filteredSuggestions : SKILL_SUGGESTIONS.filter(s => !skills.includes(s)).slice(0, 8)).map((skill) => (
                   <button
@@ -138,9 +140,9 @@ const SkillsSection = () => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? "Saving..." : "Save"}
+              {updateProfile.isPending ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Job, useAllJobs } from "@/hooks/useJobs";
 import { useApplyToJob } from "@/hooks/useApplications";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
@@ -45,6 +46,7 @@ const formatEmploymentType = (type: string): string => {
 };
 
 const AllJobsList = () => {
+  const { t } = useTranslation();
   const { data: jobs, isLoading, error, refetch } = useAllJobs();
   const { profile } = useCandidateProfile();
   const applyToJob = useApplyToJob();
@@ -66,9 +68,9 @@ const AllJobsList = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Failed to load jobs</p>
+        <p className="text-destructive">{t("candidate.jobs.failedToLoad")}</p>
         <Button variant="ghost" onClick={() => refetch()} className="mt-2">
-          Try again
+          {t("candidate.jobs.tryAgain")}
         </Button>
       </div>
     );
@@ -103,8 +105,8 @@ const AllJobsList = () => {
     return (
       <div className="text-center py-12 bg-muted/50 rounded-lg">
         <Briefcase className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground">No jobs available yet</p>
-        <p className="text-sm text-muted-foreground mt-1">Check back later for new opportunities</p>
+        <p className="text-muted-foreground">{t("candidate.jobs.noJobsAvailable")}</p>
+        <p className="text-sm text-muted-foreground mt-1">{t("candidate.jobs.checkBackLater")}</p>
       </div>
     );
   }
@@ -117,7 +119,7 @@ const AllJobsList = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search jobs, companies, skills..."
+              placeholder={t("candidate.jobs.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -129,7 +131,7 @@ const AllJobsList = () => {
             className={showFilters ? "bg-primary/10" : ""}
           >
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t("candidate.jobs.filters")}
           </Button>
         </div>
 
@@ -137,10 +139,10 @@ const AllJobsList = () => {
           <div className="flex flex-wrap gap-3 p-4 bg-muted/50 rounded-lg">
             <Select value={locationFilter} onValueChange={setLocationFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Location" />
+                <SelectValue placeholder={t("candidate.jobs.location")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="">{t("candidate.jobs.allLocations")}</SelectItem>
                 {locations.map(loc => (
                   <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                 ))}
@@ -149,10 +151,10 @@ const AllJobsList = () => {
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Job Type" />
+                <SelectValue placeholder={t("candidate.jobs.employmentType")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="">{t("candidate.jobs.allTypes")}</SelectItem>
                 {employmentTypes.map(type => (
                   <SelectItem key={type} value={type}>{formatEmploymentType(type)}</SelectItem>
                 ))}
@@ -162,7 +164,7 @@ const AllJobsList = () => {
             {hasActiveFilters && (
               <Button variant="ghost" onClick={clearFilters} className="text-muted-foreground">
                 <X className="w-4 h-4 mr-1" />
-                Clear all
+                {t("candidate.jobs.clearAll")}
               </Button>
             )}
           </div>
@@ -170,7 +172,7 @@ const AllJobsList = () => {
 
         {hasActiveFilters && (
           <p className="text-sm text-muted-foreground">
-            Showing {filteredJobs.length} of {jobs.length} jobs
+            {t("candidate.jobs.showingOf", { count: filteredJobs.length, total: jobs.length })}
           </p>
         )}
       </div>
@@ -179,9 +181,9 @@ const AllJobsList = () => {
       {filteredJobs.length === 0 ? (
         <div className="text-center py-12 bg-muted/50 rounded-lg">
           <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No jobs match your search</p>
+          <p className="text-muted-foreground">{t("candidate.jobs.noJobsMatch")}</p>
           <Button variant="ghost" onClick={clearFilters} className="mt-2">
-            Clear filters
+            {t("candidate.jobs.clearFilters")}
           </Button>
         </div>
       ) : (
@@ -213,7 +215,7 @@ const AllJobsList = () => {
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {job.experience_min || 0}+ years
+                        {t("candidate.jobs.yearsPlus", { years: job.experience_min || 0 })}
                       </span>
                       <span className="flex items-center gap-1">
                         <DollarSign className="w-3.5 h-3.5" />
@@ -230,7 +232,7 @@ const AllJobsList = () => {
                         ))}
                         {job.skills_required.length > 5 && (
                           <Badge variant="outline" className="text-xs">
-                            +{job.skills_required.length - 5} more
+                            {t("candidate.jobs.more", { count: job.skills_required.length - 5 })}
                           </Badge>
                         )}
                       </div>
@@ -250,7 +252,7 @@ const AllJobsList = () => {
                       setSelectedJob(job);
                     }}
                   >
-                    View Details
+                    {t("candidate.jobs.viewDetails")}
                   </Button>
                 </div>
               </div>
