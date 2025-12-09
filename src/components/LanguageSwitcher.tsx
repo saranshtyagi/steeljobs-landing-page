@@ -21,7 +21,7 @@ const LanguageSwitcher = () => {
         <Button variant="ghost" size="sm" className="gap-2">
           <Globe className="w-4 h-4" />
           <span className="hidden sm:inline">
-            {i18n.language === "hi" ? "हिंदी" : "EN"}
+            {i18n.language === "hi" ? "हिंदी" : i18n.language === "mr" ? "मराठी" : "EN"}
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -37,6 +37,12 @@ const LanguageSwitcher = () => {
           className={i18n.language === "hi" ? "bg-primary/10" : ""}
         >
           {t("language.hindi")}
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => changeLanguage("mr")}
+          className={i18n.language === "mr" ? "bg-primary/10" : ""}
+        >
+          {t("language.marathi")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
