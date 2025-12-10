@@ -7,7 +7,7 @@ import ShortlistPopover from "./ShortlistPopover";
 import {
   MapPin,
   Briefcase,
-  DollarSign,
+  IndianRupee,
   GraduationCap,
   Clock,
   FileText,
@@ -26,9 +26,17 @@ interface CandidateCardProps {
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Not specified";
-  if (min && max) return `₹${(min / 100000).toFixed(1)}L - ₹${(max / 100000).toFixed(1)}L`;
-  if (min) return `From ₹${(min / 100000).toFixed(1)}L`;
-  if (max) return `Up to ₹${(max / 100000).toFixed(1)}L`;
+  
+  const formatAmount = (amount: number): string => {
+    if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+    if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+    if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+    return amount.toString();
+  };
+  
+  if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
+  if (min) return `From ₹${formatAmount(min)}`;
+  if (max) return `Up to ₹${formatAmount(max)}`;
   return "Not specified";
 };
 
@@ -127,7 +135,7 @@ const CandidateCard = ({ candidate, isSelected, onSelect, onViewProfile, onEmail
               {candidate.experience_years || 0} years exp
             </span>
             <span className="flex items-center gap-1">
-              <DollarSign className="w-3.5 h-3.5" />
+              <IndianRupee className="w-3.5 h-3.5" />
               {formatSalary(candidate.expected_salary_min, candidate.expected_salary_max)}
             </span>
             {candidate.education_level && (

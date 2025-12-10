@@ -4,7 +4,7 @@ import { useSavedJobs, useToggleSaveJob } from "@/hooks/useSavedJobs";
 import { useJobById, Job } from "@/hooks/useJobs";
 import JobDetailsModal from "./JobDetailsModal";
 import { Button } from "@/components/ui/button";
-import { Loader2, Bookmark, MapPin, DollarSign, Building2, Trash2 } from "lucide-react";
+import { Loader2, Bookmark, MapPin, IndianRupee, Building2, Trash2 } from "lucide-react";
 
 interface SavedJobsListProps {
   limit?: number;
@@ -14,9 +14,17 @@ interface SavedJobsListProps {
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Salary not specified";
-  if (min && max) return `₹${(min / 100000).toFixed(1)}L - ₹${(max / 100000).toFixed(1)}L`;
-  if (min) return `From ₹${(min / 100000).toFixed(1)}L`;
-  if (max) return `Up to ₹${(max / 100000).toFixed(1)}L`;
+  
+  const formatAmount = (amount: number): string => {
+    if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+    if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+    if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+    return amount.toString();
+  };
+  
+  if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
+  if (min) return `From ₹${formatAmount(min)}`;
+  if (max) return `Up to ₹${formatAmount(max)}`;
   return "Salary not specified";
 };
 
@@ -94,7 +102,7 @@ const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListPr
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-foreground flex items-center gap-1">
-                  <DollarSign className="w-3 h-3" />
+                  <IndianRupee className="w-3 h-3" />
                   {formatSalary(savedJob.job?.salary_min ?? null, savedJob.job?.salary_max ?? null)}
                 </p>
               </div>

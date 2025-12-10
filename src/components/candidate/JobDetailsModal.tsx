@@ -16,7 +16,7 @@ import {
 import {
   MapPin,
   Briefcase,
-  DollarSign,
+  IndianRupee,
   Clock,
   GraduationCap,
   Bookmark,
@@ -36,9 +36,17 @@ interface JobDetailsModalProps {
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Not specified";
-  if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-  if (min) return `From $${(min / 1000).toFixed(0)}k`;
-  if (max) return `Up to $${(max / 1000).toFixed(0)}k`;
+  
+  const formatAmount = (amount: number): string => {
+    if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+    if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+    if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+    return amount.toString();
+  };
+  
+  if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
+  if (min) return `From ₹${formatAmount(min)}`;
+  if (max) return `Up to ₹${formatAmount(max)}`;
   return "Not specified";
 };
 
@@ -142,7 +150,7 @@ const JobDetailsModal = ({ job, isOpen, onClose, onApplySuccess }: JobDetailsMod
               <span>{formatEmploymentType(job.employment_type)}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <DollarSign className="w-4 h-4 text-primary" />
+              <IndianRupee className="w-4 h-4 text-primary" />
               <span>{formatSalary(job.salary_min, job.salary_max)}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

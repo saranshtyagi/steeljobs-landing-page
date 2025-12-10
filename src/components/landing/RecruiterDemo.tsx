@@ -1,4 +1,4 @@
-import { Search, MapPin, DollarSign, GraduationCap, Briefcase, Filter, ChevronDown, Star, Mail } from "lucide-react";
+import { Search, MapPin, IndianRupee, GraduationCap, Briefcase, Filter, ChevronDown, Star, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const RecruiterDemo = () => {
@@ -8,7 +8,7 @@ const RecruiterDemo = () => {
       role: "Senior Frontend Developer",
       skills: ["React", "TypeScript", "Next.js"],
       location: "San Francisco, CA",
-      salary: "$140K - $170K",
+      salary: "₹12L - ₹15L",
       experience: "5 years",
       rating: 4.9,
       avatar: "SJ",
@@ -18,7 +18,7 @@ const RecruiterDemo = () => {
       role: "Full Stack Engineer",
       skills: ["Node.js", "Python", "AWS"],
       location: "New York, NY",
-      salary: "$130K - $160K",
+      salary: "₹10L - ₹14L",
       experience: "4 years",
       rating: 4.8,
       avatar: "MC",
@@ -28,7 +28,7 @@ const RecruiterDemo = () => {
       role: "Backend Developer",
       skills: ["Go", "PostgreSQL", "Docker"],
       location: "Remote",
-      salary: "$120K - $150K",
+      salary: "₹8L - ₹12L",
       experience: "3 years",
       rating: 4.7,
       avatar: "ED",
@@ -78,8 +78,8 @@ const RecruiterDemo = () => {
             </div>
             <div className="flex flex-wrap gap-3">
               {[
-                { icon: MapPin, label: "Location: US Remote" },
-                { icon: DollarSign, label: "Salary: $100K - $180K" },
+                { icon: MapPin, label: "Location: India Remote" },
+                { icon: IndianRupee, label: "Salary: ₹8L - ₹15L" },
                 { icon: GraduationCap, label: "Education: Bachelor's+" },
                 { icon: Briefcase, label: "Experience: 3+ years" },
               ].map((filter, index) => (
@@ -147,7 +147,7 @@ const RecruiterDemo = () => {
                           <MapPin className="w-4 h-4" /> {candidate.location}
                         </span>
                         <span className="flex items-center gap-1">
-                          <DollarSign className="w-4 h-4" /> {candidate.salary}
+                          <IndianRupee className="w-4 h-4" /> {candidate.salary}
                         </span>
                         <span className="flex items-center gap-1">
                           <Briefcase className="w-4 h-4" /> {candidate.experience}
