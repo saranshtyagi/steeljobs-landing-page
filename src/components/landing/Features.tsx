@@ -5,7 +5,7 @@ import {
   Users, 
   FileText, 
   MapPin, 
-  DollarSign, 
+  IndianRupee, 
   GraduationCap, 
   Sparkles, 
   Upload, 
@@ -59,7 +59,7 @@ const Features = () => {
   const filterCategories = [
     { icon: Sparkles, label: t("features.filters.skills"), example: t("features.filters.skillsExample") },
     { icon: MapPin, label: t("features.filters.location"), example: t("features.filters.locationExample") },
-    { icon: DollarSign, label: t("features.filters.salary"), example: t("features.filters.salaryExample") },
+    { icon: IndianRupee, label: t("features.filters.salary"), example: t("features.filters.salaryExample") },
     { icon: GraduationCap, label: t("features.filters.education"), example: t("features.filters.educationExample") },
     { icon: BarChart3, label: t("features.filters.experience"), example: t("features.filters.experienceExample") },
     { icon: Upload, label: t("features.filters.certifications"), example: t("features.filters.certificationsExample") },

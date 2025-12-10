@@ -17,7 +17,7 @@ import {
   Briefcase,
   Clock,
   GraduationCap,
-  DollarSign,
+  IndianRupee,
   Users,
   Calendar,
   FileText,
@@ -85,9 +85,17 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
 
   const formatSalary = (min: number | null, max: number | null): string => {
     if (!min && !max) return "Not specified";
-    if (min && max) return `₹${(min / 100000).toFixed(1)}L - ₹${(max / 100000).toFixed(1)}L`;
-    if (min) return `From ₹${(min / 100000).toFixed(1)}L`;
-    if (max) return `Up to ₹${(max / 100000).toFixed(1)}L`;
+    
+    const formatAmount = (amount: number): string => {
+      if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+      if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+      if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+      return amount.toString();
+    };
+    
+    if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
+    if (min) return `From ₹${formatAmount(min)}`;
+    if (max) return `Up to ₹${formatAmount(max)}`;
     return "Not specified";
   };
 
@@ -282,7 +290,7 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
                       {(application.candidate?.expected_salary_min ||
                         application.candidate?.expected_salary_max) && (
                         <span className="flex items-center gap-1">
-                          <DollarSign className="w-3 h-3" />
+                          <IndianRupee className="w-3 h-3" />
                           {formatSalary(
                             application.candidate?.expected_salary_min || null,
                             application.candidate?.expected_salary_max || null
@@ -380,7 +388,7 @@ const JobDetailView = ({ job, onBack, onEdit }: JobDetailViewProps) => {
 
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-primary" />
+                  <IndianRupee className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Salary</p>
