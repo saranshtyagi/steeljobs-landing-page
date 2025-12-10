@@ -594,7 +594,22 @@
       "employmentType": "रोजगार प्रकार",
       "workMode": "कार्य मोड",
       "noJobs": "कोई नौकरी नहीं मिली",
-      "tryDifferentFilters": "अलग-अलग खोज फ़िल्टर आज़माएं"
+      "tryDifferentFilters": "अलग-अलग खोज फ़िल्टर आज़माएं",
+      "searchPlaceholder": "शीर्षक, कंपनी, कौशल से नौकरियां खोजें...",
+      "filters": "फ़िल्टर",
+      "viewDetails": "विवरण देखें",
+      "failedToLoad": "नौकरियां लोड करने में विफल",
+      "tryAgain": "पुनः प्रयास करें",
+      "noJobsAvailable": "इस समय कोई नौकरी उपलब्ध नहीं",
+      "checkBackLater": "नई अवसरों के लिए बाद में देखें",
+      "allLocations": "सभी स्थान",
+      "allTypes": "सभी प्रकार",
+      "clearAll": "सभी हटाएं",
+      "showingOf": "{{total}} में से {{count}} नौकरियां दिखा रहे हैं",
+      "noJobsMatch": "कोई नौकरी आपके फ़िल्टर से मेल नहीं खाती",
+      "clearFilters": "फ़िल्टर हटाएं",
+      "yearsPlus": "{{years}}+ वर्ष",
+      "more": "+{{count}} और"
     }
   },
   "jobs": {

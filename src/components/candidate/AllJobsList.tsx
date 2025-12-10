@@ -18,7 +18,7 @@ import {
   Loader2, 
   Briefcase, 
   MapPin, 
-  DollarSign, 
+  IndianRupee, 
   Search, 
   Filter,
   Clock,
@@ -218,7 +218,7 @@ const AllJobsList = () => {
                         {t("candidate.jobs.yearsPlus", { years: job.experience_min || 0 })}
                       </span>
                       <span className="flex items-center gap-1">
-                        <DollarSign className="w-3.5 h-3.5" />
+                        <IndianRupee className="w-3.5 h-3.5" />
                         {formatSalary(job.salary_min, job.salary_max)}
                       </span>
                     </div>
