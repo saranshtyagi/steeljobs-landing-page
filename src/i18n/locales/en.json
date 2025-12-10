@@ -594,7 +594,22 @@
       "employmentType": "Employment Type",
       "workMode": "Work Mode",
       "noJobs": "No jobs found",
-      "tryDifferentFilters": "Try different search filters"
+      "tryDifferentFilters": "Try different search filters",
+      "searchPlaceholder": "Search jobs by title, company, skills...",
+      "filters": "Filters",
+      "viewDetails": "View Details",
+      "failedToLoad": "Failed to load jobs",
+      "tryAgain": "Try Again",
+      "noJobsAvailable": "No jobs available at the moment",
+      "checkBackLater": "Check back later for new opportunities",
+      "allLocations": "All Locations",
+      "allTypes": "All Types",
+      "clearAll": "Clear All",
+      "showingOf": "Showing {{count}} of {{total}} jobs",
+      "noJobsMatch": "No jobs match your filters",
+      "clearFilters": "Clear Filters",
+      "yearsPlus": "{{years}}+ years",
+      "more": "+{{count}} more"
     }
   },
   "jobs": {

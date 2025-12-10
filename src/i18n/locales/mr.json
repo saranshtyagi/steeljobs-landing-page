@@ -594,7 +594,22 @@
       "employmentType": "रोजगार प्रकार",
       "workMode": "कार्य पद्धती",
       "noJobs": "कोणत्याही नोकऱ्या सापडल्या नाहीत",
-      "tryDifferentFilters": "वेगळे शोध फिल्टर वापरून पहा"
+      "tryDifferentFilters": "वेगळे शोध फिल्टर वापरून पहा",
+      "searchPlaceholder": "शीर्षक, कंपनी, कौशल्यांनुसार नोकऱ्या शोधा...",
+      "filters": "फिल्टर",
+      "viewDetails": "तपशील पहा",
+      "failedToLoad": "नोकऱ्या लोड करण्यात अयशस्वी",
+      "tryAgain": "पुन्हा प्रयत्न करा",
+      "noJobsAvailable": "सध्या कोणत्याही नोकऱ्या उपलब्ध नाहीत",
+      "checkBackLater": "नवीन संधींसाठी नंतर तपासा",
+      "allLocations": "सर्व स्थाने",
+      "allTypes": "सर्व प्रकार",
+      "clearAll": "सर्व साफ करा",
+      "showingOf": "{{total}} पैकी {{count}} नोकऱ्या दाखवत आहे",
+      "noJobsMatch": "कोणतीही नोकरी तुमच्या फिल्टरशी जुळत नाही",
+      "clearFilters": "फिल्टर साफ करा",
+      "yearsPlus": "{{years}}+ वर्षे",
+      "more": "+{{count}} अधिक"
     }
   },
   "jobs": {
