@@ -66,6 +66,8 @@ export const useSearchCandidates = (filters: CandidateSearchFilters) => {
   return useQuery({
     queryKey: ["searchCandidates", filters],
     queryFn: async () => {
+      // First, fetch all candidates with basic filters (without keyword search)
+      // We'll do keyword filtering client-side for better skill matching
       let query = supabase
         .from("candidate_profiles")
         .select(`
@@ -74,12 +76,6 @@ export const useSearchCandidates = (filters: CandidateSearchFilters) => {
           employment:candidate_employment(id, company_name, designation, is_current)
         `, { count: "exact" })
         .eq("onboarding_completed", true);
-
-      // Keywords filter (headline, skills, summary, about)
-      if (filters.keywords) {
-        const keywords = filters.keywords.toLowerCase();
-        query = query.or(`headline.ilike.%${keywords}%,about.ilike.%${keywords}%,profile_summary.ilike.%${keywords}%`);
-      }
 
       // Location filter
       if (filters.location) {
@@ -153,22 +149,54 @@ export const useSearchCandidates = (filters: CandidateSearchFilters) => {
           query = query.order("updated_at", { ascending: false });
       }
 
-      // Pagination
-      const page = filters.page || 1;
-      const pageSize = filters.pageSize || 10;
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      query = query.range(from, to);
-
       const { data, error, count } = await query;
 
       if (error) throw error;
 
+      let filteredData = data as CandidateResult[];
+
+      // Keywords filter (client-side for better skill matching)
+      if (filters.keywords) {
+        const keywords = filters.keywords.trim().toLowerCase();
+        filteredData = filteredData.filter((candidate) => {
+          // Check full_name
+          if (candidate.full_name?.toLowerCase().includes(keywords)) return true;
+          // Check headline
+          if (candidate.headline?.toLowerCase().includes(keywords)) return true;
+          // Check about
+          if (candidate.about?.toLowerCase().includes(keywords)) return true;
+          // Check profile_summary
+          if (candidate.profile_summary?.toLowerCase().includes(keywords)) return true;
+          // Check skills array - case insensitive partial match
+          if (candidate.skills?.some(skill => skill.toLowerCase().includes(keywords))) return true;
+          // Check location
+          if (candidate.location?.toLowerCase().includes(keywords)) return true;
+          return false;
+        });
+      }
+
+      // Pagination (apply after client-side filtering)
+      const page = filters.page || 1;
+      const pageSize = filters.pageSize || 10;
+      const totalCount = filteredData.length;
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize;
+      const paginatedData = filteredData.slice(from, to);
+
       // Calculate match scores based on skills overlap
-      const candidatesWithScores = (data as CandidateResult[]).map((candidate) => {
+      const candidatesWithScores = paginatedData.map((candidate) => {
         let matchScore = 0;
         
-        // Skills match scoring
+        // Keywords match scoring
+        if (filters.keywords && candidate.skills) {
+          const keywords = filters.keywords.toLowerCase();
+          const matchingSkills = candidate.skills.filter((skill) =>
+            skill.toLowerCase().includes(keywords)
+          );
+          if (matchingSkills.length > 0) matchScore += 30;
+        }
+        
+        // Skills filter match scoring
         if (filters.skills && filters.skills.length > 0 && candidate.skills) {
           const matchingSkills = candidate.skills.filter((skill) =>
             filters.skills!.some((fs) => skill.toLowerCase().includes(fs.toLowerCase()))
@@ -205,10 +233,10 @@ export const useSearchCandidates = (filters: CandidateSearchFilters) => {
 
       return {
         candidates: candidatesWithScores,
-        totalCount: count || 0,
+        totalCount,
         page,
         pageSize,
-        totalPages: Math.ceil((count || 0) / pageSize),
+        totalPages: Math.ceil(totalCount / pageSize),
       };
     },
     enabled: !!user && role === "recruiter",
