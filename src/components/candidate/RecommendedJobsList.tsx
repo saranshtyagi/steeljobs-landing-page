@@ -4,7 +4,7 @@ import { useApplyToJob } from "@/hooks/useApplications";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import JobDetailsModal from "./JobDetailsModal";
 import { Button } from "@/components/ui/button";
-import { Loader2, Briefcase, MapPin, DollarSign, Sparkles } from "lucide-react";
+import { Loader2, Briefcase, MapPin, IndianRupee, Sparkles } from "lucide-react";
 
 interface RecommendedJobsListProps {
   limit?: number;
@@ -14,9 +14,17 @@ interface RecommendedJobsListProps {
 
 const formatSalary = (min: number | null, max: number | null): string => {
   if (!min && !max) return "Salary not specified";
-  if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
-  if (min) return `From $${(min / 1000).toFixed(0)}k`;
-  if (max) return `Up to $${(max / 1000).toFixed(0)}k`;
+  
+  const formatAmount = (amount: number): string => {
+    if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+    if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+    if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+    return amount.toString();
+  };
+  
+  if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
+  if (min) return `From ₹${formatAmount(min)}`;
+  if (max) return `Up to ₹${formatAmount(max)}`;
   return "Salary not specified";
 };
 
@@ -102,7 +110,7 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-foreground flex items-center gap-1">
-                  <DollarSign className="w-3 h-3" />
+                  <IndianRupee className="w-3 h-3" />
                   {formatSalary(job.salary_min, job.salary_max)}
                 </p>
               </div>
