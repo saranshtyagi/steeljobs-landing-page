@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { OnboardingData } from "@/pages/onboarding/CandidateOnboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Briefcase, GraduationCap, Loader2 } from "lucide-react";
+import { Check, X, Briefcase, GraduationCap, Loader2, ChevronDown } from "lucide-react";
+import { INDIAN_STATES, getCitiesByState, getAllCities } from "@/data/indianLocations";
 
 interface Props {
   data: OnboardingData;
@@ -14,20 +15,49 @@ interface Props {
   userName: string;
 }
 
-const CITY_SUGGESTIONS = [
-  "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", 
-  "Kolkata", "Pune", "Ahmedabad", "Noida", "Gurgaon",
-  "Jaipur", "Lucknow", "Chandigarh", "Indore", "Bhopal"
-];
-
 const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userName }: Props) => {
+  const [stateInput, setStateInput] = useState(data.currentState);
   const [cityInput, setCityInput] = useState(data.currentCity);
+  const [showStateSuggestions, setShowStateSuggestions] = useState(false);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const filteredCities = CITY_SUGGESTIONS.filter(city =>
-    city.toLowerCase().includes(cityInput.toLowerCase()) && city !== data.currentCity
-  );
+  // Filter states based on input
+  const filteredStates = useMemo(() => {
+    if (!stateInput) return INDIAN_STATES;
+    return INDIAN_STATES.filter(state =>
+      state.toLowerCase().includes(stateInput.toLowerCase())
+    );
+  }, [stateInput]);
+
+  // Get cities based on selected state or all cities
+  const availableCities = useMemo(() => {
+    if (data.currentState) {
+      return getCitiesByState(data.currentState);
+    }
+    return getAllCities();
+  }, [data.currentState]);
+
+  // Filter cities based on input
+  const filteredCities = useMemo(() => {
+    if (!cityInput) return availableCities.slice(0, 20);
+    return availableCities.filter(city =>
+      city.toLowerCase().includes(cityInput.toLowerCase())
+    ).slice(0, 20);
+  }, [cityInput, availableCities]);
+
+  const selectState = (state: string) => {
+    updateData({ currentState: state, currentCity: "" });
+    setStateInput(state);
+    setCityInput("");
+    setShowStateSuggestions(false);
+  };
+
+  const clearState = () => {
+    updateData({ currentState: "", currentCity: "" });
+    setStateInput("");
+    setCityInput("");
+  };
 
   const selectCity = (city: string) => {
     updateData({ currentCity: city });
@@ -53,6 +83,9 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     }
     if (!data.workStatus) {
       newErrors.workStatus = "Please select your work status";
+    }
+    if (!data.currentState.trim()) {
+      newErrors.currentState = "State is required";
     }
     if (!data.currentCity.trim()) {
       newErrors.currentCity = "Current city is required";
@@ -186,6 +219,64 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
           )}
         </div>
 
+        {/* State Selection */}
+        <div className="space-y-2">
+          <Label htmlFor="currentState" className="text-foreground">
+            State<span className="text-destructive">*</span>
+          </Label>
+          
+          {data.currentState ? (
+            <div className="flex flex-wrap gap-2">
+              <Badge 
+                variant="secondary" 
+                className="px-3 py-2 text-sm bg-foreground text-background"
+              >
+                {data.currentState}
+                <button onClick={clearState} className="ml-2 hover:opacity-70">
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            </div>
+          ) : (
+            <div className="relative">
+              <Input
+                id="currentState"
+                value={stateInput}
+                onChange={(e) => {
+                  setStateInput(e.target.value);
+                  setShowStateSuggestions(true);
+                }}
+                onFocus={() => setShowStateSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowStateSuggestions(false), 200)}
+                className={`pr-10 ${errors.currentState ? "border-destructive" : ""}`}
+                placeholder="Type to search state"
+              />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              
+              {showStateSuggestions && filteredStates.length > 0 && (
+                <div className="absolute z-20 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  {filteredStates.map((state) => (
+                    <button
+                      key={state}
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        selectState(state);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-muted transition-colors text-sm"
+                    >
+                      {state}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {errors.currentState && (
+            <p className="text-sm text-destructive">{errors.currentState}</p>
+          )}
+        </div>
+
         {/* Current City */}
         <div className="space-y-2">
           <Label htmlFor="currentCity" className="text-foreground">
@@ -214,22 +305,39 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
                   setShowCitySuggestions(true);
                 }}
                 onFocus={() => setShowCitySuggestions(true)}
-                className={errors.currentCity ? "border-destructive" : ""}
-                placeholder="Type to search city"
+                onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
+                className={`pr-10 ${errors.currentCity ? "border-destructive" : ""}`}
+                placeholder={data.currentState ? `Type to search city in ${data.currentState}` : "Select state first or type city name"}
               />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               
               {showCitySuggestions && filteredCities.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                  {filteredCities.slice(0, 6).map((city) => (
+                <div className="absolute z-20 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  {filteredCities.map((city) => (
                     <button
                       key={city}
                       type="button"
-                      onClick={() => selectCity(city)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        selectCity(city);
+                      }}
                       className="w-full px-4 py-2 text-left hover:bg-muted transition-colors text-sm"
                     >
                       {city}
                     </button>
                   ))}
+                  {cityInput.trim() && !filteredCities.includes(cityInput.trim()) && (
+                    <button
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        selectCity(cityInput.trim());
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-muted transition-colors text-sm text-primary border-t border-border"
+                    >
+                      + Use "{cityInput.trim()}"
+                    </button>
+                  )}
                 </div>
               )}
             </div>

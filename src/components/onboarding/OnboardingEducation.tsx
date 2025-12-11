@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Search, Loader2, Plus, X } from "lucide-react";
+import { useCollegeSearch, POPULAR_UNIVERSITIES } from "@/hooks/useCollegeSearch";
 
 interface Props {
   data: OnboardingData;
@@ -51,13 +52,6 @@ const SKILL_SUGGESTIONS = [
   "Leadership", "Project Management", "Excel", "C++", "C#", ".NET"
 ];
 
-const UNIVERSITY_SUGGESTIONS = [
-  "Indian Institute of Technology (IIT)", "National Institute of Technology (NIT)",
-  "Birla Institute of Technology and Science (BITS)", "Delhi University",
-  "Mumbai University", "Anna University", "Jawaharlal Nehru University",
-  "VIT University", "SRM University", "Amity University"
-];
-
 const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }: Props) => {
   const [educationStep, setEducationStep] = useState(data.degreeLevel ? 2 : 1);
   const [skillInput, setSkillInput] = useState("");
@@ -68,11 +62,21 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
   const [showUniversitySuggestions, setShowUniversitySuggestions] = useState(false);
   const [showSkillSuggestions, setShowSkillSuggestions] = useState(false);
 
+  // Use college API search
+  const { colleges, isLoading: isLoadingColleges, error: collegeError } = useCollegeSearch(universityInput);
+
   const currentYear = new Date().getFullYear();
   const startYears = Array.from({ length: 10 }, (_, i) => currentYear - i);
   const passYears = Array.from({ length: 8 }, (_, i) => currentYear + 4 - i);
 
   const courseSuggestions = COURSE_SUGGESTIONS[data.degreeLevel] || COURSE_SUGGESTIONS.graduation;
+
+  // Combine API results with popular universities for suggestions
+  const universitySuggestions = colleges.length > 0 
+    ? colleges.map(c => c.college)
+    : POPULAR_UNIVERSITIES.filter(u => 
+        !universityInput || u.toLowerCase().includes(universityInput.toLowerCase())
+      );
 
   const addSkill = (skill: string) => {
     if (skill && !data.skills.includes(skill)) {
@@ -99,7 +103,6 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
       if (!data.startingYear) newErrors.startingYear = "Starting year is required";
       if (!data.passingYear) newErrors.passingYear = "Passing year is required";
       if (!data.gradingSystem) newErrors.gradingSystem = "Grading system is required";
-      // Validate grade value if grading system is not "pass"
       if (data.gradingSystem && data.gradingSystem !== "pass" && !data.gradeValue) {
         newErrors.gradeValue = "Please enter your grade/marks";
       }
@@ -301,51 +304,61 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
               )}
             </div>
 
-            {/* University */}
+            {/* University - with API search */}
             <div className="space-y-3">
               <Label className="text-foreground">
                 University / Institute<span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Input
-                  placeholder="Type your university name"
+                  placeholder="Search for your university or college"
                   value={universityInput}
                   onChange={(e) => {
                     setUniversityInput(e.target.value);
                     updateData({ university: e.target.value });
                     setShowUniversitySuggestions(e.target.value.length > 0);
                   }}
-                  onFocus={() => setShowUniversitySuggestions(universityInput.length > 0)}
+                  onFocus={() => setShowUniversitySuggestions(universityInput.length > 0 || true)}
                   onBlur={() => setTimeout(() => setShowUniversitySuggestions(false), 200)}
                   className={`pr-10 ${errors.university ? "border-destructive" : ""}`}
                 />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                {isLoadingColleges ? (
+                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
+                ) : (
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                )}
                 
                 {/* University Suggestions Dropdown */}
                 {showUniversitySuggestions && (
-                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                    {UNIVERSITY_SUGGESTIONS
-                      .filter(u => !universityInput || u.toLowerCase().includes(universityInput.toLowerCase()))
-                      .slice(0, 6)
-                      .map((uni) => (
-                        <button
-                          key={uni}
-                          type="button"
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setUniversityInput(uni);
-                            updateData({ university: uni });
-                            setShowUniversitySuggestions(false);
-                          }}
-                        >
-                          {uni}
-                        </button>
-                      ))}
-                    {universityInput.trim() && !UNIVERSITY_SUGGESTIONS.some(u => u.toLowerCase() === universityInput.toLowerCase()) && (
+                  <div className="absolute z-20 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                    {collegeError && (
+                      <p className="px-4 py-2 text-xs text-muted-foreground">{collegeError}</p>
+                    )}
+                    {isLoadingColleges && (
+                      <div className="px-4 py-3 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Searching colleges...
+                      </div>
+                    )}
+                    {!isLoadingColleges && universitySuggestions.slice(0, 15).map((uni, index) => (
+                      <button
+                        key={`${uni}-${index}`}
+                        type="button"
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setUniversityInput(uni);
+                          updateData({ university: uni });
+                          setShowUniversitySuggestions(false);
+                        }}
+                      >
+                        {uni}
+                      </button>
+                    ))}
+                    {universityInput.trim() && !universitySuggestions.some(u => u.toLowerCase() === universityInput.toLowerCase()) && (
                       <button
                         type="button"
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors text-primary flex items-center gap-2"
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors text-primary flex items-center gap-2 border-t border-border"
                         onMouseDown={(e) => {
                           e.preventDefault();
                           updateData({ university: universityInput.trim() });
@@ -360,7 +373,7 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                Start typing to see suggestions, or enter your own university name
+                Start typing to search from 43,000+ Indian colleges, or enter your institution name
               </p>
               {errors.university && (
                 <p className="text-sm text-destructive">{errors.university}</p>
@@ -513,7 +526,6 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
                   value={skillInput}
                   onChange={(e) => {
                     const value = e.target.value;
-                    // Check for comma to add skill
                     if (value.includes(",")) {
                       const skills = value.split(",").map(s => s.trim()).filter(s => s);
                       skills.forEach(skill => addSkill(skill));
@@ -536,7 +548,7 @@ const OnboardingEducation = ({ data, updateData, onContinue, onBack, isSaving }:
                 
                 {/* Filtered Suggestions Dropdown */}
                 {showSkillSuggestions && (
-                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  <div className="absolute z-20 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {SKILL_SUGGESTIONS
                       .filter(s => !data.skills.includes(s))
                       .filter(s => !skillInput || s.toLowerCase().includes(skillInput.toLowerCase()))

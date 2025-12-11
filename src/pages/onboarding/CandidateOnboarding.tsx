@@ -14,6 +14,7 @@ export interface OnboardingData {
   fullName: string;
   mobileNumber: string;
   workStatus: "experienced" | "fresher" | "";
+  currentState: string;
   currentCity: string;
   
   // Education Details
@@ -39,6 +40,7 @@ const initialData: OnboardingData = {
   fullName: "",
   mobileNumber: "",
   workStatus: "",
+  currentState: "",
   currentCity: "",
   degreeLevel: "",
   course: "",
