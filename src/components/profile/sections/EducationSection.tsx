@@ -4,21 +4,10 @@ import { useCandidateEducation, CandidateEducation } from "@/hooks/useCandidateD
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Plus, GraduationCap, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const DEGREE_OPTIONS = [
   { value: "doctorate", label: "Doctorate/PhD" },
@@ -113,8 +102,9 @@ const EducationSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-primary" />
-          {t("candidate.profile.education")}
+          {t("candidate.profile.sections.education.title")}
         </h2>
+
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
           {t("common.add")}
@@ -133,7 +123,12 @@ const EducationSection = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditDialog(edu)}>
                   <Edit2 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(edu.id)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive"
+                  onClick={() => handleDelete(edu.id)}
+                >
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
@@ -144,18 +139,24 @@ const EducationSection = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-medium text-foreground">
-                      {edu.course || DEGREE_OPTIONS.find(d => d.value === edu.degree_level)?.label || edu.degree_level}
+                      {edu.course ||
+                        DEGREE_OPTIONS.find((d) => d.value === edu.degree_level)?.label ||
+                        edu.degree_level}
                     </h3>
-                    {edu.is_highest && <Badge variant="secondary" className="text-xs">{t("candidate.profile.highest")}</Badge>}
+                    {edu.is_highest && (
+                      <Badge variant="secondary" className="text-xs">
+                        {t("candidate.profile.highest")}
+                      </Badge>
+                    )}
                   </div>
-                  {edu.specialization && (
-                    <p className="text-sm text-muted-foreground">{edu.specialization}</p>
-                  )}
-                  {edu.university && (
-                    <p className="text-sm text-muted-foreground">{edu.university}</p>
-                  )}
+                  {edu.specialization && <p className="text-sm text-muted-foreground">{edu.specialization}</p>}
+                  {edu.university && <p className="text-sm text-muted-foreground">{edu.university}</p>}
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                    {edu.passing_year && <span>{t("candidate.profile.passed")}: {edu.passing_year}</span>}
+                    {edu.passing_year && (
+                      <span>
+                        {t("candidate.profile.passed")}: {edu.passing_year}
+                      </span>
+                    )}
                     {edu.course_type && <span>{edu.course_type}</span>}
                     {edu.grade_value && <span>{edu.grade_value}</span>}
                   </div>
@@ -172,18 +173,25 @@ const EducationSection = () => {
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? t("candidate.profile.editEducation") : t("candidate.profile.addEducation")}</DialogTitle>
+            <DialogTitle>
+              {editingItem ? t("candidate.profile.editEducation") : t("candidate.profile.addEducation")}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>{t("candidate.profile.degreeLevel")}*</Label>
-              <Select value={formData.degree_level} onValueChange={(v) => setFormData(prev => ({ ...prev, degree_level: v }))}>
+              <Select
+                value={formData.degree_level}
+                onValueChange={(v) => setFormData((prev) => ({ ...prev, degree_level: v }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t("candidate.profile.selectDegree")} />
                 </SelectTrigger>
                 <SelectContent>
                   {DEGREE_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -193,7 +201,7 @@ const EducationSection = () => {
               <Input
                 placeholder={t("candidate.profile.coursePlaceholder")}
                 value={formData.course}
-                onChange={(e) => setFormData(prev => ({ ...prev, course: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, course: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
@@ -201,7 +209,7 @@ const EducationSection = () => {
               <Input
                 placeholder={t("candidate.profile.specializationPlaceholder")}
                 value={formData.specialization}
-                onChange={(e) => setFormData(prev => ({ ...prev, specialization: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, specialization: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
@@ -209,7 +217,7 @@ const EducationSection = () => {
               <Input
                 placeholder={t("candidate.profile.universityPlaceholder")}
                 value={formData.university}
-                onChange={(e) => setFormData(prev => ({ ...prev, university: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, university: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -219,7 +227,7 @@ const EducationSection = () => {
                   type="number"
                   placeholder="2020"
                   value={formData.starting_year}
-                  onChange={(e) => setFormData(prev => ({ ...prev, starting_year: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, starting_year: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
@@ -228,13 +236,16 @@ const EducationSection = () => {
                   type="number"
                   placeholder="2024"
                   value={formData.passing_year}
-                  onChange={(e) => setFormData(prev => ({ ...prev, passing_year: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, passing_year: e.target.value }))}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label>{t("candidate.profile.courseType")}</Label>
-              <Select value={formData.course_type} onValueChange={(v) => setFormData(prev => ({ ...prev, course_type: v }))}>
+              <Select
+                value={formData.course_type}
+                onValueChange={(v) => setFormData((prev) => ({ ...prev, course_type: v }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t("candidate.profile.selectType")} />
                 </SelectTrigger>
@@ -248,7 +259,10 @@ const EducationSection = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{t("candidate.profile.gradingSystem")}</Label>
-                <Select value={formData.grading_system} onValueChange={(v) => setFormData(prev => ({ ...prev, grading_system: v }))}>
+                <Select
+                  value={formData.grading_system}
+                  onValueChange={(v) => setFormData((prev) => ({ ...prev, grading_system: v }))}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder={t("common.select")} />
                   </SelectTrigger>
@@ -264,15 +278,20 @@ const EducationSection = () => {
                 <Input
                   placeholder="e.g., 8.5"
                   value={formData.grade_value}
-                  onChange={(e) => setFormData(prev => ({ ...prev, grade_value: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, grade_value: e.target.value }))}
                 />
               </div>
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
-            <Button onClick={handleSave} disabled={addEducation.isPending || updateEducation.isPending || !formData.degree_level}>
-              {(addEducation.isPending || updateEducation.isPending) ? t("candidate.profile.saving") : t("common.save")}
+            <Button variant="outline" onClick={() => setIsEditing(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={addEducation.isPending || updateEducation.isPending || !formData.degree_level}
+            >
+              {addEducation.isPending || updateEducation.isPending ? t("candidate.profile.saving") : t("common.save")}
             </Button>
           </div>
         </DialogContent>
