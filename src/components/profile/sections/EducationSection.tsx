@@ -153,7 +153,7 @@ const EducationSection = () => {
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                     {edu.passing_year && (
                       <span>
-                        {t("candidate.profile.passed")}: {edu.passing_year}
+                        {t("candidate.profile.sections.education.passingYear")}: {edu.passing_year}
                       </span>
                     )}
                     {edu.course_type && <span>{edu.course_type}</span>}
