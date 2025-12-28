@@ -237,7 +237,7 @@ const ProjectsSection = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.sections.projects.liveDemoUrl")}</Label>
+              <Label>{t("candidate.profile.sections.projects.liveUrl")}</Label>
               <Input
                 placeholder="https://..."
                 value={formData.live_url}
