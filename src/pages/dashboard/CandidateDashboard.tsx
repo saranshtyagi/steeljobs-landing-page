@@ -82,13 +82,12 @@ const CandidateDashboard = () => {
     education: { filled: education.length > 0, count: education.length },
     skills: { filled: !!(profile?.skills && profile.skills.length > 0), count: profile?.skills?.length },
     languages: { filled: languages.length > 0, count: languages.length },
+    employment: { filled: employment.length > 0, count: employment.length },
     internships: { filled: internships.length > 0, count: internships.length },
     projects: { filled: projects.length > 0, count: projects.length },
     summary: { filled: !!profile?.profile_summary },
     accomplishments: { filled: accomplishments.length > 0, count: accomplishments.length },
     exams: { filled: exams.length > 0, count: exams.length },
-    employment: { filled: employment.length > 0, count: employment.length },
-    achievements: { filled: false },
   };
 
   if (isLoading || !profile?.onboarding_completed) {
@@ -286,7 +285,7 @@ const CandidateDashboard = () => {
                     <EducationSection />
                     <SkillsSection />
                     <LanguagesSection />
-                    {profile.work_status === "experienced" && <EmploymentSection />}
+                    <EmploymentSection />
                     <InternshipsSection />
                     <ProjectsSection />
                     <SummarySection />

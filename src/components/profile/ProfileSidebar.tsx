@@ -1,6 +1,6 @@
 import { 
   Briefcase, GraduationCap, Wrench, Languages, Building2, 
-  FolderGit2, FileText, Award, BookOpen, Trophy
+  FolderGit2, FileText, Award, BookOpen, Medal
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -16,13 +16,12 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
   { id: "education", labelKey: "candidate.profile.education", icon: GraduationCap },
   { id: "skills", labelKey: "candidate.profile.skills", icon: Wrench },
   { id: "languages", labelKey: "candidate.profile.languages", icon: Languages },
-  { id: "internships", labelKey: "candidate.profile.internships", icon: Building2 },
+  { id: "employment", labelKey: "candidate.profile.employment", icon: Building2 },
+  { id: "internships", labelKey: "candidate.profile.internships", icon: Briefcase },
   { id: "projects", labelKey: "candidate.profile.projects", icon: FolderGit2 },
   { id: "summary", labelKey: "candidate.profile.summary", icon: FileText },
   { id: "accomplishments", labelKey: "candidate.profile.accomplishments", icon: Award },
   { id: "exams", labelKey: "candidate.profile.exams", icon: BookOpen },
-  { id: "employment", labelKey: "candidate.profile.employment", icon: Briefcase },
-  { id: "achievements", labelKey: "candidate.profile.achievements", icon: Trophy },
 ];
 
 interface Props {
