@@ -59,30 +59,19 @@ export const useRecommendedJobs = () => {
   return useQuery({
     queryKey: ["recommendedJobs", user?.id],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Not authenticated");
+      const { data, error } = await supabase.functions.invoke("recommended-jobs", {
+        method: "POST",
+      });
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recommended-jobs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to fetch recommendations");
+      if (error) {
+        throw new Error(error.message || "Failed to fetch recommendations");
       }
 
-      const data = await response.json();
-      return data.jobs as Job[];
+      return (data?.jobs || []) as Job[];
     },
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1,
   });
 };
 
