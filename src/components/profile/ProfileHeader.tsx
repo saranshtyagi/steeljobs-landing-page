@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, CheckCircle, Edit2, MapPin, Phone, Mail, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import EditBasicInfoModal from "./EditBasicInfoModal";
 
 interface Props {
   profile: CandidateProfile;
@@ -21,6 +22,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
   const { education } = useCandidateEducation();
   const { updateProfile } = useCandidateProfile();
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const highestEducation = education.find(e => e.is_highest) || education[0];
   
@@ -93,7 +95,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
                   </p>
                 )}
               </div>
-              <Button variant="outline" size="sm" onClick={onEditBasicInfo}>
+              <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)}>
                 <Edit2 className="w-4 h-4 mr-1" />
                 {t("common.edit")}
               </Button>
@@ -181,6 +183,9 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
           </div>
         </div>
       </div>
+
+      {/* Edit Basic Info Modal */}
+      <EditBasicInfoModal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} />
     </div>
   );
 };
