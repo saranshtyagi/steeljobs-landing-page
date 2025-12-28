@@ -70,7 +70,7 @@ const ResumeSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" />
-          {t("candidate.profile.resume")}
+          {t("candidate.profile.sections.resume.title", "Resume")}
         </h2>
       </div>
 
@@ -81,10 +81,12 @@ const ResumeSection = () => {
               <FileText className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-foreground">{t("candidate.profile.resumeUploaded")}</p>
+              <p className="font-medium text-foreground">
+                {t("candidate.profile.resumeUploaded", "Resume uploaded")}
+              </p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                {t("candidate.profile.lastUpdated")}: {profile.updated_at ? format(new Date(profile.updated_at), "dd MMM yyyy") : "N/A"}
+                {t("candidate.profile.sections.resume.lastUpdated", "Last Updated")}: {profile.updated_at ? format(new Date(profile.updated_at), "dd MMM yyyy") : "N/A"}
               </p>
             </div>
           </div>
@@ -92,19 +94,23 @@ const ResumeSection = () => {
             <label className="flex-1">
               <Button variant="outline" className="w-full" disabled={isUploading}>
                 <Upload className="w-4 h-4 mr-2" />
-                {isUploading ? t("candidate.profile.uploading") : t("candidate.profile.updateResume")}
+                {isUploading
+                  ? t("candidate.profile.uploading", "Uploading...")
+                  : t("candidate.profile.sections.resume.updateResume", "Update Resume")}
               </Button>
-              <input 
-                type="file" 
-                accept=".pdf,.doc,.docx" 
-                className="hidden" 
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
                 onChange={handleResumeUpload}
                 disabled={isUploading}
               />
             </label>
             <Button variant="outline" onClick={handleReParse} disabled={isParsing}>
               <RefreshCw className={`w-4 h-4 mr-2 ${isParsing ? "animate-spin" : ""}`} />
-              {isParsing ? t("candidate.profile.parsing") : t("candidate.profile.reParse")}
+              {isParsing
+                ? t("candidate.profile.parsing", "Parsing...")
+                : t("candidate.profile.reParse", "Re-parse")}
             </Button>
           </div>
         </div>
@@ -113,20 +119,27 @@ const ResumeSection = () => {
           <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
             <Upload className="w-8 h-8 text-muted-foreground" />
           </div>
-          <p className="text-muted-foreground mb-4">{t("candidate.profile.uploadResumePrompt")}</p>
+          <p className="text-muted-foreground mb-4">
+            {t("candidate.profile.uploadResumePrompt", "Upload your resume to complete your profile")}
+          </p>
           <label>
             <Button disabled={isUploading}>
               <Upload className="w-4 h-4 mr-2" />
-              {isUploading ? t("candidate.profile.uploading") : t("candidate.profile.uploadResume")}
+              {isUploading
+                ? t("candidate.profile.uploading", "Uploading...")
+                : t("candidate.profile.sections.resume.uploadResume", "Upload Resume")}
             </Button>
-            <input 
-              type="file" 
-              accept=".pdf,.doc,.docx" 
-              className="hidden" 
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              className="hidden"
               onChange={handleResumeUpload}
               disabled={isUploading}
             />
           </label>
+          <p className="text-xs text-muted-foreground mt-3">
+            {t("candidate.profile.sections.resume.supportedFormats", "Supported formats: PDF, DOC, DOCX")}
+          </p>
         </div>
       )}
     </div>

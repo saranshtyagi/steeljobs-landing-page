@@ -31,11 +31,11 @@ const PreferencesSection = ({ profile }: Props) => {
   const [locationInput, setLocationInput] = useState("");
 
   const AVAILABILITY_OPTIONS = [
-    { value: "Immediate", label: t("candidate.profile.immediate") },
-    { value: "15 Days", label: t("candidate.profile.15days") },
-    { value: "1 Month", label: t("candidate.profile.1month") },
-    { value: "2 Months", label: t("candidate.profile.2months") },
-    { value: "3 Months", label: t("candidate.profile.3months") },
+    { value: "Immediate", label: t("candidate.profile.sections.preferences.immediate", "Immediate") },
+    { value: "2 Weeks", label: t("candidate.profile.sections.preferences.weeks2", "2 Weeks") },
+    { value: "1 Month", label: t("candidate.profile.sections.preferences.month1", "1 Month") },
+    { value: "2 Months", label: t("candidate.profile.sections.preferences.months2", "2 Months") },
+    { value: "3+ Months", label: t("candidate.profile.sections.preferences.months3Plus", "3+ Months") },
   ];
 
   const handleSave = async () => {
