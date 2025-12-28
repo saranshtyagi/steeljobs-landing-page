@@ -399,7 +399,27 @@
       "totalApplications": "एकूण अर्ज",
       "interviewScheduled": "मुलाखत निर्धारित",
       "profileViews": "प्रोफाइल व्ह्यूज",
-      "savedJobs": "जतन केलेल्या नोकऱ्या"
+      "savedJobs": "जतन केलेल्या नोकऱ्या",
+      "applied": "अर्ज केला",
+      "shortlisted": "शॉर्टलिस्ट केले",
+      "hired": "नियुक्त",
+      "recommendations": "शिफारसी"
+    },
+    "profileCompletion": {
+      "title": "तुमचे प्रोफाइल पूर्ण करा",
+      "complete": "पूर्ण",
+      "uploadResume": "रेझ्युमे अपलोड करा",
+      "addSkills": "कौशल्ये जोडा",
+      "addExperience": "अनुभव जोडा",
+      "addEducation": "शिक्षण जोडा"
+    },
+    "recommendations": {
+      "failedToLoad": "शिफारसी लोड करण्यात अयशस्वी",
+      "noRecommendations": "अद्याप कोणत्याही नोकरी शिफारसी नाहीत",
+      "completeProfile": "चांगले जुळणी मिळविण्यासाठी तुमचे प्रोफाइल पूर्ण करा",
+      "createProfile": "शिफारसी पाहण्यासाठी तुमचे प्रोफाइल तयार करा",
+      "goodMatch": "चांगली जुळणी",
+      "viewAll": "सर्व {{count}} शिफारसी पहा"
     },
     "profile": {
       "completion": "प्रोफाइल पूर्णता",
@@ -573,7 +593,9 @@
       "rejected": "नाकारले",
       "withdraw": "मागे घ्या",
       "noApplications": "अद्याप कोणतेही अर्ज नाहीत",
-      "startApplying": "तुमच्या प्रोफाइलशी जुळणाऱ्या नोकऱ्यांसाठी अर्ज करणे सुरू करा"
+      "startApplying": "तुमच्या प्रोफाइलशी जुळणाऱ्या नोकऱ्यांसाठी अर्ज करणे सुरू करा",
+      "viewAllApplications": "सर्व {{count}} अर्ज पहा",
+      "failedToLoad": "अर्ज लोड करण्यात अयशस्वी"
     },
     "jobs": {
       "applyNow": "आता अर्ज करा",

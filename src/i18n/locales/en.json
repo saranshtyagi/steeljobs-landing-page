@@ -399,7 +399,27 @@
       "totalApplications": "Total Applications",
       "interviewScheduled": "Interview Scheduled",
       "profileViews": "Profile Views",
-      "savedJobs": "Saved Jobs"
+      "savedJobs": "Saved Jobs",
+      "applied": "Applied",
+      "shortlisted": "Shortlisted",
+      "hired": "Hired",
+      "recommendations": "Recommendations"
+    },
+    "profileCompletion": {
+      "title": "Complete Your Profile",
+      "complete": "Complete",
+      "uploadResume": "Upload Resume",
+      "addSkills": "Add Skills",
+      "addExperience": "Add Experience",
+      "addEducation": "Add Education"
+    },
+    "recommendations": {
+      "failedToLoad": "Failed to load recommendations",
+      "noRecommendations": "No job recommendations yet",
+      "completeProfile": "Complete your profile to get better matches",
+      "createProfile": "Create your profile to see recommendations",
+      "goodMatch": "Good match",
+      "viewAll": "View all {{count}} recommendations"
     },
     "profile": {
       "completion": "Profile Completion",
@@ -573,7 +593,9 @@
       "rejected": "Rejected",
       "withdraw": "Withdraw",
       "noApplications": "No applications yet",
-      "startApplying": "Start applying to jobs that match your profile"
+      "startApplying": "Start applying to jobs that match your profile",
+      "viewAllApplications": "View all {{count}} applications",
+      "failedToLoad": "Failed to load applications"
     },
     "jobs": {
       "applyNow": "Apply Now",

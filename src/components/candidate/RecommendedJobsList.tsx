@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Job, useRecommendedJobs } from "@/hooks/useJobs";
 import { useApplyToJob } from "@/hooks/useApplications";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
@@ -29,6 +30,7 @@ const formatSalary = (min: number | null, max: number | null): string => {
 };
 
 const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: RecommendedJobsListProps) => {
+  const { t } = useTranslation();
   const { data: jobs, isLoading, error, refetch } = useRecommendedJobs();
   const { profile } = useCandidateProfile();
   const applyToJob = useApplyToJob();
@@ -46,9 +48,9 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Failed to load recommendations</p>
+        <p className="text-destructive">{t("candidate.recommendations.failedToLoad", "Failed to load recommendations")}</p>
         <Button variant="ghost" onClick={() => refetch()} className="mt-2">
-          Try again
+          {t("candidate.jobs.tryAgain", "Try Again")}
         </Button>
       </div>
     );
@@ -60,9 +62,11 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
     return (
       <div className="text-center py-12 bg-muted/50 rounded-lg">
         <Briefcase className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground">No job recommendations yet</p>
+        <p className="text-muted-foreground">{t("candidate.recommendations.noRecommendations", "No job recommendations yet")}</p>
         <p className="text-sm text-muted-foreground mt-1">
-          {profile ? "Complete your profile to get better matches" : "Create your profile to see recommendations"}
+          {profile 
+            ? t("candidate.recommendations.completeProfile", "Complete your profile to get better matches") 
+            : t("candidate.recommendations.createProfile", "Create your profile to see recommendations")}
         </p>
       </div>
     );
@@ -93,7 +97,7 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
                   {job.matchScore && job.matchScore > 30 && (
                     <span className="flex items-center gap-1 text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                       <Sparkles className="w-3 h-3" />
-                      Good match
+                      {t("candidate.recommendations.goodMatch", "Good match")}
                     </span>
                   )}
                 </div>
@@ -123,7 +127,7 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
                 {applyToJob.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Apply"
+                  t("common.apply", "Apply")
                 )}
               </Button>
             </div>
@@ -132,7 +136,7 @@ const RecommendedJobsList = ({ limit, showViewAll = true, onViewAll }: Recommend
 
         {showViewAll && jobs && jobs.length > (limit || 0) && (
           <Button variant="ghost" className="w-full" onClick={onViewAll}>
-            View all {jobs.length} recommendations
+            {t("candidate.recommendations.viewAll", "View all {{count}} recommendations", { count: jobs.length })}
           </Button>
         )}
       </div>
