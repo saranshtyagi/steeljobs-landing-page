@@ -124,9 +124,10 @@ const AccomplishmentsSection = () => {
         <div className="animate-pulse h-20 bg-muted rounded-lg" />
       ) : accomplishments.length > 0 ? (
         <div className="space-y-6">
-          {certifications.length > 0 && renderItems(certifications, t("candidate.profile.certifications"))}
-          {awards.length > 0 && renderItems(awards, t("candidate.profile.awards"))}
-          {leadership.length > 0 && renderItems(leadership, t("candidate.profile.clubsLeadership"))}
+          {certifications.length > 0 &&
+            renderItems(certifications, t("candidate.profile.sections.accomplishments.certification"))}
+          {awards.length > 0 && renderItems(awards, t("candidate.profile.sections.accomplishments.award"))}
+          {leadership.length > 0 && renderItems(leadership, t("candidate.profile.sections.accomplishments.leadership"))}
         </div>
       ) : (
         <p className="text-muted-foreground text-sm">
