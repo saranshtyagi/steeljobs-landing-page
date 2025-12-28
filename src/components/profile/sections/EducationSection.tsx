@@ -102,7 +102,7 @@ const EducationSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-primary" />
-          {t("candidate.profile.education")}
+          {t("candidate.profile.sections.education.title")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
