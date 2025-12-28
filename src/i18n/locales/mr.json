@@ -554,7 +554,10 @@
           "certification": "प्रमाणपत्र",
           "award": "पुरस्कार",
           "publication": "प्रकाशन",
-          "patent": "पेटंट"
+          "patent": "पेटंट",
+          "deleteConfirm": "आपण ही उपलब्धी नक्की हटवू इच्छिता का?",
+          "viewCredential": "प्रमाणपत्र पहा",
+          "leadership": "नेतृत्व / क्लब"
         },
         "preferences": {
           "title": "करिअर प्राधान्ये",
