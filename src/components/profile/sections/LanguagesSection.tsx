@@ -4,21 +4,10 @@ import { useCandidateLanguages, CandidateLanguage } from "@/hooks/useCandidateDa
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Plus, Languages, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Proficient", "Expert", "Native"];
@@ -75,18 +64,28 @@ const LanguagesSection = () => {
             <div key={lang.id} className="flex items-center justify-between p-3 border border-border rounded-lg group">
               <div>
                 <span className="font-medium text-foreground">{lang.language}</span>
-                {lang.proficiency && (
-                  <span className="text-sm text-muted-foreground ml-2">• {lang.proficiency}</span>
-                )}
+                {lang.proficiency && <span className="text-sm text-muted-foreground ml-2">• {lang.proficiency}</span>}
                 <div className="flex gap-2 mt-1">
-                  {lang.can_read && <Badge variant="outline" className="text-xs">{t("candidate.profile.read")}</Badge>}
-                  {lang.can_write && <Badge variant="outline" className="text-xs">{t("candidate.profile.write")}</Badge>}
-                  {lang.can_speak && <Badge variant="outline" className="text-xs">{t("candidate.profile.speak")}</Badge>}
+                  {lang.can_read && (
+                    <Badge variant="outline" className="text-xs">
+                      {t("candidate.profile.read")}
+                    </Badge>
+                  )}
+                  {lang.can_write && (
+                    <Badge variant="outline" className="text-xs">
+                      {t("candidate.profile.write")}
+                    </Badge>
+                  )}
+                  {lang.can_speak && (
+                    <Badge variant="outline" className="text-xs">
+                      {t("candidate.profile.speak")}
+                    </Badge>
+                  )}
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive"
                 onClick={() => handleDelete(lang.id)}
               >
@@ -103,7 +102,7 @@ const LanguagesSection = () => {
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("candidate.profile.addLanguage")}</DialogTitle>
+            <DialogTitle>{t("candidate.profile.languages.addLanguage")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -111,18 +110,23 @@ const LanguagesSection = () => {
               <Input
                 placeholder={t("candidate.profile.languagePlaceholder")}
                 value={formData.language}
-                onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, language: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
               <Label>{t("candidate.profile.proficiency")}</Label>
-              <Select value={formData.proficiency} onValueChange={(v) => setFormData(prev => ({ ...prev, proficiency: v }))}>
+              <Select
+                value={formData.proficiency}
+                onValueChange={(v) => setFormData((prev) => ({ ...prev, proficiency: v }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t("candidate.profile.selectLevel")} />
                 </SelectTrigger>
                 <SelectContent>
                   {PROFICIENCY_LEVELS.map((level) => (
-                    <SelectItem key={level} value={level}>{level}</SelectItem>
+                    <SelectItem key={level} value={level}>
+                      {level}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -131,28 +135,30 @@ const LanguagesSection = () => {
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_read}
-                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_read: !!c }))}
+                  onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_read: !!c }))}
                 />
                 <span className="text-sm">{t("candidate.profile.canRead")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_write}
-                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_write: !!c }))}
+                  onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_write: !!c }))}
                 />
                 <span className="text-sm">{t("candidate.profile.canWrite")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_speak}
-                  onCheckedChange={(c) => setFormData(prev => ({ ...prev, can_speak: !!c }))}
+                  onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_speak: !!c }))}
                 />
                 <span className="text-sm">{t("candidate.profile.canSpeak")}</span>
               </label>
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsAdding(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>
+              {t("common.cancel")}
+            </Button>
             <Button onClick={handleSave} disabled={addLanguage.isPending || !formData.language.trim()}>
               {addLanguage.isPending ? t("candidate.profile.adding") : t("common.add")}
             </Button>
