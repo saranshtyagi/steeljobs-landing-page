@@ -100,7 +100,7 @@ const PreferencesSection = ({ profile }: Props) => {
           {profile.preferred_locations && profile.preferred_locations.length > 0 && (
             <div>
               <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
-                <MapPin className="w-4 h-4" /> {t("candidate.profile.preferredLocations")}
+                <MapPin className="w-4 h-4" /> {t("candidate.profile.sections.preferences.preferredLocations")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {profile.preferred_locations.map((loc) => (
@@ -114,7 +114,7 @@ const PreferencesSection = ({ profile }: Props) => {
           {profile.availability && (
             <div>
               <p className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
-                <Clock className="w-4 h-4" /> {t("candidate.profile.availabilityToJoin")}
+                <Clock className="w-4 h-4" /> {t("candidate.profile.sections.preferences.availability")}
               </p>
               <p className="text-foreground">{profile.availability}</p>
             </div>
