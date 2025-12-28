@@ -554,7 +554,10 @@
           "certification": "Certification",
           "award": "Award",
           "publication": "Publication",
-          "patent": "Patent"
+          "patent": "Patent",
+          "deleteConfirm": "Are you sure you want to delete this accomplishment?",
+          "viewCredential": "View Credential",
+          "leadership": "Leadership / Clubs"
         },
         "preferences": {
           "title": "Career Preferences",
