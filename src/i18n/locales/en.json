@@ -569,8 +569,11 @@
         "summary": {
           "title": "Profile Summary",
           "editSummary": "Edit Summary",
+          "label": "Profile Summary",
           "placeholder": "Write a brief summary about yourself, your experience, and career goals...",
-          "noSummary": "No profile summary added yet"
+          "noSummary": "No profile summary added yet",
+          "characters": "characters",
+          "minimumRecommended": "(minimum 50 recommended)"
         },
         "resume": {
           "title": "Resume",
