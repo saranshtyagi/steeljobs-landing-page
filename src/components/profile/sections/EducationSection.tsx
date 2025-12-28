@@ -223,7 +223,7 @@ const EducationSection = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("candidate.profile.sections.startingYear")}</Label>
+                <Label>{t("candidate.profile.sections.education.startingYear")}</Label>
                 <Input
                   type="number"
                   placeholder="2020"
@@ -232,7 +232,7 @@ const EducationSection = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("candidate.profile.sections.passingYear")}</Label>
+                <Label>{t("candidate.profile.sections.education.passingYear")}</Label>
                 <Input
                   type="number"
                   placeholder="2024"
