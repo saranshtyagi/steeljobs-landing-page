@@ -3,12 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import { Button } from "@/components/ui/button";
 import { Edit2, FileText } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -33,7 +28,7 @@ const SummarySection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" />
-          {t("candidate.profile.summary")}
+          {t("candidate.profile.sections.summary.title")}
         </h2>
         <Button variant="ghost" size="sm" onClick={handleOpenEdit}>
           <Edit2 className="w-4 h-4 mr-1" />
@@ -44,36 +39,37 @@ const SummarySection = () => {
       {profile?.profile_summary ? (
         <p className="text-muted-foreground whitespace-pre-wrap">{profile.profile_summary}</p>
       ) : (
-        <p className="text-muted-foreground text-sm">
-          {t("candidate.profile.writeSummaryPrompt")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.sections.summary.noSummary")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{t("candidate.profile.editProfileSummary")}</DialogTitle>
+            <DialogTitle>{t("candidate.profile.sections.summary.editSummary")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("candidate.profile.summaryLabel")}</Label>
+              <Label>{t("candidate.profile.sections.summary.label")}</Label>
               <Textarea
-                placeholder={t("candidate.profile.summaryPlaceholder")}
+                placeholder={t("candidate.profile.sections.summary.placeholder")}
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 rows={8}
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                {summary.length} {t("candidate.profile.characters")} {summary.length < 50 && t("candidate.profile.minimumRecommended")}
+                {summary.length} {t("candidate.profile.sections.summary.characters")}{" "}
+                {summary.length < 50 && t("candidate.profile.sections.summary.minimumRecommended")}
               </p>
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>
+              {t("common.cancel")}
+            </Button>
             <Button onClick={handleSave} disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? t("candidate.profile.saving") : t("common.save")}
+              {updateProfile.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </div>
         </DialogContent>
