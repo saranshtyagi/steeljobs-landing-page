@@ -112,6 +112,39 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     }
   };
 
+  // Handle mobile number input with +91 prefix
+  const handleMobileChange = (value: string) => {
+    // Remove all non-digit characters except +
+    let cleaned = value.replace(/[^\d+]/g, "");
+    
+    // Ensure it starts with +91
+    if (!cleaned.startsWith("+91")) {
+      // If user started typing digits, prepend +91
+      if (cleaned.startsWith("91") && cleaned.length > 2) {
+        cleaned = "+" + cleaned;
+      } else if (cleaned.startsWith("+")) {
+        // Keep the + but ensure 91 follows
+        cleaned = "+91" + cleaned.slice(1).replace(/^\d{0,2}/, "");
+      } else if (cleaned.length > 0 && !cleaned.startsWith("+")) {
+        // User started with digits, prepend +91
+        cleaned = "+91" + cleaned.replace(/^91/, "");
+      }
+    }
+    
+    // Limit to +91 + 10 digits = 13 characters
+    if (cleaned.length > 13) {
+      cleaned = cleaned.slice(0, 13);
+    }
+    
+    updateData({ mobileNumber: cleaned });
+  };
+
+  // Validate mobile number format: +91 followed by exactly 10 digits
+  const isValidMobile = (mobile: string): boolean => {
+    const mobileRegex = /^\+91[6-9]\d{9}$/;
+    return mobileRegex.test(mobile);
+  };
+
   const selectState = (state: string) => {
     updateData({ currentState: state, currentCity: "" });
     setStateInput(state);
@@ -150,8 +183,8 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     }
     if (!data.mobileNumber.trim()) {
       newErrors.mobileNumber = "Mobile number is required";
-    } else if (!/^[+]?[\d\s-]{10,}$/.test(data.mobileNumber)) {
-      newErrors.mobileNumber = "Enter a valid mobile number";
+    } else if (!isValidMobile(data.mobileNumber)) {
+      newErrors.mobileNumber = "Enter a valid 10-digit mobile number starting with +91";
     }
     if (!data.workStatus) {
       newErrors.workStatus = "Please select your work status";
@@ -227,11 +260,18 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
             <Input
               id="mobileNumber"
               value={data.mobileNumber}
-              onChange={(e) => updateData({ mobileNumber: e.target.value })}
+              onChange={(e) => handleMobileChange(e.target.value)}
+              onFocus={() => {
+                // Auto-add +91 prefix when field is focused and empty
+                if (!data.mobileNumber) {
+                  updateData({ mobileNumber: "+91" });
+                }
+              }}
               className={`pr-10 ${errors.mobileNumber ? "border-destructive" : ""}`}
-              placeholder="+91 9999999999"
+              placeholder="+91 9876543210"
+              maxLength={13}
             />
-            {data.mobileNumber && !errors.mobileNumber && (
+            {isValidMobile(data.mobileNumber) && (
               <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
             )}
           </div>
