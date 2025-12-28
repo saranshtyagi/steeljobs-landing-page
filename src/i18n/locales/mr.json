@@ -494,7 +494,11 @@
           "endDate": "समाप्ती तारीख",
           "githubUrl": "GitHub URL",
           "liveUrl": "लाइव्ह URL",
-          "noProjects": "अद्याप कोणतेही प्रकल्प जोडलेले नाहीत"
+          "noProjects": "अद्याप कोणतेही प्रकल्प जोडलेले नाहीत",
+          "deleteConfirm": "आपण हा प्रकल्प नक्की हटवू इच्छिता का?",
+          "addSkill": "कौशल्य जोडा",
+          "liveDemo": "लाईव्ह डेमो",
+          "githubLink": "GitHub"
         },
         "internships": {
           "title": "इंटर्नशिप",

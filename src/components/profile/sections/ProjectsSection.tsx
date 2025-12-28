@@ -4,12 +4,7 @@ import { useCandidateProjects, CandidateProject } from "@/hooks/useCandidateData
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Plus, FolderGit2, Trash2, ExternalLink, Github } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +27,15 @@ const ProjectsSection = () => {
 
   const openAddDialog = () => {
     setEditingItem(null);
-    setFormData({ title: "", description: "", skills_used: [], github_url: "", live_url: "", start_date: "", end_date: "" });
+    setFormData({
+      title: "",
+      description: "",
+      skills_used: [],
+      github_url: "",
+      live_url: "",
+      start_date: "",
+      end_date: "",
+    });
     setIsEditing(true);
   };
 
@@ -52,13 +55,13 @@ const ProjectsSection = () => {
 
   const addSkill = (skill: string) => {
     if (skill.trim() && !formData.skills_used.includes(skill.trim())) {
-      setFormData(prev => ({ ...prev, skills_used: [...prev.skills_used, skill.trim()] }));
+      setFormData((prev) => ({ ...prev, skills_used: [...prev.skills_used, skill.trim()] }));
     }
     setSkillInput("");
   };
 
   const removeSkill = (skill: string) => {
-    setFormData(prev => ({ ...prev, skills_used: prev.skills_used.filter(s => s !== skill) }));
+    setFormData((prev) => ({ ...prev, skills_used: prev.skills_used.filter((s) => s !== skill) }));
   };
 
   const handleSave = async () => {
@@ -81,7 +84,7 @@ const ProjectsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm(t("candidate.profile.deleteProject"))) {
+    if (confirm(t("candidate.profile.sections.projects.deleteConfirm"))) {
       await deleteProject.mutateAsync(id);
     }
   };
@@ -91,7 +94,7 @@ const ProjectsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FolderGit2 className="w-5 h-5 text-primary" />
-          {t("candidate.profile.projects")}
+          {t("candidate.profile.sections.projects.title")}
         </h2>
         <Button variant="ghost" size="sm" onClick={openAddDialog}>
           <Plus className="w-4 h-4 mr-1" />
@@ -109,7 +112,12 @@ const ProjectsSection = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditDialog(proj)}>
                   <Edit2 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(proj.id)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive"
+                  onClick={() => handleDelete(proj.id)}
+                >
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
@@ -124,22 +132,34 @@ const ProjectsSection = () => {
                   )}
                   <div className="flex items-center gap-3 mt-2">
                     {proj.github_url && (
-                      <a href={proj.github_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                      <a
+                        href={proj.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
                         <Github className="w-3 h-3" />
                         GitHub
                       </a>
                     )}
                     {proj.live_url && (
-                      <a href={proj.live_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                      <a
+                        href={proj.live_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
                         <ExternalLink className="w-3 h-3" />
-                        {t("candidate.profile.liveDemo")}
+                        {t("candidate.profile.sections.projects.liveDemo")}
                       </a>
                     )}
                   </div>
                   {proj.skills_used && proj.skills_used.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {proj.skills_used.map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
+                        <Badge key={skill} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
                       ))}
                     </div>
                   )}
@@ -149,48 +169,59 @@ const ProjectsSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">{t("candidate.profile.addProjectsPrompt")}</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.sections.projects.noProjects")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingItem ? t("candidate.profile.editProject") : t("candidate.profile.addProject")}</DialogTitle>
+            <DialogTitle>
+              {editingItem
+                ? t("candidate.profile.sections.projects.editProject")
+                : t("candidate.profile.sections.projects.addProject")}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("candidate.profile.projectTitle")}*</Label>
+              <Label>{t("candidate.profile.sections.projects.projectTitle")}*</Label>
               <Input
-                placeholder={t("candidate.profile.projectTitlePlaceholder")}
+                placeholder={t("candidate.profile.sections.projects.projectTitle")}
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.description")}</Label>
+              <Label>{t("candidate.profile.sections.projects.description")}</Label>
               <Textarea
-                placeholder={t("candidate.profile.describeProject")}
+                placeholder={t("candidate.profile.sections.projects.description")}
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.technologiesSkills")}</Label>
+              <Label>{t("candidate.profile.sections.projects.skillsUsed")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder={t("candidate.profile.addSkill")}
+                  placeholder={t("candidate.profile.sections.projects.addSkill")}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill(skillInput))}
                 />
-                <Button type="button" onClick={() => addSkill(skillInput)}>{t("common.add")}</Button>
+                <Button type="button" onClick={() => addSkill(skillInput)}>
+                  {t("common.add")}
+                </Button>
               </div>
               {formData.skills_used.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {formData.skills_used.map((skill) => (
-                    <Badge key={skill} variant="secondary" className="cursor-pointer" onClick={() => removeSkill(skill)}>
+                    <Badge
+                      key={skill}
+                      variant="secondary"
+                      className="cursor-pointer"
+                      onClick={() => removeSkill(skill)}
+                    >
                       {skill} ×
                     </Badge>
                   ))}
@@ -198,29 +229,28 @@ const ProjectsSection = () => {
               )}
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.githubUrl")}</Label>
+              <Label>{t("candidate.profile.sections.projects.githubUrl")}</Label>
               <Input
                 placeholder="https://github.com/..."
                 value={formData.github_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, github_url: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, github_url: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.liveDemoUrl")}</Label>
+              <Label>{t("candidate.profile.sections.projects.liveDemoUrl")}</Label>
               <Input
                 placeholder="https://..."
                 value={formData.live_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, live_url: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, live_url: e.target.value }))}
               />
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
-            <Button 
-              onClick={handleSave} 
-              disabled={addProject.isPending || updateProject.isPending || !formData.title}
-            >
-              {(addProject.isPending || updateProject.isPending) ? t("candidate.profile.saving") : t("common.save")}
+            <Button variant="outline" onClick={() => setIsEditing(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button onClick={handleSave} disabled={addProject.isPending || updateProject.isPending || !formData.title}>
+              {addProject.isPending || updateProject.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </div>
         </DialogContent>

@@ -494,7 +494,11 @@
           "endDate": "End Date",
           "githubUrl": "GitHub URL",
           "liveUrl": "Live URL",
-          "noProjects": "No projects added yet"
+          "noProjects": "No projects added yet",
+          "deleteConfirm": "Are you sure you want to delete this project?",
+          "addSkill": "Add skill",
+          "liveDemo": "Live Demo",
+          "githubLink": "GitHub"
         },
         "internships": {
           "title": "Internships",
