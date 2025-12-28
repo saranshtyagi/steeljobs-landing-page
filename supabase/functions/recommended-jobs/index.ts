@@ -26,11 +26,15 @@ serve(async (req) => {
 
     // Get user from auth header
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
     if (userError || !user) {
+      console.error("Auth getUser error:", userError);
       return new Response(
-        JSON.stringify({ error: "Invalid token" }),
+        JSON.stringify({ error: "Invalid token", details: userError?.message || null }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
