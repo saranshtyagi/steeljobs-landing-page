@@ -399,7 +399,27 @@
       "totalApplications": "कुल आवेदन",
       "interviewScheduled": "साक्षात्कार निर्धारित",
       "profileViews": "प्रोफ़ाइल व्यू",
-      "savedJobs": "सहेजी गई नौकरियां"
+      "savedJobs": "सहेजी गई नौकरियां",
+      "applied": "आवेदन किया",
+      "shortlisted": "शॉर्टलिस्ट किया गया",
+      "hired": "नियुक्त",
+      "recommendations": "अनुशंसाएं"
+    },
+    "profileCompletion": {
+      "title": "अपनी प्रोफ़ाइल पूरी करें",
+      "complete": "पूर्ण",
+      "uploadResume": "रिज्यूमे अपलोड करें",
+      "addSkills": "कौशल जोड़ें",
+      "addExperience": "अनुभव जोड़ें",
+      "addEducation": "शिक्षा जोड़ें"
+    },
+    "recommendations": {
+      "failedToLoad": "अनुशंसाएं लोड करने में विफल",
+      "noRecommendations": "अभी तक कोई नौकरी अनुशंसाएं नहीं",
+      "completeProfile": "बेहतर मिलान पाने के लिए अपनी प्रोफ़ाइल पूरी करें",
+      "createProfile": "अनुशंसाएं देखने के लिए अपनी प्रोफ़ाइल बनाएं",
+      "goodMatch": "अच्छा मिलान",
+      "viewAll": "सभी {{count}} अनुशंसाएं देखें"
     },
     "profile": {
       "completion": "प्रोफ़ाइल पूर्णता",
@@ -573,7 +593,9 @@
       "rejected": "अस्वीकृत",
       "withdraw": "वापस लें",
       "noApplications": "अभी तक कोई आवेदन नहीं",
-      "startApplying": "अपनी प्रोफ़ाइल से मेल खाने वाली नौकरियों के लिए आवेदन शुरू करें"
+      "startApplying": "अपनी प्रोफ़ाइल से मेल खाने वाली नौकरियों के लिए आवेदन शुरू करें",
+      "viewAllApplications": "सभी {{count}} आवेदन देखें",
+      "failedToLoad": "आवेदन लोड करने में विफल"
     },
     "jobs": {
       "applyNow": "अभी आवेदन करें",
