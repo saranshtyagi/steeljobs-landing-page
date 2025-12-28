@@ -223,7 +223,7 @@ const InternshipsSection = () => {
             <div className="space-y-2">
               <Label>{t("candidate.profile.sections.internships.description")}</Label>
               <Textarea
-                placeholder={t("candidate.profile.sections.internships.descriptionPlaceholder")}
+                placeholder={t("candidate.profile.sections.internships.description")}
                 value={formData.description}
                 onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 rows={3}
@@ -233,7 +233,7 @@ const InternshipsSection = () => {
               <Label>{t("candidate.profile.sections.internships.skillsLearned")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder={t("candidate.profile.sections.internships.addSkill")}
+                  placeholder={t("candidate.profile.sections.internships.skillsLearned")}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkillLearned(skillInput))}

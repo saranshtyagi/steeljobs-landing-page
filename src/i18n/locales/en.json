@@ -507,8 +507,7 @@
           "startDate": "Start Date",
           "endDate": "End Date",
           "isCurrent": "Currently Working",
-          "noInternships": "No internships added yet",
-          "deleteConfirm": "Are you sure you want to delete this internship?"
+          "noInternships": "No internships added yet"
         },
         "employment": {
           "title": "Employment",
