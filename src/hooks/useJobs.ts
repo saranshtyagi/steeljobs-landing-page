@@ -63,8 +63,14 @@ export const useRecommendedJobs = () => {
         method: "POST",
       });
 
+      // If the session was revoked/expired, sign out locally to stop loops
       if (error) {
-        throw new Error(error.message || "Failed to fetch recommendations");
+        const message = (error as any)?.message || "Failed to fetch recommendations";
+        const status = (error as any)?.context?.status;
+        if (status === 401) {
+          await supabase.auth.signOut();
+        }
+        throw new Error(message);
       }
 
       return (data?.jobs || []) as Job[];
