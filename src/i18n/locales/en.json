@@ -564,7 +564,8 @@
           "weeks2": "2 Weeks",
           "month1": "1 Month",
           "months2": "2 Months",
-          "months3Plus": "3+ Months"
+          "months3Plus": "3+ Months",
+          "addLocation": "Add location"
         },
         "summary": {
           "title": "Profile Summary",
