@@ -4,12 +4,7 @@ import { CandidateProfile, useCandidateProfile } from "@/hooks/useCandidateProfi
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Briefcase, MapPin, Clock } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
@@ -31,11 +26,11 @@ const PreferencesSection = ({ profile }: Props) => {
   const [locationInput, setLocationInput] = useState("");
 
   const AVAILABILITY_OPTIONS = [
-    { value: "Immediate", label: t("candidate.profile.sections.preferences.immediate", "Immediate") },
-    { value: "2 Weeks", label: t("candidate.profile.sections.preferences.weeks2", "2 Weeks") },
-    { value: "1 Month", label: t("candidate.profile.sections.preferences.month1", "1 Month") },
-    { value: "2 Months", label: t("candidate.profile.sections.preferences.months2", "2 Months") },
-    { value: "3+ Months", label: t("candidate.profile.sections.preferences.months3Plus", "3+ Months") },
+    { value: "Immediate", label: t("candidate.profile.sections.preferences.immediate") },
+    { value: "2 Weeks", label: t("candidate.profile.sections.preferences.weeks2") },
+    { value: "1 Month", label: t("candidate.profile.sections.preferences.month1") },
+    { value: "2 Months", label: t("candidate.profile.sections.preferences.months2") },
+    { value: "3+ Months", label: t("candidate.profile.sections.preferences.months3Plus") },
   ];
 
   const handleSave = async () => {
@@ -48,28 +43,28 @@ const PreferencesSection = ({ profile }: Props) => {
   };
 
   const toggleJobType = (type: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       preferred_job_type: prev.preferred_job_type.includes(type)
-        ? prev.preferred_job_type.filter(t => t !== type)
-        : [...prev.preferred_job_type, type]
+        ? prev.preferred_job_type.filter((t) => t !== type)
+        : [...prev.preferred_job_type, type],
     }));
   };
 
   const addLocation = () => {
     if (locationInput.trim() && !formData.preferred_locations.includes(locationInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        preferred_locations: [...prev.preferred_locations, locationInput.trim()]
+        preferred_locations: [...prev.preferred_locations, locationInput.trim()],
       }));
       setLocationInput("");
     }
   };
 
   const removeLocation = (loc: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      preferred_locations: prev.preferred_locations.filter(l => l !== loc)
+      preferred_locations: prev.preferred_locations.filter((l) => l !== loc),
     }));
   };
 
@@ -80,7 +75,7 @@ const PreferencesSection = ({ profile }: Props) => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Briefcase className="w-5 h-5 text-primary" />
-          {t("candidate.profile.preferences")}
+          {t("candidate.profile.sections.preferences.title")}
         </h2>
         <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
           <Edit2 className="w-4 h-4 mr-1" />
@@ -95,7 +90,9 @@ const PreferencesSection = ({ profile }: Props) => {
               <p className="text-sm text-muted-foreground mb-2">{t("candidate.profile.preferredJobType")}</p>
               <div className="flex flex-wrap gap-2">
                 {profile.preferred_job_type.map((type) => (
-                  <Badge key={type} variant="secondary">{type}</Badge>
+                  <Badge key={type} variant="secondary">
+                    {type}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -107,7 +104,9 @@ const PreferencesSection = ({ profile }: Props) => {
               </p>
               <div className="flex flex-wrap gap-2">
                 {profile.preferred_locations.map((loc) => (
-                  <Badge key={loc} variant="outline">{loc}</Badge>
+                  <Badge key={loc} variant="outline">
+                    {loc}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -122,21 +121,19 @@ const PreferencesSection = ({ profile }: Props) => {
           )}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">
-          {t("candidate.profile.addPreferencesPrompt")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.sections.preferences.noPreferences")}</p>
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{t("candidate.profile.editCareerPreferences")}</DialogTitle>
+            <DialogTitle>{t("candidate.profile.sections.preferences.editPreferences")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
             {/* Job Types */}
             <div className="space-y-3">
-              <Label>{t("candidate.profile.preferredJobType")}</Label>
+              <Label>{t("candidate.profile.sections.preferences.preferredJobType")}</Label>
               <div className="flex flex-wrap gap-2">
                 {JOB_TYPES.map((type) => (
                   <Badge
@@ -153,15 +150,17 @@ const PreferencesSection = ({ profile }: Props) => {
 
             {/* Locations */}
             <div className="space-y-3">
-              <Label>{t("candidate.profile.preferredLocations")}</Label>
+              <Label>{t("candidate.profile.sections.preferences.preferredLocations")}</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder={t("candidate.profile.addLocation")}
+                  placeholder={t("candidate.profile.sections.preferences.addLocation")}
                   value={locationInput}
                   onChange={(e) => setLocationInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addLocation())}
                 />
-                <Button type="button" onClick={addLocation}>{t("common.add")}</Button>
+                <Button type="button" onClick={addLocation}>
+                  {t("common.add")}
+                </Button>
               </div>
               {formData.preferred_locations.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -176,14 +175,14 @@ const PreferencesSection = ({ profile }: Props) => {
 
             {/* Availability */}
             <div className="space-y-3">
-              <Label>{t("candidate.profile.availabilityToJoin")}</Label>
+              <Label>{t("candidate.profile.sections.preferences.availability")}</Label>
               <div className="flex flex-wrap gap-2">
                 {AVAILABILITY_OPTIONS.map((opt) => (
                   <Badge
                     key={opt.value}
                     variant={formData.availability === opt.value ? "default" : "outline"}
                     className="cursor-pointer"
-                    onClick={() => setFormData(prev => ({ ...prev, availability: opt.value }))}
+                    onClick={() => setFormData((prev) => ({ ...prev, availability: opt.value }))}
                   >
                     {opt.label}
                   </Badge>
@@ -192,9 +191,11 @@ const PreferencesSection = ({ profile }: Props) => {
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setIsEditing(false)}>
+              {t("common.cancel")}
+            </Button>
             <Button onClick={handleSave} disabled={updateProfile.isPending}>
-              {updateProfile.isPending ? t("candidate.profile.saving") : t("common.save")}
+              {updateProfile.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </div>
         </DialogContent>
