@@ -218,7 +218,7 @@ const InternshipsSection = () => {
                 checked={formData.is_current}
                 onCheckedChange={(c) => setFormData((prev) => ({ ...prev, is_current: !!c }))}
               />
-              <span className="text-sm">{t("candidate.profile.sections.internships.current")}</span>
+              <span className="text-sm">{t("candidate.profile.sections.internships.isCurrent")}</span>
             </label>
             <div className="space-y-2">
               <Label>{t("candidate.profile.sections.internships.description")}</Label>
