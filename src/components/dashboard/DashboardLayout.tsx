@@ -40,20 +40,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="container-narrow">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-md">
                 <Briefcase className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold text-foreground">
                 Steel<span className="gradient-text">Jobs</span>
               </span>
-            </a>
+            </div>
 
             {/* User Menu */}
             <div className="flex items-center gap-4">
-              <span className="hidden sm:inline-block text-sm text-muted-foreground capitalize">
-                {role} Dashboard
-              </span>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

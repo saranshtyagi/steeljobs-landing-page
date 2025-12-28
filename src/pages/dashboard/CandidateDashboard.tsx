@@ -112,7 +112,7 @@ const CandidateDashboard = () => {
               className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Briefcase className="w-4 h-4" />
-              {t("candidate.dashboard.overview")}
+              {t("candidate.dashboard.dashboard", "Dashboard")}
             </TabsTrigger>
             <TabsTrigger 
               value="jobs" 
