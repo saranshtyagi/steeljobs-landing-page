@@ -564,7 +564,8 @@
           "weeks2": "2 सप्ताह",
           "month1": "1 महीना",
           "months2": "2 महीने",
-          "months3Plus": "3+ महीने"
+          "months3Plus": "3+ महीने",
+          "addLocation": "स्थान जोड़ें"
         },
         "summary": {
           "title": "प्रोफ़ाइल सारांश",
