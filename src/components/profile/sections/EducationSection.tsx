@@ -144,7 +144,7 @@ const EducationSection = () => {
                     </h3>
                     {edu.is_highest && (
                       <Badge variant="secondary" className="text-xs">
-                        {t("candidate.profile.highest")}
+                        {t("candidate.profile.sections.education.isHighest")}
                       </Badge>
                     )}
                   </div>
@@ -294,7 +294,7 @@ const EducationSection = () => {
               onClick={handleSave}
               disabled={addEducation.isPending || updateEducation.isPending || !formData.degree_level}
             >
-              {addEducation.isPending || updateEducation.isPending ? t("candidate.profile.saving") : t("common.save")}
+              {addEducation.isPending || updateEducation.isPending ? t("common.loading") : t("common.save")}
             </Button>
           </div>
         </DialogContent>
