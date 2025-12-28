@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { OnboardingData } from "@/pages/onboarding/CandidateOnboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Briefcase, GraduationCap, Loader2, ChevronDown } from "lucide-react";
+import { Check, X, Briefcase, GraduationCap, Loader2, ChevronDown, MapPin } from "lucide-react";
 import { INDIAN_STATES, getCitiesByState, getAllCities } from "@/data/indianLocations";
 
 interface Props {
@@ -15,12 +15,26 @@ interface Props {
   userName: string;
 }
 
+interface PincodeData {
+  Message: string;
+  Status: string;
+  PostOffice: Array<{
+    Name: string;
+    District: string;
+    State: string;
+    Pincode: string;
+  }> | null;
+}
+
 const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userName }: Props) => {
   const [stateInput, setStateInput] = useState(data.currentState);
   const [cityInput, setCityInput] = useState(data.currentCity);
+  const [pincodeInput, setPincodeInput] = useState(data.pincode || "");
   const [showStateSuggestions, setShowStateSuggestions] = useState(false);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeError, setPincodeError] = useState("");
 
   // Filter states based on input
   const filteredStates = useMemo(() => {
@@ -46,6 +60,58 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     ).slice(0, 20);
   }, [cityInput, availableCities]);
 
+  // Fetch location data when pincode is 6 digits
+  const fetchPincodeData = useCallback(async (pincode: string) => {
+    if (pincode.length !== 6 || !/^\d{6}$/.test(pincode)) {
+      return;
+    }
+
+    setPincodeLoading(true);
+    setPincodeError("");
+
+    try {
+      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data: PincodeData[] = await response.json();
+
+      if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length) {
+        const postOffice = data[0].PostOffice[0];
+        const state = postOffice.State;
+        const city = postOffice.District;
+
+        // Update state
+        updateData({ 
+          currentState: state, 
+          currentCity: city,
+          pincode: pincode 
+        });
+        setStateInput(state);
+        setCityInput(city);
+        setPincodeError("");
+      } else {
+        setPincodeError("Invalid pincode. Please check and try again.");
+      }
+    } catch (error) {
+      console.error("Pincode fetch error:", error);
+      setPincodeError("Unable to fetch location. Please enter manually.");
+    } finally {
+      setPincodeLoading(false);
+    }
+  }, [updateData]);
+
+  // Handle pincode input change
+  const handlePincodeChange = (value: string) => {
+    // Only allow digits and max 6 characters
+    const sanitized = value.replace(/\D/g, "").slice(0, 6);
+    setPincodeInput(sanitized);
+    updateData({ pincode: sanitized });
+    setPincodeError("");
+
+    // Auto-fetch when 6 digits entered
+    if (sanitized.length === 6) {
+      fetchPincodeData(sanitized);
+    }
+  };
+
   const selectState = (state: string) => {
     updateData({ currentState: state, currentCity: "" });
     setStateInput(state);
@@ -70,6 +136,12 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     setCityInput("");
   };
 
+  const clearPincode = () => {
+    updateData({ pincode: "" });
+    setPincodeInput("");
+    setPincodeError("");
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     
@@ -89,6 +161,9 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
     }
     if (!data.currentCity.trim()) {
       newErrors.currentCity = "Current city is required";
+    }
+    if (!data.pincode || data.pincode.length !== 6) {
+      newErrors.pincode = "Valid 6-digit pincode is required";
     }
 
     setErrors(newErrors);
@@ -219,6 +294,40 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
           )}
         </div>
 
+        {/* Pincode - Industry standard: Enter pincode first to auto-fill city/state */}
+        <div className="space-y-2">
+          <Label htmlFor="pincode" className="text-foreground">
+            Pincode<span className="text-destructive">*</span>
+          </Label>
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              id="pincode"
+              value={pincodeInput}
+              onChange={(e) => handlePincodeChange(e.target.value)}
+              className={`pl-10 pr-10 ${errors.pincode || pincodeError ? "border-destructive" : ""}`}
+              placeholder="Enter 6-digit pincode"
+              maxLength={6}
+              inputMode="numeric"
+            />
+            {pincodeLoading && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+            )}
+            {pincodeInput.length === 6 && !pincodeLoading && !pincodeError && data.currentCity && (
+              <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Enter your pincode to auto-fill city and state
+          </p>
+          {pincodeError && (
+            <p className="text-sm text-destructive">{pincodeError}</p>
+          )}
+          {errors.pincode && !pincodeError && (
+            <p className="text-sm text-destructive">{errors.pincode}</p>
+          )}
+        </div>
+
         {/* State Selection */}
         <div className="space-y-2">
           <Label htmlFor="currentState" className="text-foreground">
@@ -249,7 +358,7 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
                 onFocus={() => setShowStateSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowStateSuggestions(false), 200)}
                 className={`pr-10 ${errors.currentState ? "border-destructive" : ""}`}
-                placeholder="Type to search state"
+                placeholder="Type to search state or enter pincode above"
               />
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               
@@ -307,7 +416,7 @@ const OnboardingBasicDetails = ({ data, updateData, onContinue, isSaving, userNa
                 onFocus={() => setShowCitySuggestions(true)}
                 onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
                 className={`pr-10 ${errors.currentCity ? "border-destructive" : ""}`}
-                placeholder={data.currentState ? `Type to search city in ${data.currentState}` : "Select state first or type city name"}
+                placeholder={data.currentState ? `Type to search city in ${data.currentState}` : "Enter pincode above or select state first"}
               />
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               

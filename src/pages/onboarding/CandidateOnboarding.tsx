@@ -16,6 +16,7 @@ export interface OnboardingData {
   workStatus: "experienced" | "fresher" | "";
   currentState: string;
   currentCity: string;
+  pincode: string;
   
   // Education Details
   degreeLevel: string;
@@ -42,6 +43,7 @@ const initialData: OnboardingData = {
   workStatus: "",
   currentState: "",
   currentCity: "",
+  pincode: "",
   degreeLevel: "",
   course: "",
   courseType: "",
