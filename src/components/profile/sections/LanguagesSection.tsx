@@ -108,7 +108,7 @@ const LanguagesSection = () => {
             <div className="space-y-2">
               <Label>{t("candidate.profile.sections.languages.language")}*</Label>
               <Input
-                placeholder={t("candidate.profile.languagePlaceholder")}
+                placeholder={t("candidate.profile.sections.languages.language")}
                 value={formData.language}
                 onChange={(e) => setFormData((prev) => ({ ...prev, language: e.target.value }))}
               />
