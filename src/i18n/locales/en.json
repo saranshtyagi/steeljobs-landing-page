@@ -511,7 +511,8 @@
           "startDate": "Start Date",
           "endDate": "End Date",
           "isCurrent": "Currently Working",
-          "noInternships": "No internships added yet"
+          "noInternships": "No internships added yet",
+          "present": "Present"
         },
         "employment": {
           "title": "Employment",
