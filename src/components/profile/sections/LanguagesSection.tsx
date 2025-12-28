@@ -68,17 +68,17 @@ const LanguagesSection = () => {
                 <div className="flex gap-2 mt-1">
                   {lang.can_read && (
                     <Badge variant="outline" className="text-xs">
-                      {t("candidate.profile.read")}
+                      {t("candidate.profile.sections.languages.canRead")}
                     </Badge>
                   )}
                   {lang.can_write && (
                     <Badge variant="outline" className="text-xs">
-                      {t("candidate.profile.write")}
+                      {t("candidate.profile.sections.languages.canWrite")}
                     </Badge>
                   )}
                   {lang.can_speak && (
                     <Badge variant="outline" className="text-xs">
-                      {t("candidate.profile.speak")}
+                      {t("candidate.profile.sections.languages.canSpeak")}
                     </Badge>
                   )}
                 </div>
