@@ -78,26 +78,24 @@ const DashboardStats = () => {
 
   return (
     <div className="space-y-6">
-      {/* Stats and Premium Card Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="p-4 rounded-xl bg-card border border-border hover:shadow-md transition-shadow"
-            >
-              <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center mb-3`}>
-                <stat.icon className="w-5 h-5" />
-              </div>
-              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="p-4 rounded-xl bg-card border border-border hover:shadow-md transition-shadow"
+          >
+            <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center mb-3`}>
+              <stat.icon className="w-5 h-5" />
             </div>
-          ))}
-        </div>
+            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+            <p className="text-sm text-muted-foreground">{stat.label}</p>
+          </div>
+        ))}
+      </div>
 
-        {/* Premium Features Card */}
-        <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
+      {/* Premium Features Card */}
+      <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -139,7 +137,6 @@ const DashboardStats = () => {
             </Button>
           </CardContent>
         </Card>
-      </div>
 
       {/* Mock Interview Booking Section */}
       <Card className="relative overflow-hidden border border-border bg-gradient-to-r from-card via-card to-primary/5">
