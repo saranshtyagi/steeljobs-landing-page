@@ -3,12 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCandidateExams } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Plus, BookOpen, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
@@ -36,7 +31,7 @@ const ExamsSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm(t("candidate.profile.deleteExam"))) {
+    if (confirm(t("candidate.profile.sections.exams.deleteConfirm"))) {
       await deleteExam.mutateAsync(id);
     }
   };
@@ -46,7 +41,7 @@ const ExamsSection = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
-          {t("candidate.profile.exams")}
+          {t("candidate.profile.sections.exams.title")}
         </h2>
         <Button variant="ghost" size="sm" onClick={() => setIsAdding(true)}>
           <Plus className="w-4 h-4 mr-1" />
@@ -63,14 +58,26 @@ const ExamsSection = () => {
               <div>
                 <span className="font-medium text-foreground">{exam.exam_name}</span>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                  {exam.score && <span>{t("candidate.profile.score")}: {exam.score}</span>}
-                  {exam.rank && <span>{t("candidate.profile.rank")}: {exam.rank}</span>}
-                  {exam.year && <span>{t("candidate.profile.year")}: {exam.year}</span>}
+                  {exam.score && (
+                    <span>
+                      {t("candidate.profile.score")}: {exam.score}
+                    </span>
+                  )}
+                  {exam.rank && (
+                    <span>
+                      {t("candidate.profile.rank")}: {exam.rank}
+                    </span>
+                  )}
+                  {exam.year && (
+                    <span>
+                      {t("candidate.profile.year")}: {exam.year}
+                    </span>
+                  )}
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive"
                 onClick={() => handleDelete(exam.id)}
               >
@@ -80,56 +87,58 @@ const ExamsSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">{t("candidate.profile.addExamsPrompt")}</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.sections.exams.noExams")}</p>
       )}
 
       {/* Add Dialog */}
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("candidate.profile.addCompetitiveExam")}</DialogTitle>
+            <DialogTitle>{t("candidate.profile.sections.exams.addExam")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("candidate.profile.examName")}*</Label>
+              <Label>{t("candidate.profile.sections.exams.examName")}*</Label>
               <Input
-                placeholder={t("candidate.profile.examNamePlaceholder")}
+                placeholder={t("candidate.profile.sections.exams.examName")}
                 value={formData.exam_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, exam_name: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, exam_name: e.target.value }))}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("candidate.profile.score")}</Label>
+                <Label>{t("candidate.profile.sections.exams.score")}</Label>
                 <Input
-                  placeholder={t("candidate.profile.scorePlaceholder")}
+                  placeholder={t("candidate.profile.sections.exams.score")}
                   value={formData.score}
-                  onChange={(e) => setFormData(prev => ({ ...prev, score: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, score: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("candidate.profile.rank")}</Label>
+                <Label>{t("candidate.profile.sections.exams.rank")}</Label>
                 <Input
-                  placeholder={t("candidate.profile.rankPlaceholder")}
+                  placeholder={t("candidate.profile.sections.exams.rank")}
                   value={formData.rank}
-                  onChange={(e) => setFormData(prev => ({ ...prev, rank: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, rank: e.target.value }))}
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.year")}</Label>
+              <Label>{t("candidate.profile.sections.exams.year")}</Label>
               <Input
                 type="number"
-                placeholder="2024"
+                placeholder={t("candidate.profile.sections.exams.year")}
                 value={formData.year}
-                onChange={(e) => setFormData(prev => ({ ...prev, year: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, year: e.target.value }))}
               />
             </div>
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsAdding(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setIsAdding(false)}>
+              {t("common.cancel")}
+            </Button>
             <Button onClick={handleSave} disabled={addExam.isPending || !formData.exam_name.trim()}>
-              {addExam.isPending ? t("candidate.profile.adding") : t("common.add")}
+              {addExam.isPending ? t("common.loading") : t("common.add")}
             </Button>
           </div>
         </DialogContent>
