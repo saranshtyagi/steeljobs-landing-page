@@ -90,7 +90,7 @@ const AccomplishmentsSection = () => {
                 className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
               >
                 <ExternalLink className="w-3 h-3" />
-                {t("candidate.profile.viewCredential")}
+                {t("candidate.profile.sections.accomplishments.viewCredential")}
               </a>
             )}
           </div>
