@@ -26,9 +26,9 @@ const AccomplishmentsSection = () => {
   });
 
   const ACCOMPLISHMENT_TYPES = [
-    { value: "certification", label: t("candidate.profile.certification") },
-    { value: "award", label: t("candidate.profile.award") },
-    { value: "leadership", label: t("candidate.profile.leadership") },
+    { value: "certification", label: t("candidate.profile.sections.accomplishments.certification") },
+    { value: "award", label: t("candidate.profile.sections.accomplishments.award") },
+    { value: "leadership", label: t("candidate.profile.sections.accomplishments.leadership") },
   ];
 
   const handleSave = async () => {
