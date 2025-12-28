@@ -38,7 +38,7 @@ const LanguagesSection = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm(t("candidate.profile.removeLanguageConfirm"))) {
+    if (confirm(t("common.confirm"))) {
       await deleteLanguage.mutateAsync(id);
     }
   };
@@ -95,18 +95,18 @@ const LanguagesSection = () => {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">{t("candidate.profile.addLanguagesPrompt")}</p>
+        <p className="text-muted-foreground text-sm">{t("candidate.profile.sections.languages.noLanguages")}</p>
       )}
 
       {/* Add Dialog */}
       <Dialog open={isAdding} onOpenChange={setIsAdding}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("candidate.profile.languages.addLanguage")}</DialogTitle>
+            <DialogTitle>{t("candidate.profile.sections.languages.addLanguage")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("candidate.profile.language")}*</Label>
+              <Label>{t("candidate.profile.sections.languages.language")}*</Label>
               <Input
                 placeholder={t("candidate.profile.languagePlaceholder")}
                 value={formData.language}
@@ -114,13 +114,13 @@ const LanguagesSection = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("candidate.profile.proficiency")}</Label>
+              <Label>{t("candidate.profile.sections.languages.proficiency")}</Label>
               <Select
                 value={formData.proficiency}
                 onValueChange={(v) => setFormData((prev) => ({ ...prev, proficiency: v }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("candidate.profile.selectLevel")} />
+                  <SelectValue placeholder={t("candidate.profile.sections.languages.proficiency")} />
                 </SelectTrigger>
                 <SelectContent>
                   {PROFICIENCY_LEVELS.map((level) => (
@@ -137,21 +137,21 @@ const LanguagesSection = () => {
                   checked={formData.can_read}
                   onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_read: !!c }))}
                 />
-                <span className="text-sm">{t("candidate.profile.canRead")}</span>
+                <span className="text-sm">{t("candidate.profile.sections.languages.canRead")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_write}
                   onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_write: !!c }))}
                 />
-                <span className="text-sm">{t("candidate.profile.canWrite")}</span>
+                <span className="text-sm">{t("candidate.profile.sections.languages.canWrite")}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   checked={formData.can_speak}
                   onCheckedChange={(c) => setFormData((prev) => ({ ...prev, can_speak: !!c }))}
                 />
-                <span className="text-sm">{t("candidate.profile.canSpeak")}</span>
+                <span className="text-sm">{t("candidate.profile.sections.languages.canSpeak")}</span>
               </label>
             </div>
           </div>
@@ -160,7 +160,7 @@ const LanguagesSection = () => {
               {t("common.cancel")}
             </Button>
             <Button onClick={handleSave} disabled={addLanguage.isPending || !formData.language.trim()}>
-              {addLanguage.isPending ? t("candidate.profile.adding") : t("common.add")}
+              {addLanguage.isPending ? t("common.loading") : t("common.add")}
             </Button>
           </div>
         </DialogContent>
