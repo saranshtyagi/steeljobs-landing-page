@@ -60,17 +60,17 @@ const ExamsSection = () => {
                 <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                   {exam.score && (
                     <span>
-                      {t("candidate.profile.score")}: {exam.score}
+                      {t("candidate.profile.sections.exams.score")}: {exam.score}
                     </span>
                   )}
                   {exam.rank && (
                     <span>
-                      {t("candidate.profile.rank")}: {exam.rank}
+                      {t("candidate.profile.sections.exams.rank")}: {exam.rank}
                     </span>
                   )}
                   {exam.year && (
                     <span>
-                      {t("candidate.profile.year")}: {exam.year}
+                      {t("candidate.profile.sections.exams.year")}: {exam.year}
                     </span>
                   )}
                 </div>
