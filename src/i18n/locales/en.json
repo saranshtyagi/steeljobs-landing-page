@@ -645,13 +645,13 @@
       "noJobsMatch": "No jobs match your filters",
       "clearFilters": "Clear Filters",
       "yearsPlus": "{{years}}+ years",
-      "more": "+{{count}} more", 
-      "viewAllSaved": "View all saved jobs ({{count}})"
+      "more": "+{{count}} more",
+      "viewAllSaved": "View all saved jobs ({{count}})",
       "salaryNotSpecified": "Salary not specified",
       "salaryFrom": "From ₹{{amount}}",
       "salaryUpTo": "Up to ₹{{amount}}",
-      "salaryRange": "₹{{min}} - ₹{{max}}"
-      "job": "Job"
+      "salaryRange": "₹{{min}} - ₹{{max}}",
+      "job": "Job",
       "company": "Company",
       "location": "Location"
     }
