@@ -653,7 +653,9 @@
       "salaryRange": "₹{{min}} - ₹{{max}}",
       "job": "Job",
       "company": "Company",
-      "location": "Location"
+      "location": "Location",
+      "noSavedJobs": "No saved jobs yet",
+      "saveForLater": "Save jobs to view them later"
     }
   },
   "jobs": {

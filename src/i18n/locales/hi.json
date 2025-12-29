@@ -653,7 +653,9 @@
       "salaryRange": "₹{{min}} - ₹{{max}}",
       "job": "नौकरी",
       "company": "कंपनी",
-      "location": "स्थान"
+      "location": "स्थान",
+      "noSavedJobs": "अभी तक कोई सहेजी गई नौकरियाँ नहीं हैं",
+      "saveForLater": "नौकरियों को बाद में देखने के लिए सहेजें"
     }
   },
   "jobs": {
