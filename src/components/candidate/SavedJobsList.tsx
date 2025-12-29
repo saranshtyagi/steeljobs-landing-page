@@ -12,37 +12,37 @@ interface SavedJobsListProps {
   onViewAll?: () => void;
 }
 
-const formatSalary = (min: number | null, max: number | null): string => {
-  if (!min && !max) return t("candidate.jobs.salaryNotSpecified");
-
-  const formatAmount = (amount: number): string => {
-    if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
-    if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
-    if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
-    return amount.toString();
-  };
-
-  if (min && max) {
-    return t("candidate.jobs.salaryRange", {
-      min: formatAmount(min),
-      max: formatAmount(max),
-    });
-  }
-  if (min) {
-    return t("candidate.jobs.salaryFrom", {
-      amount: formatAmount(min),
-    });
-  }
-  if (max) {
-    return t("candidate.jobs.salaryUpTo", {
-      amount: formatAmount(max),
-    });
-  }
-  return t("candidate.jobs.salaryNotSpecified");
-};
-
 const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListProps) => {
   const { t } = useTranslation();
+  const formatSalary = (min: number | null, max: number | null): string => {
+    if (!min && !max) return t("candidate.jobs.salaryNotSpecified");
+
+    const formatAmount = (amount: number): string => {
+      if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
+      if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
+      if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
+      return amount.toString();
+    };
+
+    if (min && max) {
+      return t("candidate.jobs.salaryRange", {
+        min: formatAmount(min),
+        max: formatAmount(max),
+      });
+    }
+    if (min) {
+      return t("candidate.jobs.salaryFrom", {
+        amount: formatAmount(min),
+      });
+    }
+    if (max) {
+      return t("candidate.jobs.salaryUpTo", {
+        amount: formatAmount(max),
+      });
+    }
+    return t("candidate.jobs.salaryNotSpecified");
+  };
+
   const { data: savedJobs, isLoading, error, refetch } = useSavedJobs();
   const toggleSaveJob = useToggleSaveJob();
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
