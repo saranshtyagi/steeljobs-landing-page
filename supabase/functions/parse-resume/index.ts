@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { resumeText } = await req.json();
+    const { resumeText, resumeUrl, candidateId } = await req.json();
     
     if (!resumeText || resumeText.trim().length === 0) {
       return new Response(
@@ -26,6 +26,8 @@ serve(async (req) => {
     }
 
     console.log("Parsing resume with AI...");
+    console.log("Resume URL:", resumeUrl);
+    console.log("Candidate ID:", candidateId);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -38,13 +40,22 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a resume parser. Extract structured information from the resume text provided.
-            Be accurate and only extract information that is explicitly mentioned in the resume.
-            If a field is not found, leave it as null or empty array.`
+            content: `You are an expert resume parser. Extract ALL structured information from the resume text provided.
+            Be thorough and extract every piece of professional information you can find.
+            Parse dates in YYYY-MM-DD format when possible.
+            For experience years, calculate the total based on work history if not explicitly mentioned.
+            If a field is not found, leave it as null or empty array.
+            Be especially thorough with:
+            - Work history (all jobs, internships, freelance work)
+            - Education (all degrees, certifications, courses)
+            - Skills (technical, soft skills, tools, technologies)
+            - Languages known
+            - Projects and achievements
+            - Certifications and accomplishments`
           },
           {
             role: "user",
-            content: `Parse this resume and extract the following information:\n\n${resumeText}`
+            content: `Parse this resume and extract ALL available information comprehensively:\n\n${resumeText}`
           }
         ],
         tools: [
@@ -52,7 +63,7 @@ serve(async (req) => {
             type: "function",
             function: {
               name: "extract_resume_data",
-              description: "Extract structured data from a resume",
+              description: "Extract comprehensive structured data from a resume",
               parameters: {
                 type: "object",
                 properties: {
@@ -62,20 +73,24 @@ serve(async (req) => {
                   },
                   headline: { 
                     type: "string", 
-                    description: "Professional headline or title (e.g., 'Senior Software Engineer')" 
+                    description: "Professional headline or current job title (e.g., 'Senior Software Engineer at Google')" 
                   },
                   location: { 
                     type: "string", 
                     description: "Location/city mentioned in resume" 
                   },
+                  profile_summary: {
+                    type: "string",
+                    description: "Professional summary, objective, or about section from the resume"
+                  },
                   skills: { 
                     type: "array", 
                     items: { type: "string" },
-                    description: "List of technical and soft skills" 
+                    description: "List of ALL technical and soft skills mentioned (programming languages, frameworks, tools, soft skills)" 
                   },
                   experience_years: { 
                     type: "number", 
-                    description: "Total years of professional experience" 
+                    description: "Total years of professional experience (calculate from work history if not explicit)" 
                   },
                   education_level: { 
                     type: "string", 
@@ -91,29 +106,93 @@ serve(async (req) => {
                     items: {
                       type: "object",
                       properties: {
-                        company: { type: "string" },
-                        role: { type: "string" },
-                        duration: { type: "string" }
-                      }
+                        company: { type: "string", description: "Company name" },
+                        role: { type: "string", description: "Job title/designation" },
+                        duration: { type: "string", description: "Duration as text (e.g., 'Jan 2020 - Present')" },
+                        start_date: { type: "string", description: "Start date in YYYY-MM-DD format" },
+                        end_date: { type: "string", description: "End date in YYYY-MM-DD format or null if current" },
+                        description: { type: "string", description: "Job responsibilities and achievements" },
+                        is_current: { type: "boolean", description: "Is this the current job" }
+                      },
+                      required: ["company", "role"]
                     },
-                    description: "List of work experiences"
+                    description: "List of all work experiences (full-time jobs)"
+                  },
+                  internships: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        company: { type: "string", description: "Company name" },
+                        role: { type: "string", description: "Internship title/role" },
+                        duration: { type: "string", description: "Duration as text" },
+                        description: { type: "string", description: "Internship responsibilities" }
+                      },
+                      required: ["company", "role"]
+                    },
+                    description: "List of internships (separate from full-time work)"
                   },
                   education: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        degree: { type: "string" },
-                        institution: { type: "string" },
-                        year: { type: "string" }
-                      }
+                        degree: { type: "string", description: "Degree name (e.g., 'B.Tech in Computer Science')" },
+                        institution: { type: "string", description: "University or college name" },
+                        year: { type: "string", description: "Graduation year" },
+                        specialization: { type: "string", description: "Major or specialization" },
+                        grade: { type: "string", description: "GPA, percentage, or grade" }
+                      },
+                      required: ["degree", "institution"]
                     },
-                    description: "List of educational qualifications"
+                    description: "List of all educational qualifications"
+                  },
+                  projects: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string", description: "Project name" },
+                        description: { type: "string", description: "Project description" },
+                        skills_used: { 
+                          type: "array", 
+                          items: { type: "string" },
+                          description: "Technologies and skills used in the project" 
+                        }
+                      },
+                      required: ["title"]
+                    },
+                    description: "List of projects (personal, academic, or professional)"
+                  },
+                  languages: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        language: { type: "string", description: "Language name (e.g., 'English', 'Hindi')" },
+                        proficiency: { type: "string", description: "Proficiency level (native, fluent, intermediate, basic)" }
+                      },
+                      required: ["language"]
+                    },
+                    description: "Languages known by the candidate"
                   },
                   certifications: {
                     type: "array",
                     items: { type: "string" },
-                    description: "List of certifications"
+                    description: "List of certifications (e.g., 'AWS Certified Developer', 'PMP')"
+                  },
+                  accomplishments: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string", description: "Accomplishment or award title" },
+                        description: { type: "string", description: "Description of the accomplishment" },
+                        issuing_org: { type: "string", description: "Organization that issued the award" }
+                      },
+                      required: ["title"]
+                    },
+                    description: "Awards, achievements, publications, patents, etc."
                   }
                 },
                 required: ["skills"],
@@ -153,7 +232,7 @@ serve(async (req) => {
     }
 
     const parsedData = JSON.parse(toolCall.function.arguments);
-    console.log("Parsed resume data:", parsedData);
+    console.log("Parsed resume data:", JSON.stringify(parsedData, null, 2));
 
     return new Response(
       JSON.stringify({ success: true, data: parsedData }),
