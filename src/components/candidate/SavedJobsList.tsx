@@ -13,19 +13,32 @@ interface SavedJobsListProps {
 }
 
 const formatSalary = (min: number | null, max: number | null): string => {
-  if (!min && !max) return "Salary not specified";
-  
+  if (!min && !max) return t("candidate.jobs.salaryNotSpecified");
+
   const formatAmount = (amount: number): string => {
     if (amount >= 10000000) return `${(amount / 10000000).toFixed(1)} Cr`;
     if (amount >= 100000) return `${(amount / 100000).toFixed(1)} L`;
     if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
     return amount.toString();
   };
-  
-  if (min && max) return `₹${formatAmount(min)} - ₹${formatAmount(max)}`;
-  if (min) return `From ₹${formatAmount(min)}`;
-  if (max) return `Up to ₹${formatAmount(max)}`;
-  return "Salary not specified";
+
+  if (min && max) {
+    return t("candidate.jobs.salaryRange", {
+      min: formatAmount(min),
+      max: formatAmount(max),
+    });
+  }
+  if (min) {
+    return t("candidate.jobs.salaryFrom", {
+      amount: formatAmount(min),
+    });
+  }
+  if (max) {
+    return t("candidate.jobs.salaryUpTo", {
+      amount: formatAmount(max),
+    });
+  }
+  return t("candidate.jobs.salaryNotSpecified");
 };
 
 const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListProps) => {
@@ -85,15 +98,15 @@ const SavedJobsList = ({ limit, showViewAll = true, onViewAll }: SavedJobsListPr
                 {savedJob.job?.company_name?.substring(0, 2).toUpperCase() || "JB"}
               </div>
               <div>
-                <p className="font-medium text-foreground">{savedJob.job?.title || "Job"}</p>
+                <p className="font-medium text-foreground">{savedJob.job?.title || t("candidate.jobs.job")}</p>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Building2 className="w-3 h-3" />
-                    {savedJob.job?.company_name || "Company"}
+                    {savedJob.job?.company_name || t("candidate.jobs.company")}
                   </span>
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
-                    {savedJob.job?.location || "Location"}
+                    {savedJob.job?.location || t("candidate.jobs.location")}
                   </span>
                 </div>
               </div>

@@ -645,7 +645,15 @@
       "noJobsMatch": "कोणतीही नोकरी तुमच्या फिल्टरशी जुळत नाही",
       "clearFilters": "फिल्टर साफ करा",
       "yearsPlus": "{{years}}+ वर्षे",
-      "more": "+{{count}} अधिक"
+      "more": "+{{count}} अधिक",
+      "viewAllSaved": "सर्व जतन केलेल्या नोकऱ्या पहा ({{count}})",
+      "salaryNotSpecified": "पगार नमूद केलेला नाही",
+      "salaryFrom": "₹{{amount}} पासून",
+      "salaryUpTo": "₹{{amount}} पर्यंत",
+      "salaryRange": "₹{{min}} - ₹{{max}}",
+      "job": "नोकरी",
+      "company": "कंपनी",
+      "location": "स्थान"
     }
   },
   "jobs": {

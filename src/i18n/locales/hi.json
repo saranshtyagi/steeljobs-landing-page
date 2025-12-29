@@ -645,7 +645,15 @@
       "noJobsMatch": "कोई नौकरी आपके फ़िल्टर से मेल नहीं खाती",
       "clearFilters": "फ़िल्टर हटाएं",
       "yearsPlus": "{{years}}+ वर्ष",
-      "more": "+{{count}} और"
+      "more": "+{{count}} और",
+      "viewAllSaved": "सभी सहेजी गई नौकरियां देखें ({{count}})",
+      "salaryNotSpecified": "वेतन निर्दिष्ट नहीं है",
+      "salaryFrom": "₹{{amount}} से",
+      "salaryUpTo": "₹{{amount}} तक",
+      "salaryRange": "₹{{min}} - ₹{{max}}",
+      "job": "नौकरी",
+      "company": "कंपनी",
+      "location": "स्थान"
     }
   },
   "jobs": {
