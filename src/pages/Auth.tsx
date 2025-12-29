@@ -8,8 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
+import EmailOTPVerification from "@/components/auth/EmailOTPVerification";
 
-type AuthMode = "signin" | "signup" | "role-select";
+type AuthMode = "signin" | "signup" | "role-select" | "otp-verification";
 type AppRole = "recruiter" | "candidate";
 
 const Auth = () => {
@@ -88,18 +90,37 @@ const Auth = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    const { error } = await signUp(email.trim(), password, name.trim(), selectedRole);
-    setIsLoading(false);
+    try {
+      // Send OTP to email instead of regular signup
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          shouldCreateUser: true,
+          data: { name: name.trim() },
+        },
+      });
 
-    if (error) {
-      if (error.message.includes("already registered")) {
-        toast.error(t("auth.emailAlreadyRegistered"));
-      } else {
-        toast.error(error.message);
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast.error(t("auth.emailAlreadyRegistered"));
+        } else {
+          toast.error(error.message);
+        }
+        return;
       }
-    } else {
-      toast.success(t("auth.accountCreatedSuccessfully"));
+
+      toast.success("Verification code sent to your email!");
+      setMode("otp-verification");
+    } catch (err) {
+      console.error("Signup error:", err);
+      toast.error("Failed to send verification code. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleOTPVerified = () => {
+    // User is now authenticated, redirect will happen via useEffect
   };
 
   const handleRoleSelect = (role: AppRole) => {
@@ -350,6 +371,15 @@ const Auth = () => {
             {mode === "role-select" && renderRoleSelect()}
             {mode === "signup" && renderSignUpForm()}
             {mode === "signin" && renderSignInForm()}
+            {mode === "otp-verification" && selectedRole && (
+              <EmailOTPVerification
+                email={email.trim()}
+                name={name.trim()}
+                role={selectedRole}
+                onBack={() => setMode("signup")}
+                onVerified={handleOTPVerified}
+              />
+            )}
           </div>
         </div>
       </div>
