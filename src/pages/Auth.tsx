@@ -103,34 +103,28 @@ const Auth = () => {
       if (response.error || response.data?.error) {
         const errorMessage = response.data?.error || response.error?.message || "Failed to send verification code";
         
-        // Check if user already exists
+        // Check if user already exists - show special message with link to sign in
         if (response.data?.userExists) {
-          toast.error(
-            <div className="flex flex-col gap-2">
-              <span>{errorMessage}</span>
-              <button 
-                onClick={() => {
-                  setMode("signin");
-                  toast.dismiss();
-                }}
-                className="text-primary underline text-left"
-              >
-                Click here to sign in
-              </button>
-            </div>,
-            { duration: 8000 }
-          );
+          toast.error(errorMessage, {
+            description: "Click here to sign in instead",
+            action: {
+              label: "Sign In",
+              onClick: () => setMode("signin"),
+            },
+            duration: 8000,
+          });
         } else {
           toast.error(errorMessage);
         }
+        setIsLoading(false);
         return;
       }
 
       toast.success("Verification code sent to your email!");
       setMode("otp-verification");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Signup error:", err);
-      toast.error("Failed to send verification code. Please try again.");
+      toast.error(err?.message || "Failed to send verification code. Please try again.");
     } finally {
       setIsLoading(false);
     }
