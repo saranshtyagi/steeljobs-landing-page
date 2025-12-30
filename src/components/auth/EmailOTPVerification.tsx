@@ -8,12 +8,13 @@ import { toast } from "sonner";
 interface EmailOTPVerificationProps {
   email: string;
   name: string;
+  password: string;
   role: "recruiter" | "candidate";
   onBack: () => void;
   onVerified: () => void;
 }
 
-const EmailOTPVerification = ({ email, name, role, onBack, onVerified }: EmailOTPVerificationProps) => {
+const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified }: EmailOTPVerificationProps) => {
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -37,31 +38,44 @@ const EmailOTPVerification = ({ email, name, role, onBack, onVerified }: EmailOT
 
     setIsVerifying(true);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: "email",
+      // Verify OTP and create user via edge function
+      const { data, error } = await supabase.functions.invoke("verify-otp", {
+        body: {
+          email,
+          otp,
+          name,
+          password,
+          role,
+        },
       });
 
       if (error) {
-        toast.error(error.message || "Invalid OTP. Please try again.");
+        console.error("Verify OTP error:", error);
+        toast.error(error.message || "Verification failed. Please try again.");
         setOtp("");
         return;
       }
 
-      if (data.user) {
-        // Insert the user role
-        const { error: roleError } = await supabase.from("user_roles").insert({ user_id: data.user.id, role });
-
-        if (roleError) {
-          console.error("Error inserting role:", roleError);
-          toast.error("Error setting up account. Please try again.");
-          return;
-        }
-
-        toast.success("Email verified successfully! Welcome to SteelJobs.");
-        onVerified();
+      if (data?.error) {
+        toast.error(data.error);
+        setOtp("");
+        return;
       }
+
+      // Sign in the user after successful verification
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.error("Sign in error after verification:", signInError);
+        toast.error("Account created but sign in failed. Please try logging in.");
+        return;
+      }
+
+      toast.success("Email verified successfully! Welcome to SteelJobs.");
+      onVerified();
     } catch (err) {
       console.error("OTP verification error:", err);
       toast.error("Verification failed. Please try again.");
@@ -73,15 +87,20 @@ const EmailOTPVerification = ({ email, name, role, onBack, onVerified }: EmailOT
   const handleResendOTP = async () => {
     setIsResending(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
+      const { data, error } = await supabase.functions.invoke("send-otp", {
+        body: {
+          email,
+          name,
         },
       });
 
       if (error) {
         toast.error(error.message || "Failed to resend OTP");
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
         return;
       }
 
