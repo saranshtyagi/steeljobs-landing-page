@@ -195,7 +195,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     const emailResult = await withRetry(async () => {
       const response = await resend.emails.send({
-        from: "SteelJobs <onboarding@resend.dev>",
+        from: "SteelJobs <noreply@mail.mysteeljobs.com>",
         to: [email],
         subject: "Your SteelJobs Verification Code",
         html: `
