@@ -85,6 +85,7 @@ const ProfileSetupModal = ({ isOpen, onClose, initialData, isEditing = false }: 
     education_level: initialData?.education_level || null,
     about: initialData?.about || "",
     resume_url: initialData?.resume_url || null,
+    resume_text: null,
     skills: initialData?.skills || [],
   });
 
@@ -193,14 +194,19 @@ const ProfileSetupModal = ({ isOpen, onClose, initialData, isEditing = false }: 
               ...prev,
               headline: parsed.headline || prev.headline,
               location: parsed.location || prev.location,
-              experience_years: parsed.experience_years ?? prev.experience_years,
+              experience_years: typeof parsed.experience_years === 'number' ? parsed.experience_years : prev.experience_years,
               education_level: parsed.education_level || prev.education_level,
               about: parsed.about || prev.about,
               skills: parsed.skills?.length ? [...new Set([...(prev.skills || []), ...parsed.skills])] : prev.skills,
+              resume_text: resumeText, // Store extracted text for reliable re-parsing
             }));
             
             toast.success("Resume parsed! Fields have been auto-filled.");
           }
+        } else {
+          const errorResult = await response.json().catch(() => ({}));
+          console.error("Parse response error:", errorResult);
+          toast.info("Resume uploaded. You can fill in details manually.");
         }
       } catch (parseError) {
         console.error("Parse error:", parseError);
