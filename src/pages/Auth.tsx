@@ -91,20 +91,22 @@ const Auth = () => {
 
     setIsLoading(true);
     try {
-      // Send OTP to email instead of regular signup
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          shouldCreateUser: true,
+      // Send OTP via edge function
+      const { data, error } = await supabase.functions.invoke("send-otp", {
+        body: {
+          email: email.trim(),
+          name: name.trim(),
         },
       });
 
       if (error) {
-        if (error.message.includes("already registered")) {
-          toast.error(t("auth.emailAlreadyRegistered"));
-        } else {
-          toast.error(error.message);
-        }
+        console.error("Send OTP error:", error);
+        toast.error(error.message || "Failed to send verification code");
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
         return;
       }
 
@@ -359,6 +361,7 @@ const Auth = () => {
               <EmailOTPVerification
                 email={email.trim()}
                 name={name.trim()}
+                password={password}
                 role={selectedRole}
                 onBack={() => setMode("signup")}
                 onVerified={handleOTPVerified}
