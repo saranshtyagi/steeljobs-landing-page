@@ -24,7 +24,10 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { email, otp, name, password, role }: VerifyOTPRequest = await req.json();
 
+    console.log("Verify OTP request received for email:", email);
+
     if (!email || !otp || !password || !role) {
+      console.log("Missing required fields:", { email: !!email, otp: !!otp, password: !!password, role: !!role });
       return new Response(
         JSON.stringify({ error: "Email, OTP, password, and role are required" }),
         {
@@ -39,14 +42,29 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get the OTP from database
+    console.log("Fetching OTP record for email:", email.toLowerCase());
     const { data: otpRecord, error: fetchError } = await supabaseAdmin
       .from("email_otps")
       .select("*")
       .eq("email", email.toLowerCase())
       .eq("otp_code", otp)
-      .single();
+      .maybeSingle();
 
-    if (fetchError || !otpRecord) {
+    console.log("OTP fetch result:", { found: !!otpRecord, error: fetchError?.message });
+
+    if (fetchError) {
+      console.error("Error fetching OTP:", fetchError);
+      return new Response(
+        JSON.stringify({ error: "Failed to verify OTP. Please try again." }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    if (!otpRecord) {
+      console.log("OTP not found for email:", email.toLowerCase(), "with code:", otp);
       return new Response(
         JSON.stringify({ error: "Invalid OTP. Please try again." }),
         {
