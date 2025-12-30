@@ -18,7 +18,7 @@ const Auth = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get("mode") === "signup" ? "role-select" : "signin";
-  
+
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [selectedRole, setSelectedRole] = useState<AppRole | null>(null);
   const [email, setEmail] = useState("");
@@ -96,7 +96,6 @@ const Auth = () => {
         email: email.trim(),
         options: {
           shouldCreateUser: true,
-          data: { name: name.trim() },
         },
       });
 
@@ -146,9 +145,7 @@ const Auth = () => {
             </div>
             <div>
               <h3 className="font-semibold text-lg text-foreground mb-1">{t("auth.imRecruiter")}</h3>
-              <p className="text-sm text-muted-foreground">
-                {t("auth.recruiterDescription")}
-              </p>
+              <p className="text-sm text-muted-foreground">{t("auth.recruiterDescription")}</p>
             </div>
           </div>
         </button>
@@ -163,9 +160,7 @@ const Auth = () => {
             </div>
             <div>
               <h3 className="font-semibold text-lg text-foreground mb-1">{t("auth.imJobSeeker")}</h3>
-              <p className="text-sm text-muted-foreground">
-                {t("auth.jobSeekerDescription")}
-              </p>
+              <p className="text-sm text-muted-foreground">{t("auth.jobSeekerDescription")}</p>
             </div>
           </div>
         </button>
@@ -174,10 +169,7 @@ const Auth = () => {
       <div className="text-center pt-4">
         <p className="text-sm text-muted-foreground">
           {t("auth.alreadyHaveAccount")}{" "}
-          <button
-            onClick={() => setMode("signin")}
-            className="text-primary hover:underline font-medium"
-          >
+          <button onClick={() => setMode("signin")} className="text-primary hover:underline font-medium">
             {t("auth.signIn")}
           </button>
         </p>
@@ -259,11 +251,7 @@ const Auth = () => {
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           {t("auth.alreadyHaveAccount")}{" "}
-          <button
-            type="button"
-            onClick={() => setMode("signin")}
-            className="text-primary hover:underline font-medium"
-          >
+          <button type="button" onClick={() => setMode("signin")} className="text-primary hover:underline font-medium">
             {t("auth.signIn")}
           </button>
         </p>
@@ -345,12 +333,8 @@ const Auth = () => {
             </div>
             <span className="text-3xl font-bold">SteelJobs</span>
           </a>
-          <h2 className="text-2xl font-semibold mb-4">
-            {t("auth.whereTalentMeets")}
-          </h2>
-          <p className="text-primary-foreground/80">
-            {t("auth.joinThousands")}
-          </p>
+          <h2 className="text-2xl font-semibold mb-4">{t("auth.whereTalentMeets")}</h2>
+          <p className="text-primary-foreground/80">{t("auth.joinThousands")}</p>
         </div>
       </div>
 
