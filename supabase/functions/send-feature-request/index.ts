@@ -28,27 +28,26 @@ const handler = async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       console.error("No authorization header provided");
-      return new Response(
-        JSON.stringify({ error: "Authorization required" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Authorization required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      {
-        global: { headers: { Authorization: authHeader } },
-      }
-    );
+    const supabaseClient = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+      global: { headers: { Authorization: authHeader } },
+    });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) {
       console.error("Auth error:", authError);
-      return new Response(
-        JSON.stringify({ error: "Invalid authentication" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid authentication" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const { requestType, userName, userEmail }: FeatureRequestPayload = await req.json();
@@ -56,16 +55,16 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Validate input
     if (!requestType || !userName || !userEmail) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const isPremium = requestType === "premium_access";
-    
+
     // Email to support team
-    const supportSubject = isPremium 
+    const supportSubject = isPremium
       ? `Premium Access Request from ${userName}`
       : `Mock Interview Session Request from ${userName}`;
 
@@ -88,7 +87,7 @@ const handler = async (req: Request): Promise<Response> => {
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Requested At</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
           </tr>
         </table>
         <p>Please follow up with the user to complete the premium access setup.</p>
@@ -111,14 +110,14 @@ const handler = async (req: Request): Promise<Response> => {
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Requested At</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
           </tr>
         </table>
         <p>Please follow up with the user to schedule the mock interview session.</p>
       `;
 
     // User confirmation email
-    const userSubject = isPremium 
+    const userSubject = isPremium
       ? "Your Premium Access Request - SteelJobs"
       : "Your Mock Interview Session Request - SteelJobs";
 
@@ -148,7 +147,7 @@ const handler = async (req: Request): Promise<Response> => {
               </p>
             </div>
             <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-              If you have any questions, feel free to reply to this email or contact us at <a href="mailto:support@oppexl.com" style="color: #f59e0b;">support@oppexl.com</a>
+              If you have any questions, feel free to contact us at <a href="mailto:support@oppexl.com" style="color: #f59e0b;">support@oppexl.com</a>
             </p>
             <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
               Best regards,<br>
@@ -188,7 +187,7 @@ const handler = async (req: Request): Promise<Response> => {
               </p>
             </div>
             <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-              If you have any questions, feel free to reply to this email or contact us at <a href="mailto:support@oppexl.com" style="color: #3b82f6;">support@oppexl.com</a>
+              If you have any questions, feel free to contact us at <a href="mailto:support@oppexl.com" style="color: #3b82f6;">support@oppexl.com</a>
             </p>
             <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
               Best regards,<br>
@@ -221,16 +220,16 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Support email sent:", supportEmailResponse);
     console.log("User confirmation email sent:", userEmailResponse);
 
-    return new Response(
-      JSON.stringify({ success: true, message: "Request submitted successfully" }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, message: "Request submitted successfully" }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error: any) {
     console.error("Error in send-feature-request function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "Failed to submit request" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message || "Failed to submit request" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 };
 
