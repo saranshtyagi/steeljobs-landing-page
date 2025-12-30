@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 interface FeatureRequestPayload {
-  requestType: "premium_access" | "mock_interview";
+  requestType: "premium_6_month" | "premium_1_year" | "mock_interview";
   userName: string;
   userEmail: string;
 }
@@ -61,9 +61,6 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Map requestType to database format
-    const dbRequestType = requestType === "premium_access" ? "premium" : "mock_interview";
-
     // Get candidate profile
     const { data: candidateProfile, error: profileError } = await supabaseClient
       .from("candidate_profiles")
@@ -79,12 +76,12 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Check if user already has a pending request
+    // Check if user already has a pending request for this specific type
     const { data: existingRequest, error: existingError } = await supabaseClient
       .from("feature_requests")
       .select("id, status")
       .eq("candidate_id", candidateProfile.id)
-      .eq("request_type", dbRequestType)
+      .eq("request_type", requestType)
       .eq("status", "pending")
       .maybeSingle();
 
@@ -93,7 +90,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (existingRequest) {
-      console.log("User already has a pending request");
+      console.log("User already has a pending request for this type");
       return new Response(JSON.stringify({ 
         error: "Request already submitted", 
         alreadySubmitted: true 
@@ -109,7 +106,7 @@ const handler = async (req: Request): Promise<Response> => {
       .insert({
         user_id: user.id,
         candidate_id: candidateProfile.id,
-        request_type: dbRequestType,
+        request_type: requestType,
         user_name: userName,
         user_email: userEmail,
         status: "pending",
@@ -123,15 +120,27 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const isPremium = requestType === "premium_access";
+    // Determine request details
+    const isPremium6Month = requestType === "premium_6_month";
+    const isPremium1Year = requestType === "premium_1_year";
+    const isPremium = isPremium6Month || isPremium1Year;
+    const isMockInterview = requestType === "mock_interview";
+
+    // Get pricing and duration info
+    const getPlanDetails = () => {
+      if (isPremium6Month) return { price: "₹1,200", duration: "6 Months", perMonth: "₹200/month" };
+      if (isPremium1Year) return { price: "₹2,000", duration: "1 Year", perMonth: "₹167/month" };
+      return { price: "₹500", duration: "30 minutes", perMonth: "" };
+    };
+    const planDetails = getPlanDetails();
 
     // Email to support team
-    const supportSubject = isPremium
-      ? `Premium Access Request from ${userName}`
-      : `Mock Interview Session Request from ${userName}`;
+    let supportSubject: string;
+    let supportHtmlContent: string;
 
-    const supportHtmlContent = isPremium
-      ? `
+    if (isPremium) {
+      supportSubject = `Premium Access Request (${planDetails.duration}) from ${userName}`;
+      supportHtmlContent = `
         <h2>New Premium Access Request</h2>
         <p>A user has requested premium access on SteelJobs.</p>
         <table style="border-collapse: collapse; margin: 20px 0;">
@@ -144,8 +153,8 @@ const handler = async (req: Request): Promise<Response> => {
             <td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:${userEmail}">${userEmail}</a></td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Request Type</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Premium Career Tools (₹2,000)</td>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Plan</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Premium Career Tools - ${planDetails.duration} (${planDetails.price})</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Requested At</td>
@@ -153,8 +162,10 @@ const handler = async (req: Request): Promise<Response> => {
           </tr>
         </table>
         <p>Please follow up with the user to complete the premium access setup.</p>
-      `
-      : `
+      `;
+    } else {
+      supportSubject = `Mock Interview Session Request from ${userName}`;
+      supportHtmlContent = `
         <h2>New Mock Interview Session Request</h2>
         <p>A user has requested a 1-on-1 mock interview session on SteelJobs.</p>
         <table style="border-collapse: collapse; margin: 20px 0;">
@@ -177,14 +188,15 @@ const handler = async (req: Request): Promise<Response> => {
         </table>
         <p>Please follow up with the user to schedule the mock interview session.</p>
       `;
+    }
 
     // User confirmation email
-    const userSubject = isPremium
-      ? "Your Premium Access Request - SteelJobs"
-      : "Your Mock Interview Session Request - SteelJobs";
+    let userSubject: string;
+    let userHtmlContent: string;
 
-    const userHtmlContent = isPremium
-      ? `
+    if (isPremium) {
+      userSubject = `Your Premium Access Request (${planDetails.duration}) - SteelJobs`;
+      userHtmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
             <h1 style="color: white; margin: 0;">SteelJobs</h1>
@@ -200,12 +212,12 @@ const handler = async (req: Request): Promise<Response> => {
             <ul style="color: #4b5563; font-size: 16px; line-height: 1.8;">
               <li>🎥 Mock Interviews with industry experts</li>
               <li>📄 Professional Resume Building sessions</li>
-              <li>🎓 Personalized Learning Paths</li>
-              <li>📚 Industry-specific Courses</li>
+              <li>👥 Direct Recruiter Connections</li>
+              <li>⚡ Featured Profile visibility</li>
             </ul>
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <p style="color: #92400e; margin: 0; font-size: 14px;">
-                <strong>Premium Access:</strong> ₹2,000
+                <strong>Selected Plan:</strong> ${planDetails.duration} - ${planDetails.price} ${planDetails.perMonth ? `(${planDetails.perMonth})` : ''}
               </p>
             </div>
             <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
@@ -220,8 +232,10 @@ const handler = async (req: Request): Promise<Response> => {
             <p>© ${new Date().getFullYear()} SteelJobs. All rights reserved.</p>
           </div>
         </div>
-      `
-      : `
+      `;
+    } else {
+      userSubject = "Your Mock Interview Session Request - SteelJobs";
+      userHtmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
             <h1 style="color: white; margin: 0;">SteelJobs</h1>
@@ -261,6 +275,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
         </div>
       `;
+    }
 
     // Send both emails in parallel
     const [supportEmailResponse, userEmailResponse] = await Promise.all([
