@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, RefreshCw } from "lucide-react";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -17,13 +13,7 @@ interface EmailOTPVerificationProps {
   onVerified: () => void;
 }
 
-const EmailOTPVerification = ({
-  email,
-  name,
-  role,
-  onBack,
-  onVerified,
-}: EmailOTPVerificationProps) => {
+const EmailOTPVerification = ({ email, name, role, onBack, onVerified }: EmailOTPVerificationProps) => {
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -61,9 +51,7 @@ const EmailOTPVerification = ({
 
       if (data.user) {
         // Insert the user role
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert({ user_id: data.user.id, role });
+        const { error: roleError } = await supabase.from("user_roles").insert({ user_id: data.user.id, role });
 
         if (roleError) {
           console.error("Error inserting role:", roleError);
@@ -89,7 +77,6 @@ const EmailOTPVerification = ({
         email,
         options: {
           shouldCreateUser: true,
-          data: { name },
         },
       });
 
@@ -121,26 +108,18 @@ const EmailOTPVerification = ({
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
-        
+
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <Mail className="w-8 h-8 text-primary" />
         </div>
-        
-        <h1 className="text-2xl font-bold text-foreground mb-2">
-          Verify Your Email
-        </h1>
-        <p className="text-muted-foreground">
-          We've sent a 6-digit verification code to
-        </p>
+
+        <h1 className="text-2xl font-bold text-foreground mb-2">Verify Your Email</h1>
+        <p className="text-muted-foreground">We've sent a 6-digit verification code to</p>
         <p className="font-medium text-foreground mt-1">{email}</p>
       </div>
 
       <div className="flex justify-center">
-        <InputOTP
-          maxLength={6}
-          value={otp}
-          onChange={(value) => setOtp(value)}
-        >
+        <InputOTP maxLength={6} value={otp} onChange={(value) => setOtp(value)}>
           <InputOTPGroup>
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />
@@ -152,19 +131,12 @@ const EmailOTPVerification = ({
         </InputOTP>
       </div>
 
-      <Button
-        onClick={handleVerifyOTP}
-        variant="hero"
-        className="w-full"
-        disabled={isVerifying || otp.length !== 6}
-      >
+      <Button onClick={handleVerifyOTP} variant="hero" className="w-full" disabled={isVerifying || otp.length !== 6}>
         {isVerifying ? "Verifying..." : "Verify Email"}
       </Button>
 
       <div className="text-center">
-        <p className="text-sm text-muted-foreground mb-2">
-          Didn't receive the code?
-        </p>
+        <p className="text-sm text-muted-foreground mb-2">Didn't receive the code?</p>
         {canResend ? (
           <button
             onClick={handleResendOTP}
