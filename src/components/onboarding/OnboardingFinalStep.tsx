@@ -9,6 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, FileText, Check, Loader2, Sparkles, X, AlertCircle } from "lucide-react";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface Props {
   data: OnboardingData;
@@ -17,6 +21,30 @@ interface Props {
   onBack: () => void;
   isSaving: boolean;
 }
+
+const extractTextFromPDF = async (file: File): Promise<string> => {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    
+    let fullText = "";
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item: any) => item.str)
+        .join(" ");
+      fullText += pageText + "\n\n";
+    }
+    
+    console.log("Extracted PDF text length:", fullText.length);
+    return fullText;
+  } catch (error) {
+    console.error("PDF extraction error:", error);
+    throw new Error("Failed to extract text from PDF");
+  }
+};
 
 const OnboardingFinalStep = ({ data, updateData, onComplete, onBack, isSaving }: Props) => {
   const { user } = useAuth();
@@ -66,63 +94,67 @@ const OnboardingFinalStep = ({ data, updateData, onComplete, onBack, isSaving }:
       // Parse resume
       setIsParsing(true);
       
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        try {
-          const text = event.target?.result as string;
-          
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) throw new Error("Not authenticated");
-
-          const response = await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-resume`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session.access_token}`,
-              },
-              body: JSON.stringify({ resumeText: text }),
-            }
-          );
-
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              updateData({ parsedData: result.data });
-              
-              // Auto-fill data from parsed resume
-              const parsed = result.data;
-              const updates: Partial<OnboardingData> = {};
-              
-              if (parsed.name && !data.fullName) updates.fullName = parsed.name;
-              if (parsed.location && !data.currentCity) updates.currentCity = parsed.location;
-              if (parsed.skills?.length) {
-                updates.skills = [...new Set([...data.skills, ...parsed.skills])];
-              }
-              
-              if (Object.keys(updates).length > 0) {
-                updateData(updates);
-              }
-              
-              setShowParsedData(true);
-              toast.success("Resume parsed! Review the extracted information below.");
-            }
-          }
-        } catch (parseError) {
-          console.error("Parse error:", parseError);
-          toast.info("Resume uploaded. You can review and complete your profile manually.");
-        } finally {
-          setIsParsing(false);
+      try {
+        let resumeText = "";
+        
+        if (file.type === "application/pdf") {
+          resumeText = await extractTextFromPDF(file);
+        } else {
+          // For Word documents, read as text
+          resumeText = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target?.result as string);
+            reader.onerror = reject;
+            reader.readAsText(file);
+          });
         }
-      };
-      
-      reader.onerror = () => {
+        
+        console.log("Resume text to parse:", resumeText.substring(0, 500));
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error("Not authenticated");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-resume`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ resumeText }),
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            updateData({ parsedData: result.data });
+            
+            // Auto-fill data from parsed resume
+            const parsed = result.data;
+            const updates: Partial<OnboardingData> = {};
+            
+            if (parsed.name && !data.fullName) updates.fullName = parsed.name;
+            if (parsed.location && !data.currentCity) updates.currentCity = parsed.location;
+            if (parsed.skills?.length) {
+              updates.skills = [...new Set([...data.skills, ...parsed.skills])];
+            }
+            
+            if (Object.keys(updates).length > 0) {
+              updateData(updates);
+            }
+            
+            setShowParsedData(true);
+            toast.success("Resume parsed! Review the extracted information below.");
+          }
+        }
+      } catch (parseError) {
+        console.error("Parse error:", parseError);
+        toast.info("Resume uploaded. You can review and complete your profile manually.");
+      } finally {
         setIsParsing(false);
-        toast.info("Resume uploaded. Please fill in any missing details.");
-      };
-      
-      reader.readAsText(file);
+      }
 
     } catch (error) {
       console.error("Upload error:", error);
