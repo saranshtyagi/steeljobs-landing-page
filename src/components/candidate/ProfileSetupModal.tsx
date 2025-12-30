@@ -22,13 +22,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { X, Upload, Loader2, Sparkles, ArrowRight, ArrowLeft, Check } from "lucide-react";
-import * as pdfjsLib from "pdfjs-dist";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 
-// Use legacy build worker that works better in browser environments
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString();
+// Disable worker to avoid CDN/bundling issues - runs in main thread
+GlobalWorkerOptions.workerSrc = "";
 
 interface ProfileSetupModalProps {
   isOpen: boolean;
@@ -49,7 +46,7 @@ const EDUCATION_OPTIONS: { value: EducationLevel; label: string }[] = [
 const extractTextFromPDF = async (file: File): Promise<string> => {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pdf = await getDocument({ data: arrayBuffer }).promise;
     
     let fullText = "";
     
