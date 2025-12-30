@@ -39,14 +39,47 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Generate OTP
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
-
-    // Store OTP in database
+    // Initialize Supabase admin client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Check if user already exists
+    console.log("Checking if user exists with email:", email.toLowerCase());
+    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (listError) {
+      console.error("Error listing users:", listError);
+      return new Response(
+        JSON.stringify({ error: "Failed to check user status" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    const existingUser = existingUsers?.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase()
+    );
+
+    if (existingUser) {
+      console.log("User already exists with email:", email);
+      return new Response(
+        JSON.stringify({ 
+          error: "An account with this email already exists. Please sign in instead.",
+          userExists: true 
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
 
     // Delete any existing OTPs for this email
     await supabaseAdmin
