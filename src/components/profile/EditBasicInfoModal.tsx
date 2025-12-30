@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Check } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { CalendarIcon, Check, Mail, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -20,12 +22,17 @@ interface EditBasicInfoModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+type ModalStep = "edit" | "email-otp";
+
 const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => {
   const { t } = useTranslation();
-  const { profile: authProfile } = useAuth();
+  const { profile: authProfile, user } = useAuth();
   const { profile, updateProfile } = useCandidateProfile();
 
+  const [step, setStep] = useState<ModalStep>("edit");
   const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
     location: "",
     mobile_number: "",
     gender: "",
@@ -34,10 +41,19 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  
+  // Email OTP state
+  const [emailOtp, setEmailOtp] = useState("");
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [pendingEmail, setPendingEmail] = useState("");
 
   useEffect(() => {
     if (open && profile) {
       setFormData({
+        full_name: profile.full_name || authProfile?.name || "",
+        email: user?.email || authProfile?.email || "",
         location: profile.location || "",
         mobile_number: profile.mobile_number || "",
         gender: profile.gender || "",
@@ -45,13 +61,30 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
         profile_summary: profile.profile_summary || "",
       });
       setErrors({});
+      setStep("edit");
+      setEmailOtp("");
+      setPendingEmail("");
     }
-  }, [open, profile]);
+  }, [open, profile, authProfile, user]);
+
+  // Countdown timer for resend OTP
+  useEffect(() => {
+    if (resendCountdown > 0) {
+      const timer = setTimeout(() => setResendCountdown(resendCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCountdown]);
 
   // Validate mobile number format: +91 followed by exactly 10 digits
   const isValidMobile = (mobile: string): boolean => {
     const mobileRegex = /^\+91[6-9]\d{9}$/;
     return mobileRegex.test(mobile);
+  };
+
+  // Validate email format
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   // Handle mobile number input with +91 prefix
@@ -78,13 +111,21 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
   const validate = () => {
     const newErrors: Record<string, string> = {};
     
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Name is required";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+    
     if (!formData.location.trim()) {
       newErrors.location = "City/Location is required";
     }
     
-    if (!formData.mobile_number.trim()) {
-      newErrors.mobile_number = "Mobile number is required";
-    } else if (!isValidMobile(formData.mobile_number)) {
+    if (formData.mobile_number && !isValidMobile(formData.mobile_number)) {
       newErrors.mobile_number = "Enter a valid 10-digit mobile number starting with +91";
     }
     
@@ -94,11 +135,79 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
 
   const handleSave = async () => {
     if (!validate()) return;
-    
+
+    const currentEmail = user?.email || authProfile?.email || "";
+    const newEmail = formData.email.trim().toLowerCase();
+    const emailChanged = newEmail !== currentEmail.toLowerCase();
+
+    // If email changed, send OTP for verification
+    if (emailChanged) {
+      await sendEmailOtp(newEmail);
+      return;
+    }
+
+    // No email change, just save the profile data
+    await saveProfileData();
+  };
+
+  const sendEmailOtp = async (email: string) => {
+    setIsSendingOtp(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: email,
+      });
+
+      if (error) throw error;
+
+      setPendingEmail(email);
+      setStep("email-otp");
+      setResendCountdown(60);
+      toast.success(`Verification code sent to ${email}`);
+    } catch (error: any) {
+      console.error("Send OTP error:", error);
+      toast.error(error.message || "Failed to send verification code");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async () => {
+    if (emailOtp.length !== 6) {
+      toast.error("Please enter the complete 6-digit code");
+      return;
+    }
+
+    setIsVerifyingEmail(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email: pendingEmail,
+        token: emailOtp,
+        type: "email_change",
+      });
+
+      if (error) throw error;
+
+      toast.success("Email updated successfully");
+      await saveProfileData();
+    } catch (error: any) {
+      console.error("Verify OTP error:", error);
+      toast.error(error.message || "Invalid verification code");
+    } finally {
+      setIsVerifyingEmail(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0) return;
+    await sendEmailOtp(pendingEmail);
+  };
+
+  const saveProfileData = async () => {
     try {
       await updateProfile.mutateAsync({
+        full_name: formData.full_name.trim(),
         location: formData.location.trim(),
-        mobile_number: formData.mobile_number,
+        mobile_number: formData.mobile_number || null,
         gender: formData.gender || null,
         date_of_birth: formData.date_of_birth || null,
         profile_summary: formData.profile_summary.trim() || null,
@@ -117,6 +226,83 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
     setDatePickerOpen(false);
   };
 
+  const handleBack = () => {
+    setStep("edit");
+    setEmailOtp("");
+  };
+
+  if (step === "email-otp") {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Verify New Email</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+              <Mail className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm text-muted-foreground">Verification code sent to</p>
+                <p className="font-medium">{pendingEmail}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Enter 6-digit code</Label>
+              <InputOTP
+                value={emailOtp}
+                onChange={setEmailOtp}
+                maxLength={6}
+                className="justify-center"
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            <div className="text-center">
+              {resendCountdown > 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Resend code in {resendCountdown}s
+                </p>
+              ) : (
+                <Button variant="link" onClick={handleResendOtp} disabled={isSendingOtp}>
+                  {isSendingOtp ? "Sending..." : "Resend code"}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-3 pt-2">
+            <Button variant="outline" onClick={handleBack}>
+              Back
+            </Button>
+            <Button 
+              onClick={handleVerifyEmailOtp} 
+              disabled={emailOtp.length !== 6 || isVerifyingEmail}
+            >
+              {isVerifyingEmail ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                "Verify & Save"
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
@@ -125,20 +311,51 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
         </DialogHeader>
         
         <div className="space-y-5 py-4">
-          {/* Email (Read-only) */}
+          {/* Full Name */}
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Email Address</Label>
+            <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
             <Input
-              value={authProfile?.email || ""}
-              disabled
-              className="bg-muted"
+              id="fullName"
+              value={formData.full_name}
+              onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+              className={errors.full_name ? "border-destructive" : ""}
+              placeholder="Enter your full name"
             />
-            <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+            {errors.full_name && (
+              <p className="text-sm text-destructive">{errors.full_name}</p>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address <span className="text-destructive">*</span></Label>
+            <div className="relative">
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                className={cn("pr-10", errors.email && "border-destructive")}
+                placeholder="your@email.com"
+              />
+              {isValidEmail(formData.email) && (
+                <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+              )}
+            </div>
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+            {formData.email.toLowerCase() !== (user?.email || authProfile?.email || "").toLowerCase() && 
+              formData.email.trim() && isValidEmail(formData.email) && (
+              <p className="text-xs text-amber-600">
+                Changing email will require OTP verification
+              </p>
+            )}
           </div>
 
           {/* Mobile Number */}
           <div className="space-y-2">
-            <Label htmlFor="mobile">Mobile Number <span className="text-destructive">*</span></Label>
+            <Label htmlFor="mobile">Mobile Number</Label>
             <div className="relative">
               <Input
                 id="mobile"
@@ -252,8 +469,15 @@ const EditBasicInfoModal = ({ open, onOpenChange }: EditBasicInfoModalProps) => 
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={updateProfile.isPending}>
-            {updateProfile.isPending ? "Saving..." : "Save Changes"}
+          <Button onClick={handleSave} disabled={updateProfile.isPending || isSendingOtp}>
+            {updateProfile.isPending || isSendingOtp ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </div>
       </DialogContent>

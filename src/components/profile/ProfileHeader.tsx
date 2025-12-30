@@ -4,9 +4,10 @@ import { useCandidateEducation } from "@/hooks/useCandidateData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, CheckCircle, Edit2, MapPin, Phone, Mail, Plus } from "lucide-react";
+import { Camera, CheckCircle, Edit2, MapPin, Phone, Mail, Plus, User, Cake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 import EditBasicInfoModal from "./EditBasicInfoModal";
 
 interface Props {
@@ -121,6 +122,18 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
                   <Mail className="w-4 h-4" />
                   {authProfile.email}
                   <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                </span>
+              )}
+              {profile.gender && profile.gender !== "prefer_not_to_say" && (
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  {profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1)}
+                </span>
+              )}
+              {profile.date_of_birth && (
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <Cake className="w-4 h-4" />
+                  {format(new Date(profile.date_of_birth), "dd MMM yyyy")}
                 </span>
               )}
             </div>
