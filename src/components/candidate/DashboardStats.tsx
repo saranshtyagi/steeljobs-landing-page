@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useMyApplications } from "@/hooks/useApplications";
 import { useSavedJobs } from "@/hooks/useSavedJobs";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,14 +19,19 @@ import {
   Users,
   Target,
   MessageSquare,
-  Zap
+  Zap,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const DashboardStats = () => {
   const { t } = useTranslation();
+  const { user, profile } = useAuth();
   const { data: applications } = useMyApplications();
   const { data: savedJobs } = useSavedJobs();
+  const [isPremiumLoading, setIsPremiumLoading] = useState(false);
+  const [isInterviewLoading, setIsInterviewLoading] = useState(false);
 
   const appliedCount = applications?.filter(a => a.status === "applied").length || 0;
   const shortlistedCount = applications?.filter(a => a.status === "shortlisted").length || 0;
@@ -64,16 +71,59 @@ const DashboardStats = () => {
     { icon: Zap, text: "Boost your confidence" },
   ];
 
-  const handlePremiumClick = () => {
-    toast.info("Premium features coming soon!", {
-      description: "We're working on bringing you the best career tools."
+  const sendFeatureRequest = async (requestType: "premium_access" | "mock_interview") => {
+    const userName = profile?.name || user?.user_metadata?.name || "User";
+    const userEmail = user?.email || "";
+
+    if (!userEmail) {
+      toast.error("Unable to send request. Please ensure you're logged in.");
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke("send-feature-request", {
+      body: { requestType, userName, userEmail },
     });
+
+    if (error) {
+      console.error("Feature request error:", error);
+      throw new Error(error.message || "Failed to submit request");
+    }
+
+    return data;
   };
 
-  const handleBookInterview = () => {
-    toast.info("Booking coming soon!", {
-      description: "Mock interview sessions will be available shortly."
-    });
+  const handlePremiumClick = async () => {
+    setIsPremiumLoading(true);
+    try {
+      await sendFeatureRequest("premium_access");
+      toast.success("Request submitted!", {
+        description: "Our team will contact you shortly about premium access."
+      });
+    } catch (error: any) {
+      console.error("Premium request error:", error);
+      toast.error("Failed to submit request", {
+        description: "Please try again or contact support@oppexl.com"
+      });
+    } finally {
+      setIsPremiumLoading(false);
+    }
+  };
+
+  const handleBookInterview = async () => {
+    setIsInterviewLoading(true);
+    try {
+      await sendFeatureRequest("mock_interview");
+      toast.success("Request submitted!", {
+        description: "Our team will contact you to schedule your mock interview session."
+      });
+    } catch (error: any) {
+      console.error("Interview request error:", error);
+      toast.error("Failed to submit request", {
+        description: "Please try again or contact support@oppexl.com"
+      });
+    } finally {
+      setIsInterviewLoading(false);
+    }
   };
 
   return (
@@ -130,10 +180,15 @@ const DashboardStats = () => {
             </div>
             <Button 
               onClick={handlePremiumClick} 
+              disabled={isPremiumLoading}
               className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
             >
-              <Crown className="w-4 h-4 mr-2" />
-              Unlock Premium Access
+              {isPremiumLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Crown className="w-4 h-4 mr-2" />
+              )}
+              {isPremiumLoading ? "Submitting..." : "Unlock Premium Access"}
             </Button>
           </CardContent>
         </Card>
@@ -175,12 +230,17 @@ const DashboardStats = () => {
               </div>
               <Button 
                 onClick={handleBookInterview}
+                disabled={isInterviewLoading}
                 variant="hero"
                 size="lg"
                 className="w-full lg:w-auto"
               >
-                <Video className="w-4 h-4 mr-2" />
-                Book Your Session
+                {isInterviewLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Video className="w-4 h-4 mr-2" />
+                )}
+                {isInterviewLoading ? "Submitting..." : "Book Your Session"}
               </Button>
               <p className="text-xs text-muted-foreground text-center lg:text-right">
                 Limited slots available daily
