@@ -89,8 +89,8 @@ const DashboardStats = () => {
   const premiumFeatures = [
     { icon: Video, label: "Mock Interviews", description: "Practice with industry experts" },
     { icon: FileEdit, label: "Resume Building", description: "Professional resume sessions" },
-    { icon: GraduationCap, label: "Learning Paths", description: "Skill development tracks" },
-    { icon: BookOpen, label: "Courses", description: "Industry-specific training" },
+    { icon: Users, label: "Recruiter Connection", description: "Direct access to top recruiters" },
+    { icon: Zap, label: "Featured Profile", description: "Stand out to employers" },
   ];
 
   const mockInterviewBenefits = [
