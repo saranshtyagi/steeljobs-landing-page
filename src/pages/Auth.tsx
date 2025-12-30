@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import EmailOTPVerification from "@/components/auth/EmailOTPVerification";
 
 type AuthMode = "signin" | "signup" | "role-select" | "otp-verification";
@@ -98,39 +99,51 @@ const Auth = () => {
         },
       });
 
-      // When a function returns non-2xx, supabase-js may not populate response.data.
-      // The JSON body is often embedded inside response.error.message, so we parse it.
-      let parsedErrorBody: any = null;
-      if (response.error?.message) {
-        const jsonPart = response.error.message.split("Error,").slice(1).join("Error,").trim();
-        if (jsonPart?.startsWith("{") && jsonPart?.endsWith("}")) {
+      // Handle edge function errors properly
+      if (response.error) {
+        let errorData: { error?: string; userExists?: boolean } | null = null;
+
+        // Try to get the JSON body from FunctionsHttpError
+        if (response.error instanceof FunctionsHttpError) {
           try {
-            parsedErrorBody = JSON.parse(jsonPart);
+            // The context contains the Response object
+            const errorContext = response.error.context;
+            if (errorContext && typeof errorContext.json === 'function') {
+              errorData = await errorContext.json();
+            }
           } catch {
-            // ignore
+            // If parsing fails, try response.data as fallback
+            errorData = response.data;
           }
+        } else {
+          // For other error types, check response.data
+          errorData = response.data;
         }
+
+        // Check if user already exists
+        if (errorData?.userExists) {
+          toast.error(errorData.error || "An account with this email already exists. Please sign in instead.");
+          setMode("signin");
+          setIsLoading(false);
+          return;
+        }
+
+        // Show the actual error message if available
+        const errorMessage = errorData?.error || "Failed to send verification code. Please try again.";
+        toast.error(errorMessage);
+        setIsLoading(false);
+        return;
       }
 
-      if (response.error || response.data?.error || parsedErrorBody?.error) {
-        const errorMessage =
-          response.data?.error ||
-          parsedErrorBody?.error ||
-          response.error?.message ||
-          "Failed to send verification code";
-
-        const userExists = Boolean(response.data?.userExists ?? parsedErrorBody?.userExists);
-
-        if (userExists) {
-          toast.error("User already exists. Please sign in instead.", {
-            description: errorMessage,
-            duration: 8000,
-          });
+      // Check for error in successful response (shouldn't happen but just in case)
+      if (response.data?.error) {
+        if (response.data.userExists) {
+          toast.error(response.data.error);
           setMode("signin");
         } else {
-          toast.error(errorMessage);
+          toast.error(response.data.error);
         }
-
+        setIsLoading(false);
         return;
       }
 
@@ -138,7 +151,7 @@ const Auth = () => {
       setMode("otp-verification");
     } catch (err: any) {
       console.error("Signup error:", err);
-      toast.error(err?.message || "Failed to send verification code. Please try again.");
+      toast.error("Failed to send verification code. Please try again.");
     } finally {
       setIsLoading(false);
     }

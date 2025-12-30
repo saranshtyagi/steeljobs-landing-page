@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, RefreshCw } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { supabase } from "@/integrations/supabase/client";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
 interface EmailOTPVerificationProps {
@@ -49,18 +50,25 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
         },
       });
 
-      // Handle edge function errors - check response.data first as it contains the parsed body
+      // Handle edge function errors properly
       if (response.error) {
-        // For FunctionsHttpError, the error body is in response.data
-        let errorMessage = "Verification failed. Please try again.";
-        
-        if (response.data?.error) {
-          errorMessage = response.data.error;
-        } else if (response.error.message) {
-          errorMessage = response.error.message;
+        let errorData: { error?: string; userExists?: boolean } | null = null;
+
+        // Try to get the JSON body from FunctionsHttpError
+        if (response.error instanceof FunctionsHttpError) {
+          try {
+            const errorContext = response.error.context;
+            if (errorContext && typeof errorContext.json === 'function') {
+              errorData = await errorContext.json();
+            }
+          } catch {
+            errorData = response.data;
+          }
+        } else {
+          errorData = response.data;
         }
-        
-        console.error("Verify OTP error:", errorMessage);
+
+        const errorMessage = errorData?.error || "Verification failed. Please try again.";
         toast.error(errorMessage);
         setOtp("");
         setIsVerifying(false);
@@ -91,7 +99,7 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
       onVerified();
     } catch (err: any) {
       console.error("OTP verification error:", err);
-      toast.error(err.message || "Verification failed. Please try again.");
+      toast.error("Verification failed. Please try again.");
       setOtp("");
     } finally {
       setIsVerifying(false);
