@@ -74,14 +74,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     <Home className="w-4 h-4 mr-2" />
                     Home
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate")}>
-                    <User className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />

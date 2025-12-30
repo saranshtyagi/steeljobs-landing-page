@@ -260,47 +260,32 @@ const CandidateDashboard = () => {
               onAddMissingDetails={() => scrollToSection("summary")}
             />
 
-            {/* Profile Subtabs */}
-            <Tabs defaultValue="edit" className="w-full mt-6">
-              <TabsList className="bg-card border border-border">
-                <TabsTrigger value="edit">{t("candidate.dashboard.viewAndEdit")}</TabsTrigger>
-                <TabsTrigger value="activity">{t("candidate.dashboard.activityInsights")}</TabsTrigger>
-              </TabsList>
+            {/* Profile Content */}
+            <div className="flex gap-6 mt-6">
+              {/* Sidebar */}
+              <div className="hidden lg:block w-64 flex-shrink-0">
+                <ProfileSidebar
+                  activeSection={activeSection}
+                  onSectionClick={scrollToSection}
+                  sectionStatus={sectionStatus}
+                />
+              </div>
 
-              <TabsContent value="edit" className="mt-6">
-                <div className="flex gap-6">
-                  {/* Sidebar */}
-                  <div className="hidden lg:block w-64 flex-shrink-0">
-                    <ProfileSidebar
-                      activeSection={activeSection}
-                      onSectionClick={scrollToSection}
-                      sectionStatus={sectionStatus}
-                    />
-                  </div>
-
-                  {/* Main Content */}
-                  <div className="flex-1 space-y-6 min-w-0">
-                    <ResumeSection />
-                    <PreferencesSection profile={profile} />
-                    <EducationSection />
-                    <SkillsSection />
-                    <LanguagesSection />
-                    <EmploymentSection />
-                    <InternshipsSection />
-                    <ProjectsSection />
-                    <SummarySection />
-                    <AccomplishmentsSection />
-                    <ExamsSection />
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="activity" className="mt-6">
-                <div className="bg-card rounded-xl border border-border p-8 text-center">
-                  <p className="text-muted-foreground">{t("candidate.dashboard.activityComingSoon")}</p>
-                </div>
-              </TabsContent>
-            </Tabs>
+              {/* Main Content */}
+              <div className="flex-1 space-y-6 min-w-0">
+                <ResumeSection />
+                <PreferencesSection profile={profile} />
+                <EducationSection />
+                <SkillsSection />
+                <LanguagesSection />
+                <EmploymentSection />
+                <InternshipsSection />
+                <ProjectsSection />
+                <SummarySection />
+                <AccomplishmentsSection />
+                <ExamsSection />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
