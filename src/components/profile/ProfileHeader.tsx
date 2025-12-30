@@ -147,7 +147,7 @@ const ProfileHeader = ({ profile, completionPercentage, onEditBasicInfo, onAddMi
                     key={detail} 
                     variant="outline" 
                     className="cursor-pointer hover:bg-primary/5"
-                    onClick={onAddMissingDetails}
+                    onClick={() => setIsEditModalOpen(true)}
                   >
                     <Plus className="w-3 h-3 mr-1" />
                     {detail}
