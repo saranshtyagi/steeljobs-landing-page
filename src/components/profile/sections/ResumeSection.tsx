@@ -121,15 +121,34 @@ const ResumeSection = () => {
   };
 
   const uploadToStorage = async (file: File): Promise<string> => {
+    // Get the current user's ID for the file path
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not authenticated");
+
     const fileExt = file.name.split('.').pop();
-    const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const filePath = `${profile?.id || 'temp'}/${fileName}`;
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
+
+    // Delete old resume if it exists
+    if (profile?.resume_url) {
+      try {
+        const oldPath = profile.resume_url.split('/resumes/')[1];
+        if (oldPath) {
+          await supabase.storage.from('resumes').remove([oldPath]);
+        }
+      } catch (e) {
+        console.log("Could not delete old resume:", e);
+      }
+    }
 
     const { error: uploadError } = await supabase.storage
       .from('resumes')
-      .upload(filePath, file);
+      .upload(filePath, file, { upsert: true });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error("Storage upload error:", uploadError);
+      throw uploadError;
+    }
 
     const { data: { publicUrl } } = supabase.storage
       .from('resumes')
