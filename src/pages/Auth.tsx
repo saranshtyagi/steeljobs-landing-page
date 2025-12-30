@@ -91,7 +91,6 @@ const Auth = () => {
 
     setIsLoading(true);
     try {
-      // Send OTP via edge function (also checks if user exists)
       const response = await supabase.functions.invoke("send-otp", {
         body: {
           email: email.trim(),
@@ -99,24 +98,39 @@ const Auth = () => {
         },
       });
 
-      // Handle errors - check both error and data.error
-      if (response.error || response.data?.error) {
-        const errorMessage = response.data?.error || response.error?.message || "Failed to send verification code";
-        
-        // Check if user already exists - show special message with link to sign in
-        if (response.data?.userExists) {
-          toast.error(errorMessage, {
-            description: "Click here to sign in instead",
-            action: {
-              label: "Sign In",
-              onClick: () => setMode("signin"),
-            },
+      // When a function returns non-2xx, supabase-js may not populate response.data.
+      // The JSON body is often embedded inside response.error.message, so we parse it.
+      let parsedErrorBody: any = null;
+      if (response.error?.message) {
+        const jsonPart = response.error.message.split("Error,").slice(1).join("Error,").trim();
+        if (jsonPart?.startsWith("{") && jsonPart?.endsWith("}")) {
+          try {
+            parsedErrorBody = JSON.parse(jsonPart);
+          } catch {
+            // ignore
+          }
+        }
+      }
+
+      if (response.error || response.data?.error || parsedErrorBody?.error) {
+        const errorMessage =
+          response.data?.error ||
+          parsedErrorBody?.error ||
+          response.error?.message ||
+          "Failed to send verification code";
+
+        const userExists = Boolean(response.data?.userExists ?? parsedErrorBody?.userExists);
+
+        if (userExists) {
+          toast.error("User already exists. Please sign in instead.", {
+            description: errorMessage,
             duration: 8000,
           });
+          setMode("signin");
         } else {
           toast.error(errorMessage);
         }
-        setIsLoading(false);
+
         return;
       }
 
