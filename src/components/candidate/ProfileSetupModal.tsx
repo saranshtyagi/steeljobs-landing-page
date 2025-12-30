@@ -24,8 +24,11 @@ import { Badge } from "@/components/ui/badge";
 import { X, Upload, Loader2, Sparkles, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Set up PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Use legacy build worker that works better in browser environments
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
 
 interface ProfileSetupModalProps {
   isOpen: boolean;
