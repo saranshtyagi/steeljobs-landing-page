@@ -7,6 +7,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface ParsedResumeData {
   name?: string;
@@ -73,22 +77,46 @@ const ResumeSection = () => {
     }
   };
 
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      let fullText = "";
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(" ");
+        fullText += pageText + "\n\n";
+      }
+      
+      console.log("Extracted PDF text length:", fullText.length);
+      console.log("Extracted PDF text preview:", fullText.substring(0, 500));
+      
+      return fullText;
+    } catch (error) {
+      console.error("PDF extraction error:", error);
+      throw new Error("Failed to extract text from PDF");
+    }
+  };
+
   const extractTextFromFile = async (file: File): Promise<string> => {
+    if (file.type === "application/pdf") {
+      return extractTextFromPDF(file);
+    }
+    
+    // For Word documents, read as text (basic support)
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const text = event.target?.result as string;
-        // For PDF files, we'll send the base64 content
-        // The edge function can decode and process it
         resolve(text);
       };
       reader.onerror = reject;
-      
-      if (file.type === "application/pdf") {
-        reader.readAsDataURL(file);
-      } else {
-        reader.readAsText(file);
-      }
+      reader.readAsText(file);
     });
   };
 
@@ -340,14 +368,46 @@ const ResumeSection = () => {
 
     setIsParsing(true);
     try {
-      // For re-parsing, we'll fetch the resume content if it's a URL
-      // or use placeholder text to indicate re-parsing
-      let resumeContent = "Re-parsing existing resume. Please extract all available information from the stored resume data.";
+      // Download the resume from storage and extract text
+      let resumeContent = "";
       
-      // If it's a storage URL, try to fetch the content
       if (profile.resume_url.includes('supabase')) {
-        // The resume is in storage, we need to indicate this to the parser
-        resumeContent = `Resume stored at: ${profile.resume_url}. Please analyze and extract all professional information.`;
+        try {
+          // Fetch the PDF from storage
+          const response = await fetch(profile.resume_url);
+          if (!response.ok) {
+            throw new Error("Failed to fetch resume");
+          }
+          
+          const blob = await response.blob();
+          const arrayBuffer = await blob.arrayBuffer();
+          
+          // Extract text from PDF
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items
+              .map((item: any) => item.str)
+              .join(" ");
+            resumeContent += pageText + "\n\n";
+          }
+          
+          console.log("Re-parsed resume text length:", resumeContent.length);
+          console.log("Re-parsed resume text preview:", resumeContent.substring(0, 500));
+        } catch (fetchError) {
+          console.error("Error fetching resume from storage:", fetchError);
+          toast.error("Could not fetch resume from storage. Please upload again.");
+          setIsParsing(false);
+          return;
+        }
+      }
+
+      if (!resumeContent || resumeContent.trim().length < 50) {
+        toast.error("Could not extract text from resume. Please upload a new resume.");
+        setIsParsing(false);
+        return;
       }
 
       const response = await supabase.functions.invoke('parse-resume', {

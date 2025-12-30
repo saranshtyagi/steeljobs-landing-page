@@ -22,6 +22,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { X, Upload, Loader2, Sparkles, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface ProfileSetupModalProps {
   isOpen: boolean;
@@ -38,6 +42,30 @@ const EDUCATION_OPTIONS: { value: EducationLevel; label: string }[] = [
   { value: "doctorate", label: "Doctorate" },
   { value: "other", label: "Other" },
 ];
+
+const extractTextFromPDF = async (file: File): Promise<string> => {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    
+    let fullText = "";
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item: any) => item.str)
+        .join(" ");
+      fullText += pageText + "\n\n";
+    }
+    
+    console.log("Extracted PDF text length:", fullText.length);
+    return fullText;
+  } catch (error) {
+    console.error("PDF extraction error:", error);
+    throw new Error("Failed to extract text from PDF");
+  }
+};
 
 const ProfileSetupModal = ({ isOpen, onClose, initialData, isEditing = false }: ProfileSetupModalProps) => {
   const { user, profile: authProfile } = useAuth();
@@ -124,59 +152,62 @@ const ProfileSetupModal = ({ isOpen, onClose, initialData, isEditing = false }: 
       // Parse resume
       setIsParsing(true);
       
-      // Read file as text (for PDFs, we'd need a proper parser, but for now we'll send the filename)
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        try {
-          const text = event.target?.result as string;
-          
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) throw new Error("Not authenticated");
-
-          const response = await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-resume`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session.access_token}`,
-              },
-              body: JSON.stringify({ resumeText: text }),
-            }
-          );
-
-          if (response.ok) {
-            const result = await response.json();
-            if (result.success && result.data) {
-              const parsed = result.data;
-              
-              setFormData((prev) => ({
-                ...prev,
-                headline: parsed.headline || prev.headline,
-                location: parsed.location || prev.location,
-                experience_years: parsed.experience_years ?? prev.experience_years,
-                education_level: parsed.education_level || prev.education_level,
-                about: parsed.about || prev.about,
-                skills: parsed.skills?.length ? [...new Set([...(prev.skills || []), ...parsed.skills])] : prev.skills,
-              }));
-              
-              toast.success("Resume parsed! Fields have been auto-filled.");
-            }
-          }
-        } catch (parseError) {
-          console.error("Parse error:", parseError);
-          toast.info("Resume uploaded. You can fill in details manually.");
-        } finally {
-          setIsParsing(false);
+      try {
+        let resumeText = "";
+        
+        if (file.type === "application/pdf") {
+          resumeText = await extractTextFromPDF(file);
+        } else {
+          // For Word documents, read as text
+          resumeText = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target?.result as string);
+            reader.onerror = reject;
+            reader.readAsText(file);
+          });
         }
-      };
-      
-      reader.onerror = () => {
-        setIsParsing(false);
+        
+        console.log("Resume text to parse:", resumeText.substring(0, 500));
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error("Not authenticated");
+
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-resume`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ resumeText }),
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            const parsed = result.data;
+            
+            setFormData((prev) => ({
+              ...prev,
+              headline: parsed.headline || prev.headline,
+              location: parsed.location || prev.location,
+              experience_years: parsed.experience_years ?? prev.experience_years,
+              education_level: parsed.education_level || prev.education_level,
+              about: parsed.about || prev.about,
+              skills: parsed.skills?.length ? [...new Set([...(prev.skills || []), ...parsed.skills])] : prev.skills,
+            }));
+            
+            toast.success("Resume parsed! Fields have been auto-filled.");
+          }
+        }
+      } catch (parseError) {
+        console.error("Parse error:", parseError);
         toast.info("Resume uploaded. You can fill in details manually.");
-      };
-      
-      reader.readAsText(file);
+      } finally {
+        setIsParsing(false);
+      }
 
     } catch (error) {
       console.error("Upload error:", error);
