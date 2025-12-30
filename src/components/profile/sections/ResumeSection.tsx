@@ -269,7 +269,12 @@ const ResumeSection = () => {
 
   const parseAndSaveResume = async (fileContent: string, resumeUrl: string) => {
     if (!profile?.id) {
-      toast.error("Profile not found");
+      toast.error("Profile not found. Please refresh the page.");
+      return;
+    }
+
+    if (!fileContent || fileContent.trim().length < 100) {
+      toast.error("Could not extract text from resume. Please upload a different file.");
       return;
     }
 
@@ -280,26 +285,30 @@ const ResumeSection = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        console.error("Parse function error:", response.error);
+        toast.error("Failed to parse resume. Please try again.");
+        return;
       }
 
       const parsedData: ParsedResumeData = response.data?.data;
       
       if (!parsedData) {
-        toast.error("Failed to parse resume data");
+        toast.error("Could not extract data from resume. The file may be corrupted.");
         return;
       }
 
-      // Update the main profile with parsed data
+      // Update the main profile with parsed data - ONLY include fields that have values
       const profileUpdate: Record<string, unknown> = {
         resume_url: resumeUrl,
+        resume_text: fileContent, // Store extracted text for reliable re-parsing
       };
 
+      // Only add fields if they have actual values from the resume
       if (parsedData.name) profileUpdate.full_name = parsedData.name;
       if (parsedData.headline) profileUpdate.headline = parsedData.headline;
       if (parsedData.location) profileUpdate.location = parsedData.location;
       if (parsedData.skills && parsedData.skills.length > 0) profileUpdate.skills = parsedData.skills;
-      if (parsedData.experience_years) profileUpdate.experience_years = parsedData.experience_years;
+      if (typeof parsedData.experience_years === 'number') profileUpdate.experience_years = parsedData.experience_years;
       if (parsedData.education_level) profileUpdate.education_level = parsedData.education_level;
       if (parsedData.about || parsedData.profile_summary) {
         profileUpdate.profile_summary = parsedData.profile_summary || parsedData.about;
@@ -308,15 +317,31 @@ const ResumeSection = () => {
 
       await updateProfile.mutateAsync(profileUpdate);
 
-      // Save related data to respective tables
-      await Promise.all([
-        saveEducation(profile.id, parsedData.education),
-        saveEmployment(profile.id, parsedData.work_history),
-        saveInternships(profile.id, parsedData.internships),
-        saveProjects(profile.id, parsedData.projects),
-        saveLanguages(profile.id, parsedData.languages),
-        saveAccomplishments(profile.id, parsedData.accomplishments, parsedData.certifications),
-      ]);
+      // Save related data to respective tables - only if arrays have data
+      const savePromises = [];
+      if (parsedData.education && parsedData.education.length > 0) {
+        savePromises.push(saveEducation(profile.id, parsedData.education));
+      }
+      if (parsedData.work_history && parsedData.work_history.length > 0) {
+        savePromises.push(saveEmployment(profile.id, parsedData.work_history));
+      }
+      if (parsedData.internships && parsedData.internships.length > 0) {
+        savePromises.push(saveInternships(profile.id, parsedData.internships));
+      }
+      if (parsedData.projects && parsedData.projects.length > 0) {
+        savePromises.push(saveProjects(profile.id, parsedData.projects));
+      }
+      if (parsedData.languages && parsedData.languages.length > 0) {
+        savePromises.push(saveLanguages(profile.id, parsedData.languages));
+      }
+      if ((parsedData.accomplishments && parsedData.accomplishments.length > 0) || 
+          (parsedData.certifications && parsedData.certifications.length > 0)) {
+        savePromises.push(saveAccomplishments(profile.id, parsedData.accomplishments, parsedData.certifications));
+      }
+
+      if (savePromises.length > 0) {
+        await Promise.all(savePromises);
+      }
 
       // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ['candidateEducation'] });
@@ -380,50 +405,91 @@ const ResumeSection = () => {
   };
 
   const handleReParse = async () => {
-    if (!profile?.resume_url || !profile?.id) {
-      toast.error("No resume found to parse");
+    if (!profile?.id) {
+      toast.error("Profile not found. Please refresh the page.");
+      return;
+    }
+
+    if (!profile?.resume_url && !profile?.resume_text) {
+      toast.error("No resume found. Please upload a resume first.");
       return;
     }
 
     setIsParsing(true);
     try {
-      // Download the resume from storage and extract text
       let resumeContent = "";
       
-      if (profile.resume_url.includes('supabase')) {
+      // First, try to use stored resume_text (most reliable)
+      if (profile.resume_text && profile.resume_text.trim().length >= 100) {
+        console.log("Using stored resume text for re-parse");
+        resumeContent = profile.resume_text;
+      } else if (profile.resume_url) {
+        // Fallback: try to fetch from storage using signed URL
+        console.log("Fetching resume from storage...");
+        
         try {
-          // Fetch the PDF from storage
-          const response = await fetch(profile.resume_url);
-          if (!response.ok) {
-            throw new Error("Failed to fetch resume");
+          // Extract the file path from the URL
+          const urlParts = profile.resume_url.split('/resumes/');
+          if (urlParts.length < 2) {
+            throw new Error("Invalid resume URL format");
           }
           
-          const blob = await response.blob();
-          const arrayBuffer = await blob.arrayBuffer();
+          const filePath = decodeURIComponent(urlParts[1]);
+          console.log("Resume file path:", filePath);
           
-          // Extract text from PDF
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          // Download the file using Supabase storage (works for private buckets)
+          const { data: fileData, error: downloadError } = await supabase.storage
+            .from('resumes')
+            .download(filePath);
           
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const pageText = textContent.items
-              .map((item: any) => item.str)
-              .join(" ");
-            resumeContent += pageText + "\n\n";
+          if (downloadError) {
+            console.error("Storage download error:", downloadError);
+            throw new Error("Could not download resume file");
           }
           
-          console.log("Re-parsed resume text length:", resumeContent.length);
-          console.log("Re-parsed resume text preview:", resumeContent.substring(0, 500));
+          if (!fileData) {
+            throw new Error("Resume file is empty");
+          }
+          
+          // Extract text from the downloaded blob
+          const arrayBuffer = await fileData.arrayBuffer();
+          
+          // Check if it's a PDF
+          const isPDF = profile.resume_url.toLowerCase().endsWith('.pdf') || 
+                       fileData.type === 'application/pdf';
+          
+          if (isPDF) {
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            
+            for (let i = 1; i <= pdf.numPages; i++) {
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              const pageText = textContent.items
+                .map((item: any) => item.str)
+                .join(" ");
+              resumeContent += pageText + "\n\n";
+            }
+          } else {
+            // For Word docs, try to read as text
+            const textDecoder = new TextDecoder();
+            resumeContent = textDecoder.decode(arrayBuffer);
+          }
+          
+          console.log("Extracted resume text length:", resumeContent.length);
+          
+          // Store the extracted text for future re-parses
+          if (resumeContent.trim().length >= 100) {
+            await updateProfile.mutateAsync({ resume_text: resumeContent });
+          }
         } catch (fetchError) {
           console.error("Error fetching resume from storage:", fetchError);
-          toast.error("Could not fetch resume from storage. Please upload again.");
+          toast.error("Resume file not found. Please upload your resume again.");
           setIsParsing(false);
           return;
         }
       }
 
-      if (!resumeContent || resumeContent.trim().length < 50) {
+      if (!resumeContent || resumeContent.trim().length < 100) {
         toast.error("Could not extract text from resume. Please upload a new resume.");
         setIsParsing(false);
         return;
@@ -438,24 +504,28 @@ const ResumeSection = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        console.error("Parse function error:", response.error);
+        toast.error("Failed to parse resume. Please try again.");
+        setIsParsing(false);
+        return;
       }
 
       const parsedData: ParsedResumeData = response.data?.data;
       
       if (!parsedData) {
-        toast.error("Could not extract data from resume");
+        toast.error("Could not extract data from resume.");
+        setIsParsing(false);
         return;
       }
 
-      // Update profile
+      // Update profile - only with fields that have actual values
       const profileUpdate: Record<string, unknown> = {};
 
       if (parsedData.name) profileUpdate.full_name = parsedData.name;
       if (parsedData.headline) profileUpdate.headline = parsedData.headline;
       if (parsedData.location) profileUpdate.location = parsedData.location;
       if (parsedData.skills && parsedData.skills.length > 0) profileUpdate.skills = parsedData.skills;
-      if (parsedData.experience_years) profileUpdate.experience_years = parsedData.experience_years;
+      if (typeof parsedData.experience_years === 'number') profileUpdate.experience_years = parsedData.experience_years;
       if (parsedData.education_level) profileUpdate.education_level = parsedData.education_level;
       if (parsedData.about || parsedData.profile_summary) {
         profileUpdate.profile_summary = parsedData.profile_summary || parsedData.about;
@@ -466,15 +536,31 @@ const ResumeSection = () => {
         await updateProfile.mutateAsync(profileUpdate);
       }
 
-      // Save related data
-      await Promise.all([
-        saveEducation(profile.id, parsedData.education),
-        saveEmployment(profile.id, parsedData.work_history),
-        saveInternships(profile.id, parsedData.internships),
-        saveProjects(profile.id, parsedData.projects),
-        saveLanguages(profile.id, parsedData.languages),
-        saveAccomplishments(profile.id, parsedData.accomplishments, parsedData.certifications),
-      ]);
+      // Save related data - only if arrays have data
+      const savePromises = [];
+      if (parsedData.education && parsedData.education.length > 0) {
+        savePromises.push(saveEducation(profile.id, parsedData.education));
+      }
+      if (parsedData.work_history && parsedData.work_history.length > 0) {
+        savePromises.push(saveEmployment(profile.id, parsedData.work_history));
+      }
+      if (parsedData.internships && parsedData.internships.length > 0) {
+        savePromises.push(saveInternships(profile.id, parsedData.internships));
+      }
+      if (parsedData.projects && parsedData.projects.length > 0) {
+        savePromises.push(saveProjects(profile.id, parsedData.projects));
+      }
+      if (parsedData.languages && parsedData.languages.length > 0) {
+        savePromises.push(saveLanguages(profile.id, parsedData.languages));
+      }
+      if ((parsedData.accomplishments && parsedData.accomplishments.length > 0) || 
+          (parsedData.certifications && parsedData.certifications.length > 0)) {
+        savePromises.push(saveAccomplishments(profile.id, parsedData.accomplishments, parsedData.certifications));
+      }
+
+      if (savePromises.length > 0) {
+        await Promise.all(savePromises);
+      }
 
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: ['candidateEducation'] });
@@ -488,7 +574,7 @@ const ResumeSection = () => {
       toast.success("Profile updated from resume!");
     } catch (error) {
       console.error("Parse error:", error);
-      toast.error("Failed to re-parse resume");
+      toast.error("Failed to re-parse resume. Please try again.");
     } finally {
       setIsParsing(false);
     }

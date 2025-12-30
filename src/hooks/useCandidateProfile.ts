@@ -16,6 +16,7 @@ export interface CandidateProfile {
   education_level: EducationLevel | null;
   about: string | null;
   resume_url: string | null;
+  resume_text: string | null;
   skills: string[] | null;
   full_name: string | null;
   mobile_number: string | null;
@@ -42,6 +43,7 @@ export interface CandidateProfileInput {
   education_level?: EducationLevel | null;
   about?: string | null;
   resume_url?: string | null;
+  resume_text?: string | null;
   skills?: string[];
   full_name?: string | null;
   mobile_number?: string | null;

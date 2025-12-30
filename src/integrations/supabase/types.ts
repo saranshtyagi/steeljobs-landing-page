@@ -384,6 +384,7 @@ export type Database = {
           preferred_locations: string[] | null
           profile_photo_url: string | null
           profile_summary: string | null
+          resume_text: string | null
           resume_url: string | null
           skills: string[] | null
           updated_at: string
@@ -413,6 +414,7 @@ export type Database = {
           preferred_locations?: string[] | null
           profile_photo_url?: string | null
           profile_summary?: string | null
+          resume_text?: string | null
           resume_url?: string | null
           skills?: string[] | null
           updated_at?: string
@@ -442,6 +444,7 @@ export type Database = {
           preferred_locations?: string[] | null
           profile_photo_url?: string | null
           profile_summary?: string | null
+          resume_text?: string | null
           resume_url?: string | null
           skills?: string[] | null
           updated_at?: string
