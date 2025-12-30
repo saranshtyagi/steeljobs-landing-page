@@ -13,8 +13,6 @@ import {
   Crown,
   Video,
   FileEdit,
-  GraduationCap,
-  BookOpen,
   CheckCircle,
   Users,
   Target,
@@ -32,9 +30,11 @@ const DashboardStats = () => {
   const { data: applications } = useMyApplications();
   const { data: savedJobs } = useSavedJobs();
   const { profile: candidateProfile } = useCandidateProfile();
-  const [isPremiumLoading, setIsPremiumLoading] = useState(false);
+  const [isPremium6MonthLoading, setIsPremium6MonthLoading] = useState(false);
+  const [isPremium1YearLoading, setIsPremium1YearLoading] = useState(false);
   const [isInterviewLoading, setIsInterviewLoading] = useState(false);
-  const [hasPendingPremium, setHasPendingPremium] = useState(false);
+  const [hasPending6Month, setHasPending6Month] = useState(false);
+  const [hasPending1Year, setHasPending1Year] = useState(false);
   const [hasPendingInterview, setHasPendingInterview] = useState(false);
 
   const appliedCount = applications?.filter(a => a.status === "applied").length || 0;
@@ -57,7 +57,8 @@ const DashboardStats = () => {
       }
 
       if (data) {
-        setHasPendingPremium(data.some(r => r.request_type === "premium"));
+        setHasPending6Month(data.some(r => r.request_type === "premium_6_month"));
+        setHasPending1Year(data.some(r => r.request_type === "premium_1_year"));
         setHasPendingInterview(data.some(r => r.request_type === "mock_interview"));
       }
     };
@@ -100,7 +101,7 @@ const DashboardStats = () => {
     { icon: Zap, text: "Boost your confidence" },
   ];
 
-  const sendFeatureRequest = async (requestType: "premium_access" | "mock_interview") => {
+  const sendFeatureRequest = async (requestType: "premium_6_month" | "premium_1_year" | "mock_interview") => {
     const userName = profile?.name || user?.user_metadata?.name || "User";
     const userEmail = user?.email || "";
 
@@ -126,27 +127,27 @@ const DashboardStats = () => {
     return data;
   };
 
-  const handlePremiumClick = async () => {
-    if (hasPendingPremium) {
+  const handlePremium6MonthClick = async () => {
+    if (hasPending6Month) {
       toast.info("Request already submitted", {
-        description: "You have already submitted a premium access request. Our team will contact you soon."
+        description: "You have already submitted a 6-month premium access request. Our team will contact you soon."
       });
       return;
     }
 
-    setIsPremiumLoading(true);
+    setIsPremium6MonthLoading(true);
     try {
-      await sendFeatureRequest("premium_access");
-      setHasPendingPremium(true);
+      await sendFeatureRequest("premium_6_month");
+      setHasPending6Month(true);
       toast.success("Request submitted!", {
-        description: "Our team will contact you shortly about premium access."
+        description: "Our team will contact you shortly about 6-month premium access."
       });
     } catch (error: any) {
       console.error("Premium request error:", error);
       if (error.message === "already_submitted") {
-        setHasPendingPremium(true);
+        setHasPending6Month(true);
         toast.info("Request already submitted", {
-          description: "You have already submitted a premium access request. Our team will contact you soon."
+          description: "You have already submitted a 6-month premium access request. Our team will contact you soon."
         });
       } else {
         toast.error("Failed to submit request", {
@@ -154,7 +155,39 @@ const DashboardStats = () => {
         });
       }
     } finally {
-      setIsPremiumLoading(false);
+      setIsPremium6MonthLoading(false);
+    }
+  };
+
+  const handlePremium1YearClick = async () => {
+    if (hasPending1Year) {
+      toast.info("Request already submitted", {
+        description: "You have already submitted a 1-year premium access request. Our team will contact you soon."
+      });
+      return;
+    }
+
+    setIsPremium1YearLoading(true);
+    try {
+      await sendFeatureRequest("premium_1_year");
+      setHasPending1Year(true);
+      toast.success("Request submitted!", {
+        description: "Our team will contact you shortly about 1-year premium access."
+      });
+    } catch (error: any) {
+      console.error("Premium request error:", error);
+      if (error.message === "already_submitted") {
+        setHasPending1Year(true);
+        toast.info("Request already submitted", {
+          description: "You have already submitted a 1-year premium access request. Our team will contact you soon."
+        });
+      } else {
+        toast.error("Failed to submit request", {
+          description: "Please try again or contact support@oppexl.com"
+        });
+      }
+    } finally {
+      setIsPremium1YearLoading(false);
     }
   };
 
@@ -190,6 +223,8 @@ const DashboardStats = () => {
     }
   };
 
+  const hasPendingPremium = hasPending6Month || hasPending1Year;
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -210,65 +245,104 @@ const DashboardStats = () => {
 
       {/* Premium Features Card */}
       <Card className="relative overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-                  <Crown className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Premium Career Tools</CardTitle>
-                  <CardDescription>Accelerate your job search</CardDescription>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Premium Career Tools</CardTitle>
+                <CardDescription>Accelerate your job search with exclusive features</CardDescription>
+              </div>
+            </div>
+            {hasPendingPremium && (
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Requested
+              </Badge>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {premiumFeatures.map((feature) => (
+              <div 
+                key={feature.label}
+                className="flex items-start gap-2 p-2 rounded-lg bg-background/50 border border-border/50"
+              >
+                <feature.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{feature.label}</p>
+                  <p className="text-xs text-muted-foreground truncate">{feature.description}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {hasPendingPremium && (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Requested
-                  </Badge>
+            ))}
+          </div>
+          
+          {/* Pricing Plans */}
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            {/* 6 Month Plan */}
+            <div className="relative rounded-xl border border-border bg-background/50 p-4 space-y-3">
+              <div className="text-center">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">6 Months</p>
+                <div className="flex items-baseline justify-center gap-1 mt-1">
+                  <span className="text-2xl font-bold text-foreground">₹1,200</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">₹200/month</p>
+              </div>
+              <Button 
+                onClick={handlePremium6MonthClick} 
+                disabled={isPremium6MonthLoading}
+                variant="outline"
+                className={`w-full ${hasPending6Month 
+                  ? "bg-green-600 hover:bg-green-700 text-white border-green-600" 
+                  : "border-primary/50 hover:bg-primary/10"
+                }`}
+              >
+                {isPremium6MonthLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : hasPending6Month ? (
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                ) : null}
+                {isPremium6MonthLoading ? "Submitting..." : hasPending6Month ? "Requested" : "Get Started"}
+              </Button>
+            </div>
+
+            {/* 1 Year Plan */}
+            <div className="relative rounded-xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-4 space-y-3">
+              <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-amber-500 hover:bg-amber-500 text-white text-xs">
+                Best Value
+              </Badge>
+              <div className="text-center">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">1 Year</p>
+                <div className="flex items-baseline justify-center gap-1 mt-1">
+                  <span className="text-2xl font-bold text-foreground">₹2,000</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">₹167/month • Save 17%</p>
+              </div>
+              <Button 
+                onClick={handlePremium1YearClick} 
+                disabled={isPremium1YearLoading}
+                className={`w-full ${hasPending1Year 
+                  ? "bg-green-600 hover:bg-green-700" 
+                  : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                } text-white`}
+              >
+                {isPremium1YearLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : hasPending1Year ? (
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                ) : (
+                  <Crown className="w-4 h-4 mr-2" />
                 )}
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                  ₹2,000
-                </Badge>
-              </div>
+                {isPremium1YearLoading ? "Submitting..." : hasPending1Year ? "Requested" : "Get Premium"}
+              </Button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              {premiumFeatures.map((feature) => (
-                <div 
-                  key={feature.label}
-                  className="flex items-start gap-2 p-2 rounded-lg bg-background/50 border border-border/50"
-                >
-                  <feature.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{feature.label}</p>
-                    <p className="text-xs text-muted-foreground truncate">{feature.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button 
-              onClick={handlePremiumClick} 
-              disabled={isPremiumLoading}
-              className={`w-full ${hasPendingPremium 
-                ? "bg-green-600 hover:bg-green-700" 
-                : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
-              } text-white`}
-            >
-              {isPremiumLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : hasPendingPremium ? (
-                <CheckCircle className="w-4 h-4 mr-2" />
-              ) : (
-                <Crown className="w-4 h-4 mr-2" />
-              )}
-              {isPremiumLoading ? "Submitting..." : hasPendingPremium ? "Request Submitted" : "Unlock Premium Access"}
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Mock Interview Booking Section */}
       <Card className="relative overflow-hidden border border-border bg-gradient-to-r from-card via-card to-primary/5">
@@ -310,8 +384,11 @@ const DashboardStats = () => {
             {/* Right Content - CTA */}
             <div className="flex flex-col items-center lg:items-end gap-3 lg:min-w-[200px]">
               <div className="text-center lg:text-right">
-                <p className="text-3xl font-bold text-primary">₹500</p>
-                <p className="text-sm text-muted-foreground">per session</p>
+                <div className="flex items-baseline justify-center lg:justify-end gap-1">
+                  <span className="text-xl font-bold text-primary">₹500</span>
+                  <span className="text-sm text-muted-foreground">/session</span>
+                </div>
+                <p className="text-xs text-muted-foreground">30 min with expert</p>
               </div>
               <Button 
                 onClick={handleBookInterview}
