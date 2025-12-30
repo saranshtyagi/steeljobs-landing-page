@@ -21,23 +21,32 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    // Create a client with the user's JWT to verify authentication
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: { Authorization: authHeader },
+      },
+    });
 
-    // Get user from auth header
-    const token = authHeader.replace("Bearer ", "");
+    // Verify the user's token
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser(token);
+    } = await supabaseAuth.auth.getUser();
 
     if (userError || !user) {
       console.error("Auth getUser error:", userError);
       return new Response(
-        JSON.stringify({ error: "Invalid token", details: userError?.message || null }),
+        JSON.stringify({ error: "Invalid token", details: userError?.message || "Auth session missing!" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Create a service role client for database operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log("Fetching recommendations for user:", user.id);
 
