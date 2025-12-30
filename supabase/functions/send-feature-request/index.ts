@@ -63,11 +63,13 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const isPremium = requestType === "premium_access";
-    const subject = isPremium 
+    
+    // Email to support team
+    const supportSubject = isPremium 
       ? `Premium Access Request from ${userName}`
       : `Mock Interview Session Request from ${userName}`;
 
-    const htmlContent = isPremium
+    const supportHtmlContent = isPremium
       ? `
         <h2>New Premium Access Request</h2>
         <p>A user has requested premium access on SteelJobs.</p>
@@ -115,15 +117,109 @@ const handler = async (req: Request): Promise<Response> => {
         <p>Please follow up with the user to schedule the mock interview session.</p>
       `;
 
-    const emailResponse = await resend.emails.send({
-      from: "SteelJobs <noreply@mail.mysteeljobs.com>",
-      to: ["support@oppexl.com"],
-      subject: subject,
-      html: htmlContent,
-      reply_to: userEmail,
-    });
+    // User confirmation email
+    const userSubject = isPremium 
+      ? "Your Premium Access Request - SteelJobs"
+      : "Your Mock Interview Session Request - SteelJobs";
 
-    console.log("Email sent successfully:", emailResponse);
+    const userHtmlContent = isPremium
+      ? `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="color: white; margin: 0;">SteelJobs</h1>
+          </div>
+          <div style="padding: 30px; background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Hi ${userName}! 👋</h2>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              Thank you for your interest in our <strong>Premium Career Tools</strong>!
+            </p>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              We've received your request and our team will reach out to you shortly to help you unlock:
+            </p>
+            <ul style="color: #4b5563; font-size: 16px; line-height: 1.8;">
+              <li>🎥 Mock Interviews with industry experts</li>
+              <li>📄 Professional Resume Building sessions</li>
+              <li>🎓 Personalized Learning Paths</li>
+              <li>📚 Industry-specific Courses</li>
+            </ul>
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #92400e; margin: 0; font-size: 14px;">
+                <strong>Premium Access:</strong> ₹2,000
+              </p>
+            </div>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              If you have any questions, feel free to reply to this email or contact us at <a href="mailto:support@oppexl.com" style="color: #f59e0b;">support@oppexl.com</a>
+            </p>
+            <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
+              Best regards,<br>
+              <strong>The SteelJobs Team</strong>
+            </p>
+          </div>
+          <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;">
+            <p>© ${new Date().getFullYear()} SteelJobs. All rights reserved.</p>
+          </div>
+        </div>
+      `
+      : `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="color: white; margin: 0;">SteelJobs</h1>
+          </div>
+          <div style="padding: 30px; background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Hi ${userName}! 👋</h2>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              Thank you for your interest in our <strong>1-on-1 Mock Interview Session</strong>!
+            </p>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              We've received your booking request and our team will contact you shortly to schedule your session.
+            </p>
+            <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h3 style="color: #1e40af; margin-top: 0;">What to expect:</h3>
+              <ul style="color: #4b5563; font-size: 15px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li>👤 1-on-1 session with an industry professional</li>
+                <li>🎯 Role-specific interview questions</li>
+                <li>💬 Real-time feedback & tips</li>
+                <li>⚡ Boost your interview confidence</li>
+              </ul>
+            </div>
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #1e40af; margin: 0; font-size: 14px;">
+                <strong>Session Fee:</strong> ₹500 | <strong>Duration:</strong> 30 minutes
+              </p>
+            </div>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              If you have any questions, feel free to reply to this email or contact us at <a href="mailto:support@oppexl.com" style="color: #3b82f6;">support@oppexl.com</a>
+            </p>
+            <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
+              Best regards,<br>
+              <strong>The SteelJobs Team</strong>
+            </p>
+          </div>
+          <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;">
+            <p>© ${new Date().getFullYear()} SteelJobs. All rights reserved.</p>
+          </div>
+        </div>
+      `;
+
+    // Send both emails in parallel
+    const [supportEmailResponse, userEmailResponse] = await Promise.all([
+      resend.emails.send({
+        from: "SteelJobs <noreply@mail.mysteeljobs.com>",
+        to: ["support@oppexl.com"],
+        subject: supportSubject,
+        html: supportHtmlContent,
+        reply_to: userEmail,
+      }),
+      resend.emails.send({
+        from: "SteelJobs <noreply@mail.mysteeljobs.com>",
+        to: [userEmail],
+        subject: userSubject,
+        html: userHtmlContent,
+      }),
+    ]);
+
+    console.log("Support email sent:", supportEmailResponse);
+    console.log("User confirmation email sent:", userEmailResponse);
 
     return new Response(
       JSON.stringify({ success: true, message: "Request submitted successfully" }),
