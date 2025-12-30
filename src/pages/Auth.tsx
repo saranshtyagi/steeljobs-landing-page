@@ -91,22 +91,38 @@ const Auth = () => {
 
     setIsLoading(true);
     try {
-      // Send OTP via edge function
-      const { data, error } = await supabase.functions.invoke("send-otp", {
+      // Send OTP via edge function (also checks if user exists)
+      const response = await supabase.functions.invoke("send-otp", {
         body: {
           email: email.trim(),
           name: name.trim(),
         },
       });
 
-      if (error) {
-        console.error("Send OTP error:", error);
-        toast.error(error.message || "Failed to send verification code");
-        return;
-      }
-
-      if (data?.error) {
-        toast.error(data.error);
+      // Handle errors - check both error and data.error
+      if (response.error || response.data?.error) {
+        const errorMessage = response.data?.error || response.error?.message || "Failed to send verification code";
+        
+        // Check if user already exists
+        if (response.data?.userExists) {
+          toast.error(
+            <div className="flex flex-col gap-2">
+              <span>{errorMessage}</span>
+              <button 
+                onClick={() => {
+                  setMode("signin");
+                  toast.dismiss();
+                }}
+                className="text-primary underline text-left"
+              >
+                Click here to sign in
+              </button>
+            </div>,
+            { duration: 8000 }
+          );
+        } else {
+          toast.error(errorMessage);
+        }
         return;
       }
 
