@@ -39,7 +39,7 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
     setIsVerifying(true);
     try {
       // Verify OTP and create user via edge function
-      const { data, error } = await supabase.functions.invoke("verify-otp", {
+      const response = await supabase.functions.invoke("verify-otp", {
         body: {
           email,
           otp,
@@ -49,15 +49,18 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
         },
       });
 
-      if (error) {
-        console.error("Verify OTP error:", error);
-        toast.error(error.message || "Verification failed. Please try again.");
+      // Handle edge function errors - the error body contains the actual message
+      if (response.error) {
+        // Try to get the error message from the response data
+        const errorMessage = response.data?.error || response.error.message || "Verification failed. Please try again.";
+        console.error("Verify OTP error:", errorMessage);
+        toast.error(errorMessage);
         setOtp("");
         return;
       }
 
-      if (data?.error) {
-        toast.error(data.error);
+      if (response.data?.error) {
+        toast.error(response.data.error);
         setOtp("");
         return;
       }
@@ -76,9 +79,9 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
 
       toast.success("Email verified successfully! Welcome to SteelJobs.");
       onVerified();
-    } catch (err) {
+    } catch (err: any) {
       console.error("OTP verification error:", err);
-      toast.error("Verification failed. Please try again.");
+      toast.error(err.message || "Verification failed. Please try again.");
     } finally {
       setIsVerifying(false);
     }
