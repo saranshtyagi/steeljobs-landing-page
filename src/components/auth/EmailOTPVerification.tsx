@@ -49,19 +49,28 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
         },
       });
 
-      // Handle edge function errors - the error body contains the actual message
+      // Handle edge function errors - check response.data first as it contains the parsed body
       if (response.error) {
-        // Try to get the error message from the response data
-        const errorMessage = response.data?.error || response.error.message || "Verification failed. Please try again.";
+        // For FunctionsHttpError, the error body is in response.data
+        let errorMessage = "Verification failed. Please try again.";
+        
+        if (response.data?.error) {
+          errorMessage = response.data.error;
+        } else if (response.error.message) {
+          errorMessage = response.error.message;
+        }
+        
         console.error("Verify OTP error:", errorMessage);
         toast.error(errorMessage);
         setOtp("");
+        setIsVerifying(false);
         return;
       }
 
       if (response.data?.error) {
         toast.error(response.data.error);
         setOtp("");
+        setIsVerifying(false);
         return;
       }
 
@@ -74,6 +83,7 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
       if (signInError) {
         console.error("Sign in error after verification:", signInError);
         toast.error("Account created but sign in failed. Please try logging in.");
+        setIsVerifying(false);
         return;
       }
 
@@ -82,6 +92,7 @@ const EmailOTPVerification = ({ email, name, password, role, onBack, onVerified 
     } catch (err: any) {
       console.error("OTP verification error:", err);
       toast.error(err.message || "Verification failed. Please try again.");
+      setOtp("");
     } finally {
       setIsVerifying(false);
     }
