@@ -116,6 +116,9 @@ export type Database = {
           grade_value: string | null
           grading_system: string | null
           id: string
+          institution_city: string | null
+          institution_pincode: string | null
+          institution_state: string | null
           is_highest: boolean | null
           passing_year: number | null
           specialization: string | null
@@ -132,6 +135,9 @@ export type Database = {
           grade_value?: string | null
           grading_system?: string | null
           id?: string
+          institution_city?: string | null
+          institution_pincode?: string | null
+          institution_state?: string | null
           is_highest?: boolean | null
           passing_year?: number | null
           specialization?: string | null
@@ -148,6 +154,9 @@ export type Database = {
           grade_value?: string | null
           grading_system?: string | null
           id?: string
+          institution_city?: string | null
+          institution_pincode?: string | null
+          institution_state?: string | null
           is_highest?: boolean | null
           passing_year?: number | null
           specialization?: string | null
