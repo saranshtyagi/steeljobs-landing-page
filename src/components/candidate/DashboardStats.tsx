@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMyApplications } from "@/hooks/useApplications";
 import { useSavedJobs } from "@/hooks/useSavedJobs";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,17 +24,46 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useCandidateProfile } from "@/hooks/useCandidateProfile";
 
 const DashboardStats = () => {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { data: applications } = useMyApplications();
   const { data: savedJobs } = useSavedJobs();
+  const { profile: candidateProfile } = useCandidateProfile();
   const [isPremiumLoading, setIsPremiumLoading] = useState(false);
   const [isInterviewLoading, setIsInterviewLoading] = useState(false);
+  const [hasPendingPremium, setHasPendingPremium] = useState(false);
+  const [hasPendingInterview, setHasPendingInterview] = useState(false);
 
   const appliedCount = applications?.filter(a => a.status === "applied").length || 0;
   const shortlistedCount = applications?.filter(a => a.status === "shortlisted").length || 0;
+
+  // Fetch existing pending requests
+  useEffect(() => {
+    const fetchPendingRequests = async () => {
+      if (!candidateProfile?.id) return;
+
+      const { data, error } = await supabase
+        .from("feature_requests")
+        .select("request_type")
+        .eq("candidate_id", candidateProfile.id)
+        .eq("status", "pending");
+
+      if (error) {
+        console.error("Error fetching pending requests:", error);
+        return;
+      }
+
+      if (data) {
+        setHasPendingPremium(data.some(r => r.request_type === "premium"));
+        setHasPendingInterview(data.some(r => r.request_type === "mock_interview"));
+      }
+    };
+
+    fetchPendingRequests();
+  }, [candidateProfile?.id]);
 
   const stats = [
     {
@@ -89,38 +118,73 @@ const DashboardStats = () => {
       throw new Error(error.message || "Failed to submit request");
     }
 
+    // Check if already submitted (409 status)
+    if (data?.alreadySubmitted) {
+      throw new Error("already_submitted");
+    }
+
     return data;
   };
 
   const handlePremiumClick = async () => {
+    if (hasPendingPremium) {
+      toast.info("Request already submitted", {
+        description: "You have already submitted a premium access request. Our team will contact you soon."
+      });
+      return;
+    }
+
     setIsPremiumLoading(true);
     try {
       await sendFeatureRequest("premium_access");
+      setHasPendingPremium(true);
       toast.success("Request submitted!", {
         description: "Our team will contact you shortly about premium access."
       });
     } catch (error: any) {
       console.error("Premium request error:", error);
-      toast.error("Failed to submit request", {
-        description: "Please try again or contact support@oppexl.com"
-      });
+      if (error.message === "already_submitted") {
+        setHasPendingPremium(true);
+        toast.info("Request already submitted", {
+          description: "You have already submitted a premium access request. Our team will contact you soon."
+        });
+      } else {
+        toast.error("Failed to submit request", {
+          description: "Please try again or contact support@oppexl.com"
+        });
+      }
     } finally {
       setIsPremiumLoading(false);
     }
   };
 
   const handleBookInterview = async () => {
+    if (hasPendingInterview) {
+      toast.info("Request already submitted", {
+        description: "You have already submitted a mock interview request. Our team will contact you soon."
+      });
+      return;
+    }
+
     setIsInterviewLoading(true);
     try {
       await sendFeatureRequest("mock_interview");
+      setHasPendingInterview(true);
       toast.success("Request submitted!", {
         description: "Our team will contact you to schedule your mock interview session."
       });
     } catch (error: any) {
       console.error("Interview request error:", error);
-      toast.error("Failed to submit request", {
-        description: "Please try again or contact support@oppexl.com"
-      });
+      if (error.message === "already_submitted") {
+        setHasPendingInterview(true);
+        toast.info("Request already submitted", {
+          description: "You have already submitted a mock interview request. Our team will contact you soon."
+        });
+      } else {
+        toast.error("Failed to submit request", {
+          description: "Please try again or contact support@oppexl.com"
+        });
+      }
     } finally {
       setIsInterviewLoading(false);
     }
@@ -158,9 +222,17 @@ const DashboardStats = () => {
                   <CardDescription>Accelerate your job search</CardDescription>
                 </div>
               </div>
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                ₹2,000
-              </Badge>
+              <div className="flex items-center gap-2">
+                {hasPendingPremium && (
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Requested
+                  </Badge>
+                )}
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                  ₹2,000
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -181,14 +253,19 @@ const DashboardStats = () => {
             <Button 
               onClick={handlePremiumClick} 
               disabled={isPremiumLoading}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
+              className={`w-full ${hasPendingPremium 
+                ? "bg-green-600 hover:bg-green-700" 
+                : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+              } text-white`}
             >
               {isPremiumLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : hasPendingPremium ? (
+                <CheckCircle className="w-4 h-4 mr-2" />
               ) : (
                 <Crown className="w-4 h-4 mr-2" />
               )}
-              {isPremiumLoading ? "Submitting..." : "Unlock Premium Access"}
+              {isPremiumLoading ? "Submitting..." : hasPendingPremium ? "Request Submitted" : "Unlock Premium Access"}
             </Button>
           </CardContent>
         </Card>
@@ -205,7 +282,15 @@ const DashboardStats = () => {
                   <Video className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">1-on-1 Mock Interview Session</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-foreground">1-on-1 Mock Interview Session</h3>
+                    {hasPendingInterview && (
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Requested
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-muted-foreground">30 minutes with an industry expert</p>
                 </div>
               </div>
@@ -231,19 +316,21 @@ const DashboardStats = () => {
               <Button 
                 onClick={handleBookInterview}
                 disabled={isInterviewLoading}
-                variant="hero"
+                variant={hasPendingInterview ? "default" : "hero"}
                 size="lg"
-                className="w-full lg:w-auto"
+                className={`w-full lg:w-auto ${hasPendingInterview ? "bg-green-600 hover:bg-green-700" : ""}`}
               >
                 {isInterviewLoading ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : hasPendingInterview ? (
+                  <CheckCircle className="w-4 h-4 mr-2" />
                 ) : (
                   <Video className="w-4 h-4 mr-2" />
                 )}
-                {isInterviewLoading ? "Submitting..." : "Book Your Session"}
+                {isInterviewLoading ? "Submitting..." : hasPendingInterview ? "Request Submitted" : "Book Your Session"}
               </Button>
               <p className="text-xs text-muted-foreground text-center lg:text-right">
-                Limited slots available daily
+                {hasPendingInterview ? "Our team will contact you soon" : "Limited slots available daily"}
               </p>
             </div>
           </div>

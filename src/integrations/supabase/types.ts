@@ -581,6 +581,50 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_requests: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          id: string
+          request_type: string
+          status: string
+          updated_at: string
+          user_email: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          id?: string
+          request_type: string
+          status?: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          id?: string
+          request_type?: string
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_requests_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           application_deadline: string | null
