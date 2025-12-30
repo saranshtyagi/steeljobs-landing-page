@@ -61,6 +61,68 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
+    // Map requestType to database format
+    const dbRequestType = requestType === "premium_access" ? "premium" : "mock_interview";
+
+    // Get candidate profile
+    const { data: candidateProfile, error: profileError } = await supabaseClient
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (profileError || !candidateProfile) {
+      console.error("Profile error:", profileError);
+      return new Response(JSON.stringify({ error: "Candidate profile not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check if user already has a pending request
+    const { data: existingRequest, error: existingError } = await supabaseClient
+      .from("feature_requests")
+      .select("id, status")
+      .eq("candidate_id", candidateProfile.id)
+      .eq("request_type", dbRequestType)
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (existingError) {
+      console.error("Error checking existing request:", existingError);
+    }
+
+    if (existingRequest) {
+      console.log("User already has a pending request");
+      return new Response(JSON.stringify({ 
+        error: "Request already submitted", 
+        alreadySubmitted: true 
+      }), {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Save the request to database
+    const { error: insertError } = await supabaseClient
+      .from("feature_requests")
+      .insert({
+        user_id: user.id,
+        candidate_id: candidateProfile.id,
+        request_type: dbRequestType,
+        user_name: userName,
+        user_email: userEmail,
+        status: "pending",
+      });
+
+    if (insertError) {
+      console.error("Error saving request:", insertError);
+      return new Response(JSON.stringify({ error: "Failed to save request" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const isPremium = requestType === "premium_access";
 
     // Email to support team
