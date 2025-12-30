@@ -7,10 +7,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
-// Disable worker to avoid CDN/bundling issues - runs in main thread
-GlobalWorkerOptions.workerSrc = "";
+// Set up PDF.js worker for version 3.x
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
 interface ParsedResumeData {
   name?: string;
@@ -80,7 +80,7 @@ const ResumeSection = () => {
   const extractTextFromPDF = async (file: File): Promise<string> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await getDocument({ data: arrayBuffer }).promise;
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       
       let fullText = "";
       
@@ -459,7 +459,7 @@ const ResumeSection = () => {
                        fileData.type === 'application/pdf';
           
           if (isPDF) {
-            const pdf = await getDocument({ data: arrayBuffer }).promise;
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             
             for (let i = 1; i <= pdf.numPages; i++) {
               const page = await pdf.getPage(i);
