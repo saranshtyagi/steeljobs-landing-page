@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 interface FeatureRequestPayload {
-  requestType: "premium_6_month" | "premium_1_year" | "mock_interview";
+  requestType: "premium_6_month" | "premium_1_year" | "mock_interview" | "free_trial_1_week";
   userName: string;
   userEmail: string;
 }
@@ -125,11 +125,13 @@ const handler = async (req: Request): Promise<Response> => {
     const isPremium1Year = requestType === "premium_1_year";
     const isPremium = isPremium6Month || isPremium1Year;
     const isMockInterview = requestType === "mock_interview";
+    const isFreeTrial = requestType === "free_trial_1_week";
 
     // Get pricing and duration info
     const getPlanDetails = () => {
       if (isPremium6Month) return { price: "₹1,200", duration: "6 Months", perMonth: "₹200/month" };
       if (isPremium1Year) return { price: "₹2,000", duration: "1 Year", perMonth: "₹167/month" };
+      if (isFreeTrial) return { price: "FREE", duration: "1 Week", perMonth: "" };
       return { price: "₹500", duration: "30 minutes", perMonth: "" };
     };
     const planDetails = getPlanDetails();
@@ -162,6 +164,31 @@ const handler = async (req: Request): Promise<Response> => {
           </tr>
         </table>
         <p>Please follow up with the user to complete the premium access setup.</p>
+      `;
+    } else if (isFreeTrial) {
+      supportSubject = `Free Trial Request (1 Week) from ${userName}`;
+      supportHtmlContent = `
+        <h2>New Free Trial Request</h2>
+        <p>A user has requested a 1-week free trial on SteelJobs.</p>
+        <table style="border-collapse: collapse; margin: 20px 0;">
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Name</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${userName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Email</td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:${userEmail}">${userEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Request Type</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Free Trial - 1 Week (Resume Building Sessions)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Requested At</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
+          </tr>
+        </table>
+        <p>Please follow up with the user to activate their free trial.</p>
       `;
     } else {
       supportSubject = `Mock Interview Session Request from ${userName}`;
@@ -222,6 +249,47 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
               If you have any questions, feel free to contact us at <a href="mailto:support@oppexl.com" style="color: #f59e0b;">support@oppexl.com</a>
+            </p>
+            <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
+              Best regards,<br>
+              <strong>The SteelJobs Team</strong>
+            </p>
+          </div>
+          <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;">
+            <p>© ${new Date().getFullYear()} SteelJobs. All rights reserved.</p>
+          </div>
+        </div>
+      `;
+    } else if (isFreeTrial) {
+      userSubject = "Congratulations! You've Unlocked 1-Week Free Trial - SteelJobs";
+      userHtmlContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="color: white; margin: 0;">🎉 SteelJobs</h1>
+          </div>
+          <div style="padding: 30px; background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937; margin-top: 0;">Congratulations, ${userName}! 🎊</h2>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              You've unlocked <strong>1-Week Premium Benefits</strong> including free resume building sessions!
+            </p>
+            <div style="background: #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #6ee7b7;">
+              <h3 style="color: #065f46; margin-top: 0;">What you get:</h3>
+              <ul style="color: #047857; font-size: 15px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li>📄 Professional Resume Building Sessions</li>
+                <li>✨ Expert guidance on resume optimization</li>
+                <li>🎯 Industry-specific tips and feedback</li>
+              </ul>
+            </div>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              Our sales team will contact you soon to get you started.
+            </p>
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #92400e; margin: 0; font-size: 12px;">
+                <strong>*Terms & Conditions apply.</strong> This offer is valid for new users only. Benefits are subject to availability.
+              </p>
+            </div>
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+              If you have any questions, feel free to contact us at <a href="mailto:support@oppexl.com" style="color: #10b981;">support@oppexl.com</a>
             </p>
             <p style="color: #4b5563; font-size: 16px; margin-top: 30px;">
               Best regards,<br>
