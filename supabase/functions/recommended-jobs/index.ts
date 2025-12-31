@@ -24,23 +24,30 @@ serve(async (req) => {
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     
-    // Create a client with the user's JWT to verify authentication
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: { Authorization: authHeader },
-      },
-    });
+    // Create a client for auth verification
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Verify the user's token
+    // Verify the user's token (extract raw JWT from "Bearer <token>")
+    const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+    if (!token) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const {
       data: { user },
       error: userError,
-    } = await supabaseAuth.auth.getUser();
+    } = await supabaseAuth.auth.getUser(token);
 
     if (userError || !user) {
       console.error("Auth getUser error:", userError);
       return new Response(
-        JSON.stringify({ error: "Invalid token", details: userError?.message || "Auth session missing!" }),
+        JSON.stringify({
+          error: "Invalid token",
+          details: userError?.message || "Auth session missing!",
+        }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
