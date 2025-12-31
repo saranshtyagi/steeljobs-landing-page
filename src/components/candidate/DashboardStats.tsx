@@ -36,6 +36,8 @@ const DashboardStats = () => {
   const [hasPending6Month, setHasPending6Month] = useState(false);
   const [hasPending1Year, setHasPending1Year] = useState(false);
   const [hasPendingInterview, setHasPendingInterview] = useState(false);
+  const [hasPendingFreeTrial, setHasPendingFreeTrial] = useState(false);
+  const [isFreeTrialLoading, setIsFreeTrialLoading] = useState(false);
 
   const appliedCount = applications?.filter(a => a.status === "applied").length || 0;
   const shortlistedCount = applications?.filter(a => a.status === "shortlisted").length || 0;
@@ -60,6 +62,7 @@ const DashboardStats = () => {
         setHasPending6Month(data.some(r => r.request_type === "premium_6_month"));
         setHasPending1Year(data.some(r => r.request_type === "premium_1_year"));
         setHasPendingInterview(data.some(r => r.request_type === "mock_interview"));
+        setHasPendingFreeTrial(data.some(r => r.request_type === "free_trial_1_week"));
       }
     };
 
@@ -101,7 +104,7 @@ const DashboardStats = () => {
     { icon: Zap, text: "Boost your confidence" },
   ];
 
-  const sendFeatureRequest = async (requestType: "premium_6_month" | "premium_1_year" | "mock_interview") => {
+  const sendFeatureRequest = async (requestType: "premium_6_month" | "premium_1_year" | "mock_interview" | "free_trial_1_week") => {
     const userName = profile?.name || user?.user_metadata?.name || "User";
     const userEmail = user?.email || "";
 
@@ -223,6 +226,38 @@ const DashboardStats = () => {
     }
   };
 
+  const handleFreeTrialClick = async () => {
+    if (hasPendingFreeTrial) {
+      toast.info("Request already submitted", {
+        description: "You have already submitted a free trial request. Our sales team will contact you soon."
+      });
+      return;
+    }
+
+    setIsFreeTrialLoading(true);
+    try {
+      await sendFeatureRequest("free_trial_1_week");
+      setHasPendingFreeTrial(true);
+      toast.success("Request submitted!", {
+        description: "Congratulations! Our sales team will contact you shortly to unlock your 1-week free trial."
+      });
+    } catch (error: any) {
+      console.error("Free trial request error:", error);
+      if (error.message === "already_submitted") {
+        setHasPendingFreeTrial(true);
+        toast.info("Request already submitted", {
+          description: "You have already submitted a free trial request. Our sales team will contact you soon."
+        });
+      } else {
+        toast.error("Failed to submit request", {
+          description: "Please try again or contact support@oppexl.com"
+        });
+      }
+    } finally {
+      setIsFreeTrialLoading(false);
+    }
+  };
+
   const hasPendingPremium = hasPending6Month || hasPending1Year;
 
   return (
@@ -279,6 +314,33 @@ const DashboardStats = () => {
                 </div>
               </div>
             ))}
+            </div>
+
+          {/* Free Trial Banner */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-green-600" />
+              <span className="text-sm text-foreground">
+                Enjoy premium benefits for 1 week<sup className="text-xs text-muted-foreground">*T&C</sup>
+              </span>
+            </div>
+            <Button
+              onClick={handleFreeTrialClick}
+              disabled={isFreeTrialLoading}
+              variant="outline"
+              size="sm"
+              className={`${hasPendingFreeTrial 
+                ? "bg-green-600 hover:bg-green-700 text-white border-green-600" 
+                : "border-green-500 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/30"
+              }`}
+            >
+              {isFreeTrialLoading ? (
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              ) : hasPendingFreeTrial ? (
+                <CheckCircle className="w-3 h-3 mr-1" />
+              ) : null}
+              {isFreeTrialLoading ? "Submitting..." : hasPendingFreeTrial ? "Requested" : "Contact Sales"}
+            </Button>
           </div>
           
           {/* Pricing Plans */}
