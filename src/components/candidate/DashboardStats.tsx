@@ -317,30 +317,35 @@ const DashboardStats = () => {
             </div>
 
           {/* Free Trial Banner */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-green-600" />
-              <span className="text-sm text-foreground">
-                Enjoy premium benefits for 1 week<sup className="text-xs text-muted-foreground">*T&C</sup>
-              </span>
+          <div className="p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-green-600" />
+                <span className="text-sm text-foreground">
+                  Enjoy premium benefits for 1 week<sup className="text-xs text-muted-foreground">*</sup>
+                </span>
+              </div>
+              <Button
+                onClick={handleFreeTrialClick}
+                disabled={isFreeTrialLoading}
+                variant="outline"
+                size="sm"
+                className={`${hasPendingFreeTrial 
+                  ? "bg-green-600 hover:bg-green-700 text-white border-green-600" 
+                  : "border-green-500 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/30"
+                }`}
+              >
+                {isFreeTrialLoading ? (
+                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                ) : hasPendingFreeTrial ? (
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                ) : null}
+                {isFreeTrialLoading ? "Submitting..." : hasPendingFreeTrial ? "Requested" : "Contact Sales"}
+              </Button>
             </div>
-            <Button
-              onClick={handleFreeTrialClick}
-              disabled={isFreeTrialLoading}
-              variant="outline"
-              size="sm"
-              className={`${hasPendingFreeTrial 
-                ? "bg-green-600 hover:bg-green-700 text-white border-green-600" 
-                : "border-green-500 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/30"
-              }`}
-            >
-              {isFreeTrialLoading ? (
-                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-              ) : hasPendingFreeTrial ? (
-                <CheckCircle className="w-3 h-3 mr-1" />
-              ) : null}
-              {isFreeTrialLoading ? "Submitting..." : hasPendingFreeTrial ? "Requested" : "Contact Sales"}
-            </Button>
+            <p className="text-[10px] text-muted-foreground leading-tight">
+              <span className="font-medium">*T&C:</span> Free trial includes professional resume building sessions only. Valid for new users. Other premium features require a paid subscription.
+            </p>
           </div>
           
           {/* Pricing Plans */}
