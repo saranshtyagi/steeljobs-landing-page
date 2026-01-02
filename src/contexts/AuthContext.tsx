@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type AppRole = "recruiter" | "candidate";
+type AppRole = "recruiter" | "candidate" | "admin";
 
 interface Profile {
   id: string;
@@ -17,7 +17,8 @@ interface AuthContextType {
   profile: Profile | null;
   role: AppRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, role: AppRole) => Promise<{ error: Error | null }>;
+  isAdmin: boolean;
+  signUp: (email: string, password: string, name: string, role: "recruiter" | "candidate") => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -30,6 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isAdmin = role === "admin";
 
   const fetchUserData = async (userId: string) => {
     // Fetch profile
@@ -53,6 +56,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (roleData) {
       setRole(roleData.role as AppRole);
     }
+
+    // Update last login time
+    await supabase
+      .from("profiles")
+      .update({ last_login_at: new Date().toISOString() })
+      .eq("user_id", userId);
   };
 
   useEffect(() => {
@@ -88,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string, role: AppRole) => {
+  const signUp = async (email: string, password: string, name: string, role: "recruiter" | "candidate") => {
     const redirectUrl = `${window.location.origin}/`;
 
     const { data, error } = await supabase.auth.signUp({
@@ -143,6 +152,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         profile,
         role,
         loading,
+        isAdmin,
         signUp,
         signIn,
         signOut,

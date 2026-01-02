@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           candidate_id: string
@@ -714,11 +744,46 @@ export type Database = {
           },
         ]
       }
+      login_logs: {
+        Row: {
+          email: string
+          failure_reason: string | null
+          id: string
+          ip_address: string | null
+          login_at: string
+          success: boolean
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          email: string
+          failure_reason?: string | null
+          id?: string
+          ip_address?: string | null
+          login_at?: string
+          success?: boolean
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          email?: string
+          failure_reason?: string | null
+          id?: string
+          ip_address?: string | null
+          login_at?: string
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           email: string
           id: string
+          is_active: boolean | null
+          last_login_at: string | null
           name: string
           updated_at: string
           user_id: string
@@ -727,6 +792,8 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
           name: string
           updated_at?: string
           user_id: string
@@ -735,6 +802,8 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
           name?: string
           updated_at?: string
           user_id?: string
@@ -868,6 +937,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "recruiter" | "candidate" | "admin"
