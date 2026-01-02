@@ -46,15 +46,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfile(profileData);
     }
 
-    // Fetch role
-    const { data: roleData } = await supabase
+    // Fetch all roles for the user (user might have multiple roles)
+    const { data: rolesData } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", userId)
-      .maybeSingle();
+      .eq("user_id", userId);
 
-    if (roleData) {
-      setRole(roleData.role as AppRole);
+    if (rolesData && rolesData.length > 0) {
+      // Prioritize admin role if user has it
+      const roles = rolesData.map((r) => r.role as AppRole);
+      if (roles.includes("admin")) {
+        setRole("admin");
+      } else {
+        setRole(roles[0]);
+      }
     }
 
     // Update last login time

@@ -38,7 +38,11 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && role) {
-      navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
+      }
     }
   }, [user, role, navigate]);
 
