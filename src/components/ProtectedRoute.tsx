@@ -2,15 +2,15 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-type AppRole = "recruiter" | "candidate";
+type AppRole = "recruiter" | "candidate" | "admin";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRole?: AppRole;
+  allowedRole?: "recruiter" | "candidate";
 }
 
 const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
-  const { user, role, loading } = useAuth();
+  const { user, role, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,12 +20,18 @@ const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
         return;
       }
 
+      // Admins should always go to admin panel, not candidate/recruiter dashboards
+      if (isAdmin && allowedRole) {
+        navigate("/admin");
+        return;
+      }
+
       if (allowedRole && role && role !== allowedRole) {
         // Redirect to their correct dashboard if they have the wrong role
         navigate(role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate");
       }
     }
-  }, [user, role, loading, allowedRole, navigate]);
+  }, [user, role, loading, allowedRole, navigate, isAdmin]);
 
   if (loading) {
     return (
@@ -39,6 +45,11 @@ const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
   }
 
   if (!user) {
+    return null;
+  }
+
+  // Admins trying to access candidate/recruiter routes should be blocked
+  if (isAdmin && allowedRole) {
     return null;
   }
 

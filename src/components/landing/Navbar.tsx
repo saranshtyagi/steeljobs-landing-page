@@ -15,7 +15,7 @@ import {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, profile, role, signOut, loading } = useAuth();
+  const { user, profile, role, signOut, loading, isAdmin } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -34,6 +34,7 @@ const Navbar = () => {
   };
 
   const getDashboardLink = () => {
+    if (isAdmin) return "/admin";
     return role === "recruiter" ? "/dashboard/recruiter" : "/dashboard/candidate";
   };
 
