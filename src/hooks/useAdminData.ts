@@ -23,6 +23,7 @@ export interface UserWithDetails {
   is_active: boolean;
   last_login_at: string | null;
   role: string;
+  isAdmin: boolean;
 }
 
 export interface CandidateInsight {
@@ -45,6 +46,16 @@ export interface RecruiterInsight {
   active_jobs_count: number;
 }
 
+// Helper to get admin user IDs
+const getAdminUserIds = async (): Promise<Set<string>> => {
+  const { data: adminRoles } = await supabase
+    .from("user_roles")
+    .select("user_id")
+    .eq("role", "admin");
+  
+  return new Set(adminRoles?.map((r) => r.user_id) || []);
+};
+
 export const useAdminStats = () => {
   return useQuery({
     queryKey: ["admin-stats"],
@@ -54,30 +65,41 @@ export const useAdminStats = () => {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
+      // Get admin user IDs to exclude from counts
+      const adminUserIds = await getAdminUserIds();
+
       const [
         profilesRes,
         candidatesRes,
         recruitersRes,
         jobsRes,
         applicationsRes,
-        newTodayRes,
-        newWeekRes,
-        newMonthRes,
-        activeRes,
+        allProfilesRes,
       ] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("user_id, is_active, created_at"),
         supabase.from("candidate_profiles").select("id", { count: "exact", head: true }),
         supabase.from("recruiter_profiles").select("id", { count: "exact", head: true }),
         supabase.from("jobs").select("id", { count: "exact", head: true }),
         supabase.from("applications").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", todayStart),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", weekAgo),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", monthAgo),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("is_active", true),
+        supabase.from("profiles").select("user_id, is_active, created_at"),
       ]);
 
-      const totalUsers = profilesRes.count || 0;
-      const activeUsers = activeRes.count || 0;
+      // Filter out admins from profile counts
+      const nonAdminProfiles = (allProfilesRes.data || []).filter(
+        (p) => !adminUserIds.has(p.user_id)
+      );
+
+      const totalUsers = nonAdminProfiles.length;
+      const activeUsers = nonAdminProfiles.filter((p) => p.is_active !== false).length;
+      const newUsersToday = nonAdminProfiles.filter(
+        (p) => new Date(p.created_at) >= new Date(todayStart)
+      ).length;
+      const newUsersWeek = nonAdminProfiles.filter(
+        (p) => new Date(p.created_at) >= new Date(weekAgo)
+      ).length;
+      const newUsersMonth = nonAdminProfiles.filter(
+        (p) => new Date(p.created_at) >= new Date(monthAgo)
+      ).length;
 
       return {
         totalUsers,
@@ -85,9 +107,9 @@ export const useAdminStats = () => {
         totalRecruiters: recruitersRes.count || 0,
         totalJobs: jobsRes.count || 0,
         totalApplications: applicationsRes.count || 0,
-        newUsersToday: newTodayRes.count || 0,
-        newUsersWeek: newWeekRes.count || 0,
-        newUsersMonth: newMonthRes.count || 0,
+        newUsersToday,
+        newUsersWeek,
+        newUsersMonth,
         activeUsers,
         inactiveUsers: totalUsers - activeUsers,
       };
@@ -99,6 +121,9 @@ export const useAdminUsers = (filters?: { role?: string; search?: string }) => {
   return useQuery({
     queryKey: ["admin-users", filters],
     queryFn: async (): Promise<UserWithDetails[]> => {
+      // Get admin user IDs
+      const adminUserIds = await getAdminUserIds();
+
       // Get all profiles with roles
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
@@ -113,7 +138,15 @@ export const useAdminUsers = (filters?: { role?: string; search?: string }) => {
 
       if (rolesError) throw rolesError;
 
-      const roleMap = new Map(roles?.map((r) => [r.user_id, r.role]) || []);
+      // Create a map of user_id to their primary role (prioritize non-admin for display)
+      const roleMap = new Map<string, string>();
+      roles?.forEach((r) => {
+        const existingRole = roleMap.get(r.user_id);
+        // If user has admin role, mark them but also keep their other role for display
+        if (r.role !== "admin" || !existingRole) {
+          roleMap.set(r.user_id, r.role);
+        }
+      });
 
       let users = (profiles || []).map((p) => ({
         id: p.id,
@@ -124,7 +157,11 @@ export const useAdminUsers = (filters?: { role?: string; search?: string }) => {
         is_active: p.is_active ?? true,
         last_login_at: p.last_login_at,
         role: roleMap.get(p.user_id) || "unknown",
+        isAdmin: adminUserIds.has(p.user_id),
       }));
+
+      // Filter out admin users from the list (admins shouldn't see other admins)
+      users = users.filter((u) => !u.isAdmin);
 
       // Apply filters
       if (filters?.role && filters.role !== "all") {
@@ -286,6 +323,12 @@ export const useActivityLogs = () => {
 
 export const useToggleUserStatus = () => {
   const toggleStatus = async (userId: string, isActive: boolean) => {
+    // Double-check that we're not trying to disable an admin
+    const adminUserIds = await getAdminUserIds();
+    if (adminUserIds.has(userId)) {
+      throw new Error("Cannot modify admin user status");
+    }
+
     const { error } = await supabase
       .from("profiles")
       .update({ is_active: isActive })
