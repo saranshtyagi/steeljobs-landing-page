@@ -29,7 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { UserPlus, Mail, Clock, CheckCircle, XCircle, Loader2, Trash2 } from "lucide-react";
+import { UserPlus, Mail, Clock, CheckCircle, XCircle, Loader2, Trash2, Send, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { z } from "zod";
 
@@ -40,6 +40,8 @@ interface AdminInvite {
   created_at: string;
   expires_at: string;
   accepted_at: string | null;
+  email_id: string | null;
+  email_status: string | null;
 }
 
 const emailSchema = z.string().email("Please enter a valid email address");
@@ -150,6 +152,39 @@ const AdminInviteSection = () => {
     );
   };
 
+  const getEmailStatusBadge = (emailStatus: string | null) => {
+    if (emailStatus === "sent") {
+      return (
+        <Badge className="bg-green-600/20 text-green-400 border-green-600/30">
+          <Send className="w-3 h-3 mr-1" />
+          Delivered
+        </Badge>
+      );
+    }
+    if (emailStatus === "failed") {
+      return (
+        <Badge className="bg-red-600/20 text-red-400 border-red-600/30">
+          <AlertCircle className="w-3 h-3 mr-1" />
+          Failed
+        </Badge>
+      );
+    }
+    if (emailStatus === "sending") {
+      return (
+        <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30">
+          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+          Sending
+        </Badge>
+      );
+    }
+    return (
+      <Badge className="bg-slate-600/20 text-slate-400 border-slate-600/30">
+        <Clock className="w-3 h-3 mr-1" />
+        Unknown
+      </Badge>
+    );
+  };
+
   const pendingCount = invites?.filter(
     (i) => i.status === "pending" && new Date(i.expires_at) > new Date()
   ).length || 0;
@@ -246,7 +281,9 @@ const AdminInviteSection = () => {
             <TableHeader>
               <TableRow className="border-slate-800 hover:bg-transparent">
                 <TableHead className="text-slate-400">Email</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
+                <TableHead className="text-slate-400">Sender</TableHead>
+                <TableHead className="text-slate-400">Email Status</TableHead>
+                <TableHead className="text-slate-400">Invite Status</TableHead>
                 <TableHead className="text-slate-400">Sent</TableHead>
                 <TableHead className="text-slate-400">Expires</TableHead>
                 <TableHead className="text-slate-400 text-right">Actions</TableHead>
@@ -255,13 +292,13 @@ const AdminInviteSection = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-slate-400 py-8">
+                  <TableCell colSpan={7} className="text-center text-slate-400 py-8">
                     <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                   </TableCell>
                 </TableRow>
               ) : invites?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-slate-400 py-8">
+                  <TableCell colSpan={7} className="text-center text-slate-400 py-8">
                     No invitations sent yet
                   </TableCell>
                 </TableRow>
@@ -273,6 +310,12 @@ const AdminInviteSection = () => {
                   >
                     <TableCell className="text-white font-medium">
                       {invite.email}
+                    </TableCell>
+                    <TableCell className="text-slate-300">
+                      <span className="font-medium">SteelJobs Admin</span>
+                    </TableCell>
+                    <TableCell>
+                      {getEmailStatusBadge(invite.email_status)}
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(invite.status, invite.expires_at)}

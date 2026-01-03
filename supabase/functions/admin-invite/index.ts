@@ -94,6 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
         .insert({
           email,
           invited_by: user.id,
+          email_status: "sending",
         })
         .select()
         .single();
@@ -157,6 +158,23 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
       console.log("Email sent:", emailResponse);
+
+      // Update invite with email_id and status
+      const emailId = emailResponse?.data?.id || null;
+      const emailStatus = emailResponse?.error ? "failed" : "sent";
+      
+      await supabaseClient
+        .from("admin_invites")
+        .update({ 
+          email_id: emailId, 
+          email_status: emailStatus 
+        })
+        .eq("id", invite.id);
+
+      if (emailResponse?.error) {
+        console.error("Email sending failed:", emailResponse.error);
+        throw new Error("Failed to send invitation email");
+      }
 
       return new Response(
         JSON.stringify({ success: true, message: "Invite sent successfully" }),
