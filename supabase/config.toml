@@ -42,3 +42,9 @@ verify_jwt = false
 
 [functions.delete-user]
 verify_jwt = false
+
+[functions.admin-invite]
+verify_jwt = false
+
+[functions.send-feature-request]
+verify_jwt = true

@@ -1,4 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminInviteSection from "@/components/admin/AdminInviteSection";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Server, Database, Shield, Cloud } from "lucide-react";
@@ -11,9 +12,12 @@ const AdminSettings = () => {
         <div>
           <h1 className="text-3xl font-bold text-white">System Settings</h1>
           <p className="text-slate-400 mt-1">
-            Platform health and configuration overview
+            Platform health, configuration, and admin management
           </p>
         </div>
+
+        {/* Admin Invitations */}
+        <AdminInviteSection />
 
         {/* System Status */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

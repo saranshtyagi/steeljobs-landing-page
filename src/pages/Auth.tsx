@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Briefcase, Users, Building2, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Briefcase, Users, Building2, ArrowLeft, Eye, EyeOff, Shield, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -12,13 +12,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import EmailOTPVerification from "@/components/auth/EmailOTPVerification";
 
-type AuthMode = "signin" | "signup" | "role-select" | "otp-verification";
+type AuthMode = "signin" | "signup" | "role-select" | "otp-verification" | "admin-invite";
 type AppRole = "recruiter" | "candidate";
+
+interface AdminInviteState {
+  token: string;
+  email: string;
+  existingUser: boolean;
+  isProcessing: boolean;
+  processed: boolean;
+}
 
 const Auth = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const initialMode = searchParams.get("mode") === "signup" ? "role-select" : "signin";
+  const inviteToken = searchParams.get("invite");
+  const initialMode = inviteToken ? "admin-invite" : (searchParams.get("mode") === "signup" ? "role-select" : "signin");
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [selectedRole, setSelectedRole] = useState<AppRole | null>(null);
@@ -28,6 +37,9 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
+  const [adminInvite, setAdminInvite] = useState<AdminInviteState | null>(
+    inviteToken ? { token: inviteToken, email: "", existingUser: false, isProcessing: true, processed: false } : null
+  );
 
   const emailSchema = z.string().trim().email(t("auth.emailInvalid")).max(255, t("validation.emailInvalid"));
   const passwordSchema = z.string().min(6, t("auth.passwordTooShort")).max(72, t("validation.passwordTooLong"));
@@ -35,6 +47,45 @@ const Auth = () => {
 
   const { signIn, signUp, user, role } = useAuth();
   const navigate = useNavigate();
+
+  // Process admin invite token
+  useEffect(() => {
+    if (inviteToken && adminInvite?.isProcessing && !adminInvite?.processed) {
+      processAdminInvite(inviteToken);
+    }
+  }, [inviteToken]);
+
+  const processAdminInvite = async (token: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-invite", {
+        body: { inviteToken: token, action: "accept" },
+      });
+
+      if (error || data?.error) {
+        toast.error(data?.error || "Invalid or expired invitation");
+        setMode("signin");
+        setAdminInvite(null);
+        return;
+      }
+
+      if (data.existingUser) {
+        // User already exists and has been promoted to admin
+        toast.success("You've been granted admin access! Please sign in.");
+        setEmail(data.email);
+        setMode("signin");
+        setAdminInvite({ ...adminInvite!, email: data.email, existingUser: true, isProcessing: false, processed: true });
+      } else {
+        // New user - needs to sign up
+        setEmail(data.email);
+        setAdminInvite({ ...adminInvite!, email: data.email, existingUser: false, isProcessing: false, processed: true });
+      }
+    } catch (err) {
+      console.error("Error processing invite:", err);
+      toast.error("Failed to process invitation");
+      setMode("signin");
+      setAdminInvite(null);
+    }
+  };
 
   useEffect(() => {
     if (user && role) {
@@ -163,6 +214,51 @@ const Auth = () => {
 
   const handleOTPVerified = () => {
     // User is now authenticated, redirect will happen via useEffect
+  };
+
+  const handleAdminSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminInvite) return;
+
+    const newErrors: { email?: string; password?: string; name?: string } = {};
+    
+    const nameResult = nameSchema.safeParse(name);
+    if (!nameResult.success) {
+      newErrors.name = nameResult.error.errors[0].message;
+    }
+
+    const passwordResult = passwordSchema.safeParse(password);
+    if (!passwordResult.success) {
+      newErrors.password = passwordResult.error.errors[0].message;
+    }
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    setIsLoading(true);
+    try {
+      // Sign up with admin role
+      const { error } = await signUp(adminInvite.email, password, name.trim(), "admin" as any);
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      // Mark invite as accepted
+      await supabase.functions.invoke("admin-invite", {
+        body: { inviteToken: adminInvite.token, action: "accept" },
+      });
+
+      toast.success("Admin account created! You can now sign in.");
+      setMode("signin");
+      setEmail(adminInvite.email);
+    } catch (err: any) {
+      console.error("Admin signup error:", err);
+      toast.error("Failed to create admin account");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRoleSelect = (role: AppRole) => {
@@ -395,6 +491,86 @@ const Auth = () => {
           </div>
 
           <div className="bg-card rounded-2xl border border-border p-6 sm:p-8 shadow-lg">
+            {mode === "admin-invite" && adminInvite && (
+              adminInvite.isProcessing ? (
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-red-100 mx-auto flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-foreground">Processing Invitation</h1>
+                  <p className="text-muted-foreground">Please wait while we verify your admin invitation...</p>
+                </div>
+              ) : !adminInvite.existingUser ? (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full bg-red-100 mx-auto flex items-center justify-center mb-4">
+                      <Shield className="w-8 h-8 text-red-600" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-foreground mb-2">Admin Invitation</h1>
+                    <p className="text-muted-foreground">Create your admin account to access the control panel</p>
+                  </div>
+                  <form onSubmit={handleAdminSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-name">{t("auth.fullName")}</Label>
+                      <Input
+                        id="admin-name"
+                        type="text"
+                        placeholder={t("auth.fullNamePlaceholder")}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={errors.name ? "border-destructive" : ""}
+                      />
+                      {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-email">{t("auth.email")}</Label>
+                      <Input
+                        id="admin-email"
+                        type="email"
+                        value={adminInvite.email}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">Email is set by the invitation</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-password">{t("auth.password")}</Label>
+                      <div className="relative">
+                        <Input
+                          id="admin-password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder={t("auth.passwordPlaceholder")}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+                    </div>
+                    <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Creating Account...
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="w-4 h-4 mr-2" />
+                          Create Admin Account
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </div>
+              ) : null
+            )}
             {mode === "role-select" && renderRoleSelect()}
             {mode === "signup" && renderSignUpForm()}
             {mode === "signin" && renderSignInForm()}
