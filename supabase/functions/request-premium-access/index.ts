@@ -118,7 +118,7 @@ const handler = async (req: Request): Promise<Response> => {
         </p>
         
         <p style="color: #374151; line-height: 1.6;">
-          We have received your request for premium access to our comprehensive candidate database at <strong>${companyName}</strong>.
+          We have received your request for premium access to our comprehensive candidate database at <strong>SteelJobs</strong>.
         </p>
 
         <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
@@ -152,7 +152,7 @@ const handler = async (req: Request): Promise<Response> => {
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
 
         <p style="color: #9ca3af; font-size: 12px; text-align: center;">
-          © ${new Date().getFullYear()} SteelJobs by Oppexl. All rights reserved.<br/>
+          © 2025 SteelJobs. All rights reserved.<br/>
           <a href="https://mysteeljobs.com" style="color: #f97316;">www.mysteeljobs.com</a>
         </p>
       </div>
