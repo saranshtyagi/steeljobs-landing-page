@@ -51,3 +51,6 @@ verify_jwt = true
 
 [functions.request-premium-access]
 verify_jwt = true
+
+[functions.grant-premium-access]
+verify_jwt = true

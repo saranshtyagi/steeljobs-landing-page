@@ -44,6 +44,7 @@ export interface RecruiterInsight {
   created_at: string;
   jobs_count: number;
   active_jobs_count: number;
+  has_premium_access: boolean;
 }
 
 // Helper to get admin user IDs
@@ -257,7 +258,7 @@ export const useRecruiterInsights = () => {
     queryFn: async (): Promise<RecruiterInsight[]> => {
       const { data: recruiters, error } = await supabase
         .from("recruiter_profiles")
-        .select("id, company_name, contact_email, created_at")
+        .select("id, company_name, contact_email, created_at, has_premium_access")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -284,6 +285,7 @@ export const useRecruiterInsights = () => {
         created_at: r.created_at,
         jobs_count: jobCountMap.get(r.id)?.total || 0,
         active_jobs_count: jobCountMap.get(r.id)?.active || 0,
+        has_premium_access: r.has_premium_access,
       }));
     },
   });
