@@ -48,3 +48,6 @@ verify_jwt = false
 
 [functions.send-feature-request]
 verify_jwt = true
+
+[functions.request-premium-access]
+verify_jwt = true
