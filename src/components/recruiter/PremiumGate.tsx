@@ -150,9 +150,6 @@ const PremiumGate = ({ children }: PremiumGateProps) => {
                       </>
                     )}
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    A confirmation email will be sent to {user?.email}
-                  </p>
                 </div>
               )}
             </div>
