@@ -19,10 +19,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, UserX, UserCheck, RefreshCw } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Search, UserX, UserCheck, RefreshCw, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminUsers = () => {
   const [search, setSearch] = useState("");
@@ -31,6 +43,31 @@ const AdminUsers = () => {
   const { toggleStatus } = useToggleUserStatus();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase.functions.invoke("delete-user", {
+        body: { userId },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
+      toast({
+        title: "User Deleted",
+        description: "User and all related data have been permanently deleted.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {
@@ -164,28 +201,62 @@ const AdminUsers = () => {
                         : "Never"}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleToggleStatus(user.user_id, user.is_active)}
-                        className={
-                          user.is_active
-                            ? "text-red-400 hover:text-red-300 hover:bg-red-600/10"
-                            : "text-green-400 hover:text-green-300 hover:bg-green-600/10"
-                        }
-                      >
-                        {user.is_active ? (
-                          <>
-                            <UserX className="w-4 h-4 mr-1" />
-                            Disable
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck className="w-4 h-4 mr-1" />
-                            Enable
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleToggleStatus(user.user_id, user.is_active)}
+                          className={
+                            user.is_active
+                              ? "text-red-400 hover:text-red-300 hover:bg-red-600/10"
+                              : "text-green-400 hover:text-green-300 hover:bg-green-600/10"
+                          }
+                        >
+                          {user.is_active ? (
+                            <>
+                              <UserX className="w-4 h-4 mr-1" />
+                              Disable
+                            </>
+                          ) : (
+                            <>
+                              <UserCheck className="w-4 h-4 mr-1" />
+                              Enable
+                            </>
+                          )}
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-400 hover:bg-red-600/10"
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="bg-slate-900 border-slate-700">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-white">Delete User Permanently?</AlertDialogTitle>
+                              <AlertDialogDescription className="text-slate-400">
+                                This will permanently delete <span className="font-semibold text-white">{user.name}</span> ({user.email}) and all their associated data including profile, applications, jobs, and other records. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="bg-slate-800 text-white border-slate-700 hover:bg-slate-700">
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteUserMutation.mutate(user.user_id)}
+                                className="bg-red-600 text-white hover:bg-red-700"
+                                disabled={deleteUserMutation.isPending}
+                              >
+                                {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
