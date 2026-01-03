@@ -117,7 +117,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       // Send email
       const emailResponse = await resend.emails.send({
-        from: "SteelJobs Admin <onboarding@resend.dev>",
+        from: "SteelJobs Admin <noreply@mail.mysteeljobs.com>",
         to: [email],
         subject: "You've been invited as an Admin on SteelJobs",
         html: `
