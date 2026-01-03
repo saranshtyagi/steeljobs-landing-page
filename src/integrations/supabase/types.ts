@@ -861,6 +861,7 @@ export type Database = {
           contact_name: string | null
           contact_phone: string | null
           created_at: string
+          has_premium_access: boolean
           id: string
           industry: string | null
           onboarding_completed: boolean | null
@@ -878,6 +879,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string
+          has_premium_access?: boolean
           id?: string
           industry?: string | null
           onboarding_completed?: boolean | null
@@ -895,6 +897,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string
+          has_premium_access?: boolean
           id?: string
           industry?: string | null
           onboarding_completed?: boolean | null

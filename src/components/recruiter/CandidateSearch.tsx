@@ -4,6 +4,7 @@ import CandidateCard from "./CandidateCard";
 import CandidateProfileDrawer from "./CandidateProfileDrawer";
 import ShortlistPopover from "./ShortlistPopover";
 import EmailCandidateModal from "./EmailCandidateModal";
+import PremiumGate from "./PremiumGate";
 import { EmailRecipient } from "@/hooks/useEmailCandidates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +55,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const CandidateSearch = () => {
+const CandidateSearchContent = () => {
   const { t } = useTranslation();
   const [filters, setFilters] = useState<CandidateSearchFilters>({
     page: 1,
@@ -619,6 +620,14 @@ const CandidateSearch = () => {
         recipients={emailRecipients}
       />
     </div>
+  );
+};
+
+const CandidateSearch = () => {
+  return (
+    <PremiumGate>
+      <CandidateSearchContent />
+    </PremiumGate>
   );
 };
 

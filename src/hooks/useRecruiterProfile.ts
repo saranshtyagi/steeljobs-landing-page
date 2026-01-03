@@ -17,6 +17,7 @@ export interface RecruiterProfile {
   contact_email: string | null;
   contact_phone: string | null;
   onboarding_completed: boolean | null;
+  has_premium_access: boolean;
   created_at: string;
   updated_at: string;
 }
