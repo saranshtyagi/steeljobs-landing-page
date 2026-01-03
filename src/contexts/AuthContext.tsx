@@ -43,6 +43,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
 
     if (profileData) {
+      // Check if user is disabled
+      if (profileData.is_active === false) {
+        // Sign out the disabled user
+        await supabase.auth.signOut();
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        setRole(null);
+        return;
+      }
       setProfile(profileData);
     }
 

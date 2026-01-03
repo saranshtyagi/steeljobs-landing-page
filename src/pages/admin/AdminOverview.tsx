@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminStats } from "@/hooks/useAdminData";
 import {
@@ -173,27 +174,27 @@ const AdminOverview = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <a
-                  href="/admin/users"
+                <Link
+                  to="/admin/users"
                   className="flex items-center gap-3 p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                 >
                   <Users className="w-5 h-5 text-slate-400" />
                   <span className="text-white">Manage Users</span>
-                </a>
-                <a
-                  href="/admin/candidates"
+                </Link>
+                <Link
+                  to="/admin/candidates"
                   className="flex items-center gap-3 p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                 >
                   <UserCheck className="w-5 h-5 text-slate-400" />
                   <span className="text-white">View Candidates</span>
-                </a>
-                <a
-                  href="/admin/logs"
+                </Link>
+                <Link
+                  to="/admin/logs"
                   className="flex items-center gap-3 p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                 >
                   <FileText className="w-5 h-5 text-slate-400" />
                   <span className="text-white">View Activity Logs</span>
-                </a>
+                </Link>
               </div>
             </CardContent>
           </Card>
