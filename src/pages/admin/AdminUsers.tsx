@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { useAdminUsers, useToggleUserStatus } from "@/hooks/useAdminData";
+import { useAdminUsers } from "@/hooks/useAdminData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +30,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Search, UserX, UserCheck, RefreshCw, Trash2 } from "lucide-react";
+import { Search, RefreshCw, Trash2, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -40,7 +46,7 @@ const AdminUsers = () => {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const { data: users, isLoading, refetch } = useAdminUsers({ role: roleFilter, search });
-  const { toggleStatus } = useToggleUserStatus();
+  
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -69,22 +75,6 @@ const AdminUsers = () => {
     },
   });
 
-  const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
-    try {
-      await toggleStatus(userId, !currentStatus);
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      toast({
-        title: currentStatus ? "User Disabled" : "User Enabled",
-        description: `User has been ${currentStatus ? "disabled" : "enabled"} successfully.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update user status.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -201,62 +191,43 @@ const AdminUsers = () => {
                         : "Never"}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleToggleStatus(user.user_id, user.is_active)}
-                          className={
-                            user.is_active
-                              ? "text-red-400 hover:text-red-300 hover:bg-red-600/10"
-                              : "text-green-400 hover:text-green-300 hover:bg-green-600/10"
-                          }
-                        >
-                          {user.is_active ? (
-                            <>
-                              <UserX className="w-4 h-4 mr-1" />
-                              Disable
-                            </>
-                          ) : (
-                            <>
-                              <UserCheck className="w-4 h-4 mr-1" />
-                              Enable
-                            </>
-                          )}
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-500 hover:text-red-400 hover:bg-red-600/10"
-                            >
-                              <Trash2 className="w-4 h-4 mr-1" />
-                              Delete
+                      <AlertDialog>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+                              <MoreHorizontal className="w-4 h-4" />
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-slate-900 border-slate-700">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className="text-white">Delete User Permanently?</AlertDialogTitle>
-                              <AlertDialogDescription className="text-slate-400">
-                                This will permanently delete <span className="font-semibold text-white">{user.name}</span> ({user.email}) and all their associated data including profile, applications, jobs, and other records. This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="bg-slate-800 text-white border-slate-700 hover:bg-slate-700">
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => deleteUserMutation.mutate(user.user_id)}
-                                className="bg-red-600 text-white hover:bg-red-700"
-                                disabled={deleteUserMutation.isPending}
-                              >
-                                {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-slate-900 border-slate-700">
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem className="text-red-400 focus:text-red-300 focus:bg-red-600/10 cursor-pointer">
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete User
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <AlertDialogContent className="bg-slate-900 border-slate-700">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">Delete User Permanently?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-slate-400">
+                              This will permanently delete <span className="font-semibold text-white">{user.name}</span> ({user.email}) and all their associated data including profile, applications, jobs, and other records. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-slate-800 text-white border-slate-700 hover:bg-slate-700">
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteUserMutation.mutate(user.user_id)}
+                              className="bg-red-600 text-white hover:bg-red-700"
+                              disabled={deleteUserMutation.isPending}
+                            >
+                              {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))
