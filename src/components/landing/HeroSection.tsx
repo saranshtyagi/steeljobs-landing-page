@@ -78,7 +78,7 @@ const HeroSection = () => {
         </div>
 
         {/* Floating Cards */}
-        <div className="hidden xl:block absolute top-1/4 left-4 animate-float">
+        <div className="hidden lg:block absolute top-1/4 left-2 animate-float">
           <div className="glass-card rounded-2xl p-4 shadow-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
