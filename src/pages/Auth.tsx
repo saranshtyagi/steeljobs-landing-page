@@ -11,8 +11,9 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import EmailOTPVerification from "@/components/auth/EmailOTPVerification";
+import PasswordResetFlow from "@/components/auth/PasswordResetFlow";
 
-type AuthMode = "signin" | "signup" | "role-select" | "otp-verification" | "admin-invite";
+type AuthMode = "signin" | "signup" | "role-select" | "otp-verification" | "admin-invite" | "forgot-password";
 type AppRole = "recruiter" | "candidate";
 
 interface AdminInviteState {
@@ -420,7 +421,16 @@ const Auth = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">{t("auth.password")}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">{t("auth.password")}</Label>
+            <button
+              type="button"
+              onClick={() => setMode("forgot-password")}
+              className="text-sm text-primary hover:underline font-medium"
+            >
+              Forgot Password?
+            </button>
+          </div>
           <div className="relative">
             <Input
               id="password"
@@ -574,6 +584,12 @@ const Auth = () => {
             {mode === "role-select" && renderRoleSelect()}
             {mode === "signup" && renderSignUpForm()}
             {mode === "signin" && renderSignInForm()}
+            {mode === "forgot-password" && (
+              <PasswordResetFlow
+                onBack={() => setMode("signin")}
+                onComplete={() => setMode("signin")}
+              />
+            )}
             {mode === "otp-verification" && selectedRole && (
               <EmailOTPVerification
                 email={email.trim()}

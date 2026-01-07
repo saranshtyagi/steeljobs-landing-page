@@ -54,3 +54,9 @@ verify_jwt = true
 
 [functions.grant-premium-access]
 verify_jwt = true
+
+[functions.send-password-reset-otp]
+verify_jwt = false
+
+[functions.reset-password]
+verify_jwt = false
