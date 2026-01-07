@@ -42,6 +42,9 @@ async function withRetry<T>(
   throw lastError;
 }
 
+const RATE_LIMIT_MAX_ATTEMPTS = 5;
+const RATE_LIMIT_WINDOW_HOURS = 1;
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("=== send-otp function invoked ===");
   
@@ -96,6 +99,44 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Check rate limiting
+    const oneHourAgo = new Date(Date.now() - RATE_LIMIT_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
+    
+    const { count: attemptCount, error: countError } = await supabaseAdmin
+      .from("otp_rate_limits")
+      .select("*", { count: "exact", head: true })
+      .eq("email", email.toLowerCase())
+      .eq("request_type", "signup")
+      .gte("created_at", oneHourAgo);
+
+    if (countError) {
+      console.error("Error checking rate limit:", countError);
+      // Continue anyway, don't block on rate limit check failure
+    } else if (attemptCount !== null && attemptCount >= RATE_LIMIT_MAX_ATTEMPTS) {
+      console.log("Rate limit exceeded for email:", email.toLowerCase(), "attempts:", attemptCount);
+      return new Response(
+        JSON.stringify({ 
+          error: `Too many attempts. Please try again after ${RATE_LIMIT_WINDOW_HOURS} hour.`,
+          rateLimited: true 
+        }),
+        {
+          status: 429,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Record this attempt for rate limiting
+    await supabaseAdmin
+      .from("otp_rate_limits")
+      .insert({
+        email: email.toLowerCase(),
+        request_type: "signup",
+      });
+
+    // Clean up old rate limit records (older than 1 hour)
+    await supabaseAdmin.rpc("cleanup_old_rate_limits");
 
     // Check if user already exists
     console.log("Checking if user exists with email:", email.toLowerCase());
